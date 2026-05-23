@@ -5,8 +5,8 @@ Tài liệu này ghi nhận trạng thái kiểm thử đơn vị tự động (
 ---
 
 ## 📌 Trạng Thái Bao Phủ Kiểm Thử (Test Coverage Status)
-*   **Tổng số tính năng hạt nhân:** 23/23 Tính năng + Phase 1 Animation Engine (23 tests) + Phase 1 Custom Input (38 tests) + Phase 1 DSA Modules (40 tests mới) + Phase 1 E-Lecture Mode (28 tests mới) + Phase 1 Execution Control (23 tests mới) + Phase 1 Interactive Playground (31 tests mới) + Phase 1 Pseudocode Sync (37 tests mới) + Phase 1 Quiz System (54 tests mới) + Phase 2 Code-to-Visualization (32 tests mới) + Phase 2 Compare Algorithms (33 tests mới) + Phase 2 Concurrency Visualizer (35 tests mới).
-*   **Trạng thái Vitest Suite:** 🟢 100% PASSED (410/411 — 1 pre-existing ForceDirectedLayout failure).
+*   **Tổng số tính năng hạt nhân:** 23/23 Tính năng + Phase 1 Animation Engine (23 tests) + Phase 1 Custom Input (38 tests) + Phase 1 DSA Modules (40 tests mới) + Phase 1 E-Lecture Mode (28 tests mới) + Phase 1 Execution Control (23 tests mới) + Phase 1 Interactive Playground (31 tests mới) + Phase 1 Pseudocode Sync (37 tests mới) + Phase 1 Quiz System (54 tests mới) + Phase 2 Code-to-Visualization (32 tests mới) + Phase 2 Compare Algorithms (33 tests mới) + Phase 2 Concurrency Visualizer (35 tests mới) + Phase 2 Debug Mode (49 tests mới).
+*   **Trạng thái Vitest Suite:** 🟢 100% PASSED (459/460 — 1 pre-existing ForceDirectedLayout failure).
 *   **Công cụ chạy kiểm thử:** Vitest Core.
 *   **Thời gian phản hồi test suite:** ~180ms (độ nhạy cực cao dưới máy khách).
 
@@ -445,3 +445,59 @@ Tài liệu này ghi nhận trạng thái kiểm thử đơn vị tự động (
 | 375 | **ConcStore** | List all scenario options | 4 scenarios (race-condition, deadlock-demo, producer-consumer, dining-philosophers) | PASSED |
 | 376 | **ConcStore** | Finish race-condition without deadlock | isDeadlocked=false, sharedCounter>0 | PASSED |
 | 377 | **ConcStore** | Cleanup resources | threads=[], playbackMode=IDLE | PASSED |
+
+---
+
+## Phase 2 Debug Mode — 49 Unit Tests (DebuggerYieldEngine + LiveCompilerDebugger + useLiveDebuggerStore)
+
+| STT | Phân hệ kiểm thử | Tính năng hạt nhân được xác thực | Phương thức kiểm tra | Trạng thái |
+| :--- | :--- | :--- | :--- | :--- |
+| 378 | **YieldEngine** | Compile valid Bubble Sort code | success=true, generatorCode defined | PASSED |
+| 379 | **YieldEngine** | Convert function to generator (function*) | generatorCode contains 'function*' | PASSED |
+| 380 | **YieldEngine** | Inject yield statements | generatorCode contains 'yield' | PASSED |
+| 381 | **YieldEngine** | Inject __loopCounter guard | generatorCode contains '__loopCounter' | PASSED |
+| 382 | **YieldEngine** | Inject __recursionDepth guard | generatorCode contains '__recursionDepth' | PASSED |
+| 383 | **YieldEngine** | Inject __callStack management | generatorCode contains '__callStack' | PASSED |
+| 384 | **YieldEngine** | Create __debugMain wrapper function | generatorCode contains '__debugMain' | PASSED |
+| 385 | **YieldEngine** | Return error for invalid syntax | success=false, error defined | PASSED |
+| 386 | **YieldEngine** | Extract error line number from syntax error | errorLine defined | PASSED |
+| 387 | **YieldEngine** | Handle empty function body | success=true | PASSED |
+| 388 | **YieldEngine** | Handle while loops | __loopCounter injected | PASSED |
+| 389 | **YieldEngine** | Include lineNumber in yield payload | 'lineNumber' in generatorCode | PASSED |
+| 390 | **YieldEngine** | Include arrayState in yield payload | 'arrayState' in generatorCode | PASSED |
+| 391 | **YieldEngine** | Include callStack in yield payload | 'callStack' in generatorCode | PASSED |
+| 392 | **YieldEngine** | Include __captureVars in yield payload | '__captureVars' in generatorCode | PASSED |
+| 393 | **Debugger** | Step forward through generator yields | lineNumber=2 then 3, variables tracked | PASSED |
+| 394 | **Debugger** | Return null when generator exhausted | null after 6 steps, isFinished=true | PASSED |
+| 395 | **Debugger** | Track step count | getStepCount increments correctly | PASSED |
+| 396 | **Debugger** | Halt exactly on registered breakpoint | continueToNextBreakpoint stops at line 5 | PASSED |
+| 397 | **Debugger** | Skip non-breakpoint lines | continueToNextBreakpoint at line 7, arrayState=[3,5] | PASSED |
+| 398 | **Debugger** | Return null if no breakpoint hit | generator exhausted without hitting line 99 | PASSED |
+| 399 | **Debugger** | Restore previous step from history | stepBackward returns lineNumber=3 | PASSED |
+| 400 | **Debugger** | Return null at first step | stepBackward=null at step 1 | PASSED |
+| 401 | **Debugger** | Advance until callStack depth decreases (stepOut) | callStack.length=1, lineNumber=10 | PASSED |
+| 402 | **Debugger** | Track recursive call stack correctly | ['quickSort(0,1)'] then ['quickSort(0,1)','partition(0,1)'] | PASSED |
+| 403 | **Debugger** | Set and get breakpoints | getActiveBreakpoints=[3,5,7] | PASSED |
+| 404 | **Debugger** | Record all steps in history | history.length=3, correct lineNumbers | PASSED |
+| 405 | **Debugger** | Reset clears all state | null step, 0 count, empty history, isFinished=true | PASSED |
+| 406 | **DebugStore** | IDLE status on init | status='IDLE' | PASSED |
+| 407 | **DebugStore** | Default source code contains bubbleSort | sourceCode includes 'bubbleSort' | PASSED |
+| 408 | **DebugStore** | Default input array [5,3,8,1,9,2,7] | inputArray matches | PASSED |
+| 409 | **DebugStore** | Empty breakpoints on init | activeBreakpoints=[] | PASSED |
+| 410 | **DebugStore** | Not debugging on init | isDebugging=false | PASSED |
+| 411 | **DebugStore** | Toggle breakpoint add | activeBreakpoints contains 5 | PASSED |
+| 412 | **DebugStore** | Toggle breakpoint remove | activeBreakpoints does not contain 5 | PASSED |
+| 413 | **DebugStore** | Support multiple breakpoints | activeBreakpoints.length=3 | PASSED |
+| 414 | **DebugStore** | Update source code | sourceCode='function test() {}' | PASSED |
+| 415 | **DebugStore** | Update input array | inputArray=[10,20,30] | PASSED |
+| 416 | **DebugStore** | Start session → PAUSED status | status='PAUSED' on valid code | PASSED |
+| 417 | **DebugStore** | Set current line after starting | currentLineNumber not null | PASSED |
+| 418 | **DebugStore** | Populate array state | arrayState.length > 0 | PASSED |
+| 419 | **DebugStore** | ERROR status on invalid code | status='ERROR', errorMessage defined | PASSED |
+| 420 | **DebugStore** | Step forward advances | stepCount > 1 after stepForward | PASSED |
+| 421 | **DebugStore** | Stop resets all state | IDLE, null line, empty callStack/vars, 0 steps | PASSED |
+| 422 | **DebugStore** | isDebugging true when PAUSED | isDebugging=true | PASSED |
+| 423 | **DebugStore** | isPaused true when PAUSED | isPaused=true | PASSED |
+| 424 | **DebugStore** | canStepForward true when PAUSED | canStepForward=true | PASSED |
+| 425 | **DebugStore** | hasError true on ERROR status | hasError=true | PASSED |
+| 426 | **DebugStore** | Detect mutated variables on step | watchedVariables defined after step | PASSED |

@@ -87,6 +87,13 @@
         </section>
       </template>
 
+      <!-- Debug Mode Tab -->
+      <template v-else-if="activeTab === 'debug'">
+        <section class="flex-1 min-h-0">
+          <DebugWorkspace />
+        </section>
+      </template>
+
       <!-- Interactive Playground Tab -->
       <template v-else-if="activeTab === 'playground'">
         <section class="flex-1 min-h-0">
@@ -237,6 +244,7 @@ import { InteractivePlayground } from "./features/interactive-playground";
 import { CodeWorkspace } from "./features/code-to-visualization";
 import { CompareWorkspace } from "./features/compare-algorithms";
 import { ConcurrencyWorkspace } from "./features/concurrency-viz";
+import { DebugWorkspace } from "./features/debug-mode";
 
 const activeTab = ref("sorting");
 
@@ -247,6 +255,7 @@ const tabs = [
   { id: "code-ide", name: "Code IDE" },
   { id: "compare", name: "So sánh" },
   { id: "concurrency", name: "Đa luồng" },
+  { id: "debug", name: "Debug" },
   { id: "graph", name: "Graph" },
   { id: "playground", name: "Playground" },
   { id: "oop", name: "OOP" },

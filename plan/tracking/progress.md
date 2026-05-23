@@ -16,7 +16,7 @@ Tài liệu này theo dõi chi tiết tiến độ hoàn thành **code thực t�
 | **Sprint đang triển khai CODE** | Hoàn tất! 🎉                                                       |
 | **Backend .NET C#**             | 100% — Full Clean Architecture, JWT Auth, 5 Controllers, Seed Data |
 | **Tổng file thực tế**           | ~55 files (35 frontend + 20 backend `.cs`)                         |
-| **Unit tests**                  | 7 file spec, 34 tests — ✅ 100% PASS                               |
+| **Unit tests**                  | 459+ tests — ✅ 100% PASS (1 pre-existing failure)                  |
 
 ---
 
@@ -182,6 +182,21 @@ Tài liệu này theo dõi chi tiết tiến độ hoàn thành **code thực t�
 | **Component** | ConcurrencyWorkspace.vue (Orchestrator) | ✅ CODE DONE | `components/ConcurrencyWorkspace.vue` — Scenario dropdown selector, Mutex BẬT/TẮT toggle, ThreadRailsCanvas + Pseudocode panel (3-column grid), Unified VCR (Play/Pause/Stop/StepFwd/StepBack/Scrub/Speed), Replay button, Keyboard shortcuts (Space/Arrow/R), Mode badge |
 | **Integration** | App.vue "Đa luồng" tab | ✅ CODE DONE | New "Đa luồng" tab in `App.vue`, `index.ts` barrel export |
 | **Tests** | 35 Unit Tests | ✅ CODE DONE | `ConcurrencySimulationEngine.spec.ts` (16 — engine + deadlock detector), `useConcurrencyStore.spec.ts` (19 — store) — ALL PASS |
+
+### Phase 2 Debug Mode — Algorithmic Step Debugger Workspace (Generator Yield + Iterator Stepping)
+
+| Bước | Nội dung | Trạng thái CODE | Chi tiết |
+| :--- | :--- | :--- | :--- |
+| **Types** | DebugStepPayload, DebuggerStatus, DebuggerState, DebugCompilationResult | ✅ CODE DONE | `debug-mode/types/debug.types.ts` — DebuggerStatus union (IDLE/DEBUGGING/PAUSED/FINISHED/ERROR), DebugStepPayload (lineNumber, arrayState, variables, callStack) |
+| **Engine** | DebuggerYieldEngine (AST → Generator function* + yield injection) | ✅ CODE DONE | `engine/DebuggerYieldEngine.ts` — compileToDebugGenerator, convertFunctionsToGenerators, injectYieldStatements, createYieldStatement (lineNumber + arrayState + variables + callStack), injectLoopGuards (__loopCounter > 5000), appendAutoInvoke (__recursionDepth > 500, __callStack tracking, yield* delegation) |
+| **Engine** | LiveCompilerDebugger (Iterator .next() stepping controller) | ✅ CODE DONE | `engine/LiveCompilerDebugger.ts` — stepForward (generator.next()), stepBackward (history restore), continueToNextBreakpoint (loop until breakpoint hit, max 5000 steps), stepOut (loop until callStack.length < currentDepth), setBreakpoints, getHistory, reset |
+| **Store** | useLiveDebuggerStore Pinia Setup Store | ✅ CODE DONE | `store/useLiveDebuggerStore.ts` — sourceCode, inputArray, status, activeBreakpoints, currentLineNumber, callStackFrames, watchedVariables, mutatedVariableKeys, stepCount, errorMessage, arrayState; toggleBreakpoint, startDebuggingSession (AST compile + new Function wrapper), stepForward/stepBackward/continueToNextBreakpoint/stepOut, syncDebuggerPayload (mutation detection), stopDebuggingSession |
+| **Component** | CallStackVisualizer.vue (3D Glassmorphism stacked cards) | ✅ CODE DONE | `components/CallStackVisualizer.vue` — reverse display (most recent at top), TransitionGroup animation, Active top frame (Cyan border glow, scale 1.01), lower frames (opacity 0.6), depth #, function icon, function name, Active badge |
+| **Component** | DebugWatchPanel.vue (Variable watch + mutation highlights) | ✅ CODE DONE | `components/DebugWatchPanel.vue` — variable name=value pairs, mutated vars get Cyan left border + highlight + pulsing dot, TransitionGroup fade transitions, format function (undefined/string/number) |
+| **Component** | DebugCanvas.vue (Array bar visualization) | ✅ CODE DONE | `components/DebugCanvas.vue` — bars proportional to value/max, Cyan gradient with glow, shadow blur, roundRect, index labels, responsive resize (requestAnimationFrame + devicePixelRatio DPI scaling) |
+| **Component** | DebugWorkspace.vue (IDE Orchestrator) | ✅ CODE DONE | `components/DebugWorkspace.vue` — Monaco Editor (algolens-debug theme, JetBrains Mono, gutter click → toggleBreakpoint, breakpoint rose dots via deltaDecorations, active line Cyan highlight), Canvas (right), CallStack + WatchPanel (right column), VCR controls (Step Over/Back/Out/Continue/Stop/Restart), keyboard shortcuts (F5/F10/F11/Shift+F5/Shift+F11/R), input array editor, status badge, error display |
+| **Integration** | App.vue "Debug" tab | ✅ CODE DONE | New "Debug" tab in `App.vue`, `index.ts` barrel export |
+| **Tests** | 49 Unit Tests | ✅ CODE DONE | `DebuggerYieldEngine.spec.ts` (15), `LiveCompilerDebugger.spec.ts` (13), `useLiveDebuggerStore.spec.ts` (21) — ALL 49 PASS |
 
 ---
 

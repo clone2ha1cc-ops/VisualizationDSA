@@ -322,3 +322,31 @@ Các ADR sau đây được ghi trong tài liệu đặc tả nhưng **chưa có
   - Module: concurrency-viz/index.ts (barrel export)
   - Integration: App.vue ("Đa luồng" tab)
   - Tests: ConcurrencySimulationEngine.spec.ts (16), useConcurrencyStore.spec.ts (19) — 35 tests total
+
+---
+
+## ADR-16: Debug Mode — Generator Yield Coroutine Pattern for Pauseable Algorithmic Stepping
+
+- **Trạng thái:** ✅ IMPLEMENTED
+- **Ngữ cảnh:** Sinh viên cần debug từng dòng code thuật toán JavaScript, xem biến thay đổi, call stack, và trạng thái mảng tại mỗi bước — giống IDE debugger thật (VS Code F10/F11/F5).
+- **Quyết định:** Triển khai Generator Yield Coroutine Pattern 100% client-side:
+  1. **AST → Generator function*:** Acorn parser chuyển đổi `function` → `function*`, tiêm `yield { lineNumber, arrayState, variables, callStack }` sau mỗi dòng thực thi.
+  2. **Iterator .next() Stepping:** `LiveCompilerDebugger` gọi `generator.next()` để bước từng dòng, lưu history[] cho step backward.
+  3. **Breakpoint hit detection:** `continueToNextBreakpoint()` loop `.next()` cho đến khi `lineNumber ∈ breakpoints Set`, max 5000 steps timeout.
+  4. **Step Out:** Loop `.next()` cho đến khi `callStack.length < currentDepth`.
+  5. **Safety Guards:** `__loopCounter > 5000` chống infinite loop, `__recursionDepth > 500` chống stack overflow.
+  6. **Variable Mutation Detection:** So sánh `old vs new watchedVariables` mỗi bước, highlight Cyan Neon cho biến thay đổi.
+- **Kiến trúc:**
+  - `DebuggerYieldEngine` — compileToDebugGenerator (Acorn parse → AST walk → escodegen regenerate)
+  - `LiveCompilerDebugger` — Iterator controller (stepForward/stepBackward/continueToNextBreakpoint/stepOut)
+  - `useLiveDebuggerStore` — Pinia store (status FSM, breakpoints, callStack, watchedVars, mutatedKeys)
+  - `DebugWorkspace.vue` — Monaco Editor (algolens-debug theme, gutter breakpoints rose dots, active line Cyan) + DebugCanvas + CallStackVisualizer + DebugWatchPanel + VCR debug controls
+- **Hệ quả:** Sinh viên thấy code highlight dòng đang chạy, biến thay đổi real-time, call stack 3D Glassmorphism, mảng animate. Toàn bộ pauseable/seekable/stepable — không cần Backend.
+- **File liên quan:**
+  - Types: debug-mode/types/debug.types.ts
+  - Engine: debug-mode/engine/DebuggerYieldEngine.ts, LiveCompilerDebugger.ts
+  - Store: debug-mode/store/useLiveDebuggerStore.ts
+  - Components: DebugWorkspace.vue, CallStackVisualizer.vue, DebugWatchPanel.vue, DebugCanvas.vue
+  - Module: debug-mode/index.ts (barrel export)
+  - Integration: App.vue ("Debug" tab)
+  - Tests: DebuggerYieldEngine.spec.ts (15), LiveCompilerDebugger.spec.ts (13), useLiveDebuggerStore.spec.ts (21) — 49 tests total
