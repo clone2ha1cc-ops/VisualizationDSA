@@ -139,3 +139,29 @@ Các ADR sau đây được ghi trong tài liệu đặc tả nhưng **chưa có
   - Backend: Domain/Lectures/Lecture.cs, LectureRepository.cs, WebApi/Controllers/LecturesController.cs
   - Extended: animation-engine/store/useAnimationStore.ts (playUntilFrame, goToFrame, interactionLocked)
   - Tests: useLectureStore.spec.ts (13), lectureLoader.spec.ts (7), animationStoreExtensions.spec.ts (8) — 28 tests total
+
+---
+
+## ADR-EXECUTION-CONTROL: VCR Control Panel Nâng cấp (Phase 1 — Command Issuer Pattern)
+
+- **Trạng thái:** ✅ IMPLEMENTED
+- **Ngữ cảnh:** Hệ thống cần bảng điều khiển VCR chuyên nghiệp kiểu YouTube/Netflix player: Replay, Dynamic Tooltip, Throttled Scrubbing 30 FPS, localStorage persistence, enhanced keyboard shortcuts.
+- **Quyết định:** Áp dụng Command Issuer Pattern + Composable Architecture:
+  1. `AnimControlPanel.vue` chỉ phát lệnh tới `useAnimationStore`, không xử lý logic Canvas — Loose Coupling.
+  2. `useThrottledScrub` composable: Throttle 33ms (~30 FPS) khi kéo tua slider, tự động pause khi bắt đầu scrub.
+  3. `usePlaybackHotkeys` composable: Global keyboard listener với input focus guard (INPUT/TEXTAREA/SELECT), Shift+Arrow rewind/fast-forward, interactionLocked guard, auto-cleanup onUnmount.
+  4. `useSliderTooltip` composable: Dynamic tooltip hiển thị explanation khi hover slider, truncateText 55 chars.
+  5. `useSpeedPreferences` composable: localStorage persistence cho `dsa_preferences.defaultSpeed`, init speed on mount.
+  6. Replay button: Play→Pause→Replay (↩) auto-switch theo playbackState (PLAYING/PAUSED/FINISHED).
+  7. YouTube-style slider: Emerald neon progress track, glow thumb, hover height transition.
+  8. E-Lecture lock: opacity 0.5 + pointer-events none khi interactionLocked=true.
+- **Hệ quả:**
+  - Thanh trượt kéo tua mượt mà 30 FPS, không lag CPU.
+  - Phím tắt toàn cục (Space, Arrow, Shift+Arrow, R, Esc) không xung đột với Custom Input textarea.
+  - Tốc độ phát yêu thích được lưu qua phiên qua localStorage.
+  - togglePlay() action mới trong useAnimationStore.
+- **File liên quan:**
+  - Frontend: animation-engine/composables/useSpeedPreferences.ts, useThrottledScrub.ts, usePlaybackHotkeys.ts, useSliderTooltip.ts
+  - Component: animation-engine/components/AnimControlPanel.vue (rewritten)
+  - Store: animation-engine/store/useAnimationStore.ts (added togglePlay)
+  - Tests: executionControl.spec.ts (23 tests)

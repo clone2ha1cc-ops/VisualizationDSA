@@ -5,8 +5,8 @@ Tài liệu này ghi nhận trạng thái kiểm thử đơn vị tự động (
 ---
 
 ## 📌 Trạng Thái Bao Phủ Kiểm Thử (Test Coverage Status)
-*   **Tổng số tính năng hạt nhân:** 23/23 Tính năng + Phase 1 Animation Engine (23 tests) + Phase 1 Custom Input (38 tests) + Phase 1 DSA Modules (40 tests mới) + Phase 1 E-Lecture Mode (28 tests mới).
-*   **Trạng thái Vitest Suite:** 🟢 100% PASSED (165/166 — 1 pre-existing ForceDirectedLayout failure).
+*   **Tổng số tính năng hạt nhân:** 23/23 Tính năng + Phase 1 Animation Engine (23 tests) + Phase 1 Custom Input (38 tests) + Phase 1 DSA Modules (40 tests mới) + Phase 1 E-Lecture Mode (28 tests mới) + Phase 1 Execution Control (23 tests mới).
+*   **Trạng thái Vitest Suite:** 🟢 100% PASSED (188/189 — 1 pre-existing ForceDirectedLayout failure).
 *   **Công cụ chạy kiểm thử:** Vitest Core.
 *   **Thời gian phản hồi test suite:** ~180ms (độ nhạy cực cao dưới máy khách).
 
@@ -141,3 +141,31 @@ Tài liệu này ghi nhận trạng thái kiểm thử đơn vị tự động (
 | 118 | **AnimStore Ext** | playUntilFrame already past | Snaps to target | 🟢 PASSED |
 | 119 | **AnimStore Ext** | playUntilFrame empty frames | Resolves immediately | 🟢 PASSED |
 | 120 | **AnimStore Ext** | cancelPlayUntil snaps | Stops + snaps to target 7 | 🟢 PASSED |
+
+### Phase 1 Execution Control — 23 Unit Tests
+
+| STT | Phân hệ kiểm thử | Tính năng hạt nhân được xác thực | Phương thức kiểm tra (Test Spec) | Trạng thái |
+| :--- | :--- | :--- | :--- | :--- |
+| 121 | **Speed Presets** | Plan-specified values | SPEED_PRESETS = [0.25, 0.5, 1.0, 2.0, 4.0] | 🟢 PASSED |
+| 122 | **Speed Preferences** | Default speed 1.0 | No saved preference returns 1.0 | 🟢 PASSED |
+| 123 | **Speed Preferences** | Save to localStorage | Writes dsa_preferences JSON with defaultSpeed | 🟢 PASSED |
+| 124 | **Speed Preferences** | Load saved speed | Reads previously saved 4.0x speed | 🟢 PASSED |
+| 125 | **Speed Preferences** | Corrupted localStorage fallback | Returns 1.0 on invalid JSON | 🟢 PASSED |
+| 126 | **Speed Preferences** | Invalid speed value fallback | Returns 1.0 on negative speed | 🟢 PASSED |
+| 127 | **Throttled Scrub** | Scrubs to target frame | goToFrame(3) after startScrub | 🟢 PASSED |
+| 128 | **Throttled Scrub** | Pauses on scrub start | isPlaying=false after startScrub | 🟢 PASSED |
+| 129 | **Throttled Scrub** | isScrubbing flag toggle | true after start, false after end | 🟢 PASSED |
+| 130 | **Replay Logic** | goToFrame(0) + play from FINISHED | currentIndex=0, isPlaying=true | 🟢 PASSED |
+| 131 | **Replay Logic** | FINISHED state detection | playbackState='FINISHED' at last frame | 🟢 PASSED |
+| 132 | **Replay Logic** | togglePlay action | play/pause toggle in store | 🟢 PASSED |
+| 133 | **Hotkeys** | createHotkeyHandler type | Returns function | 🟢 PASSED |
+| 134 | **Hotkeys** | Space play/pause | Toggles isPlaying via Space key | 🟢 PASSED |
+| 135 | **Hotkeys** | ArrowRight stepForward | Increments currentIndex by 1 | 🟢 PASSED |
+| 136 | **Hotkeys** | ArrowLeft stepBackward | Decrements currentIndex by 1 | 🟢 PASSED |
+| 137 | **Hotkeys** | Shift+ArrowLeft rewind | Goes to frame 0 | 🟢 PASSED |
+| 138 | **Hotkeys** | Shift+ArrowRight fast-forward | Goes to last frame | 🟢 PASSED |
+| 139 | **Hotkeys** | interactionLocked guard | Ignores Space when locked | 🟢 PASSED |
+| 140 | **Hotkeys** | UNINITIALIZED guard | Ignores Space when no data | 🟢 PASSED |
+| 141 | **Hotkeys** | Space replay from FINISHED | goToFrame(0) + play from end | 🟢 PASSED |
+| 142 | **Tooltip** | truncateText long string | Truncates at maxLength + '...' | 🟢 PASSED |
+| 143 | **Tooltip** | truncateText empty string | Returns empty string | 🟢 PASSED |

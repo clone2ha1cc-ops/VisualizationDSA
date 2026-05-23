@@ -186,6 +186,14 @@ export const useAnimationStore = defineStore('animation', () => {
     }
   }
 
+  function togglePlay(): void {
+    if (isPlaying.value) {
+      pause();
+    } else {
+      play();
+    }
+  }
+
   function setInteractionLocked(locked: boolean): void {
     interactionLocked.value = locked;
   }
@@ -212,6 +220,7 @@ export const useAnimationStore = defineStore('animation', () => {
     scrubTo,
     setSpeed,
     goToFrame,
+    togglePlay,
     playUntilFrame,
     cancelPlayUntil,
     setInteractionLocked,
