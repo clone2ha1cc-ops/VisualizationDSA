@@ -273,3 +273,28 @@ Các ADR sau đây được ghi trong tài liệu đặc tả nhưng **chưa có
   - Module: code-to-visualization/index.ts (barrel export)
   - Integration: App.vue (Code IDE tab)
   - Tests: ASTInstrumentationEngine.spec.ts (14), WorkerLifecycleCoordinator.spec.ts (7), useLiveCompilerStore.spec.ts (11) — 32 tests total
+
+---
+
+## ADR-14: Side-by-Side Algorithm Comparator — Dual Canvas Unified Playback
+
+- **Trạng thái:** ✅ IMPLEMENTED
+- **Ngữ cảnh:** Sinh viên cần so sánh trực quan hiệu năng Big-O giữa 2 thuật toán (ví dụ Bubble Sort vs Quick Sort) chạy trên cùng một mảng dữ liệu.
+- **Quyết định:** Triển khai Split Screen 50/50 với 2 Canvas độc lập props-driven, điều phối bởi `useCompareAlgorithmsStore` Pinia store. Hỗ trợ 2 chế độ phát:
+  - **Independent:** Mỗi bên chạy với tốc độ base, thuật toán nhanh hơn kết thúc trước với badge "Hoàn thành".
+  - **Normalized:** Tốc độ căn chỉnh (thuật toán dài giữ base speed, ngắn giảm tỷ lệ) để cả 2 cùng kết thúc đồng thời.
+- **Kiến trúc:**
+  - `UnifiedPlaybackCoordinator` — syncProgressByPercent (percent → frame mapping), calculateAlignedSpeeds.
+  - `UnifiedRenderScheduler` — Gom 2 Canvas vào 1 vòng rAF tối ưu GPU.
+  - `CompareCanvasPanel.vue` — Reusable props-driven Canvas (tách biệt khỏi global useAnimationStore).
+  - Stats extraction từ FrameDTO highlights (comparisons = frames with compare[], swaps = frames with swap[]).
+  - Fair comparison: Single seed array, cloned vào cả 2 generators.
+- **Hệ quả:** Sinh viên trực quan thấy Quick Sort (O(N log N)) xong trước Bubble Sort (O(N²)) hàng chục bước; bảng thống kê Cyan vs Emerald cập nhật real-time.
+- **File liên quan:**
+  - Types: compare-algorithms/types/compare.types.ts
+  - Engine: compare-algorithms/engine/UnifiedPlaybackCoordinator.ts, UnifiedRenderScheduler.ts
+  - Store: compare-algorithms/store/useCompareAlgorithmsStore.ts
+  - Components: CompareAlgorithmSelector.vue, CompareCanvasPanel.vue, ComparativeDashboard.vue, CompareWorkspace.vue
+  - Module: compare-algorithms/index.ts (barrel export)
+  - Integration: App.vue ("So sánh" tab)
+  - Tests: UnifiedPlaybackCoordinator.spec.ts (10), useCompareAlgorithmsStore.spec.ts (19), UnifiedRenderScheduler.spec.ts (4) — 33 tests total

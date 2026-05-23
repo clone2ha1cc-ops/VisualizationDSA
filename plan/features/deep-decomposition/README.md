@@ -26,7 +26,7 @@ Chào mừng bạn đến với **Deep Decomposition Master Index** của **Visu
 > ⚠️ **Toàn bộ Phase 2 chưa có code. Tất cả là tài liệu đặc tả.**
 
 - **[09. Code to Visualization](./phase2-code-to-visualization)** `✅ CODE DONE` — **Phase 2 Code-to-Visualization Compiler**: `ASTInstrumentationEngine.ts` (Acorn parser + acorn-walk + escodegen, traceCompare/traceAssign instrumentation, __loopCounter loop guard), `WorkerLifecycleCoordinator.ts` (Web Worker Sandbox, Blob URL lifecycle, Timeout Guard 1.5s, MAX_FRAMES 2000), `useLiveCompilerStore.ts` (Pinia store, AST→Worker→Canvas pipeline), `MonacoEditorPanel.vue` (algolens-dark theme, JetBrains Mono, error/success glow), `CompilerConsole.vue` (Neon console logs), `CodeWorkspace.vue` (IDE grid layout 50/50), 32 unit tests
-- [10. Compare Algorithms](./phase2-compare-algorithms) `❌ SPEC ONLY`
+- **[10. Compare Algorithms](./phase2-compare-algorithms)** `✅ CODE DONE` — **Phase 2 Compare Algorithms**: `UnifiedPlaybackCoordinator.ts` (syncProgressByPercent, calculateAlignedSpeeds), `UnifiedRenderScheduler.ts` (dual rAF loop), `useCompareAlgorithmsStore.ts` (dual algorithm selection, unified VCR, independent/normalized playback, live stats), `CompareAlgorithmSelector.vue` (pair picker), `CompareCanvasPanel.vue` (props-driven Canvas), `ComparativeDashboard.vue` (Cyan vs Emerald stats), `CompareWorkspace.vue` (orchestrator), 33 unit tests
 - [11. Concurrency Visualizer](./phase2-concurrency-viz) `❌ SPEC ONLY`
 - [12. Debug Mode](./phase2-debug-mode) `❌ SPEC ONLY`
 - [13. Design Patterns](./phase2-design-patterns) `❌ SPEC ONLY`

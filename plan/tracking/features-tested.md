@@ -5,8 +5,8 @@ Tài liệu này ghi nhận trạng thái kiểm thử đơn vị tự động (
 ---
 
 ## 📌 Trạng Thái Bao Phủ Kiểm Thử (Test Coverage Status)
-*   **Tổng số tính năng hạt nhân:** 23/23 Tính năng + Phase 1 Animation Engine (23 tests) + Phase 1 Custom Input (38 tests) + Phase 1 DSA Modules (40 tests mới) + Phase 1 E-Lecture Mode (28 tests mới) + Phase 1 Execution Control (23 tests mới) + Phase 1 Interactive Playground (31 tests mới) + Phase 1 Pseudocode Sync (37 tests mới) + Phase 1 Quiz System (54 tests mới) + Phase 2 Code-to-Visualization (32 tests mới).
-*   **Trạng thái Vitest Suite:** 🟢 100% PASSED (342/343 — 1 pre-existing ForceDirectedLayout failure).
+*   **Tổng số tính năng hạt nhân:** 23/23 Tính năng + Phase 1 Animation Engine (23 tests) + Phase 1 Custom Input (38 tests) + Phase 1 DSA Modules (40 tests mới) + Phase 1 E-Lecture Mode (28 tests mới) + Phase 1 Execution Control (23 tests mới) + Phase 1 Interactive Playground (31 tests mới) + Phase 1 Pseudocode Sync (37 tests mới) + Phase 1 Quiz System (54 tests mới) + Phase 2 Code-to-Visualization (32 tests mới) + Phase 2 Compare Algorithms (33 tests mới).
+*   **Trạng thái Vitest Suite:** 🟢 100% PASSED (375/376 — 1 pre-existing ForceDirectedLayout failure).
 *   **Công cụ chạy kiểm thử:** Vitest Core.
 *   **Thời gian phản hồi test suite:** ~180ms (độ nhạy cực cao dưới máy khách).
 
@@ -365,3 +365,41 @@ Tài liệu này ghi nhận trạng thái kiểm thử đơn vị tự động (
 | UI-3 | **ASTInstrumentation** | Syntax error detection + error glow | Broken JS → rose dot, red glow border, [LỖI] Unexpected token error | PASSED |
 | UI-4 | **WorkerCoordinator** | Infinite loop protection (__loopCounter guard) | while(true) → loop guard at 5000, [LỖI] error, UI responsive | PASSED |
 | UI-5 | **CodeWorkspace** | Invalid input array rejection | "abc, def" → red border, RUN blocked, no new console logs | PASSED |
+
+### Phase 2 Compare Algorithms — 33 Unit Tests
+
+| STT | Phân hệ kiểm thử | Tính năng hạt nhân được xác thực | Phương thức kiểm tra | Trạng thái |
+| :--- | :--- | :--- | :--- | :--- |
+| 310 | **Coordinator** | Sync 50% progress for different frame counts | leftStore(100) goToFrame(50), rightStore(20) goToFrame(10) | PASSED |
+| 311 | **Coordinator** | Sync 0% — both snap to frame 0 | goToFrame(0) called on both stores | PASSED |
+| 312 | **Coordinator** | Sync 100% — both snap to last frame | leftStore goToFrame(99), rightStore goToFrame(19) | PASSED |
+| 313 | **Coordinator** | Reject negative percent | goToFrame not called | PASSED |
+| 314 | **Coordinator** | Reject percent > 100 | goToFrame not called | PASSED |
+| 315 | **Coordinator** | Aligned speeds — left longer, right slowed | leftSpeed=1.0, rightSpeed=0.2 | PASSED |
+| 316 | **Coordinator** | Aligned speeds — right longer, left slowed | leftSpeed=0.67, rightSpeed=2.0 | PASSED |
+| 317 | **Coordinator** | Aligned speeds — equal frames, same speed | leftSpeed=rightSpeed=1.5 | PASSED |
+| 318 | **Coordinator** | Zero frames returns base speed | Both sides get globalSpeed | PASSED |
+| 319 | **Coordinator** | Global progress from max of both sides | max(leftPct, rightPct) | PASSED |
+| 320 | **CompareStore** | Default algorithm IDs and UNINITIALIZED state | bubble-sort, selection-sort, UNINITIALIZED | PASSED |
+| 321 | **CompareStore** | Load compare session with dummy generators | Frames loaded, LOADED state | PASSED |
+| 322 | **CompareStore** | Generate random input array (size 15) | 15 values in [1,99] range | PASSED |
+| 323 | **CompareStore** | Fair comparison — same input for both sides | leftFrames[0].dataState === rightFrames[0].dataState | PASSED |
+| 324 | **CompareStore** | Step forward both sides | leftCurrentIndex=rightCurrentIndex=1 | PASSED |
+| 325 | **CompareStore** | Step backward both sides | Both decrement by 1 | PASSED |
+| 326 | **CompareStore** | Cannot step backward below 0 | Both stay at 0 | PASSED |
+| 327 | **CompareStore** | Scrub to percent — sync proportionally | Correct frame indices for 50% | PASSED |
+| 328 | **CompareStore** | Clamp scrub percent 0-100 | -10 → frame 0, 200 → last frame | PASSED |
+| 329 | **CompareStore** | Stop and reset to frame 0 | isPlaying=false, both at 0 | PASSED |
+| 330 | **CompareStore** | Left stats computation (comparisons/swaps) | Values ≥ 0, totalFrames correct | PASSED |
+| 331 | **CompareStore** | Efficiency ratio computation | efficiencyRatio > 0 at 100% | PASSED |
+| 332 | **CompareStore** | Algorithm name resolution from catalog | Contains Bubble Sort / Selection Sort | PASSED |
+| 333 | **CompareStore** | Change playback speed | globalPlaySpeed = 2.0 | PASSED |
+| 334 | **CompareStore** | Toggle playback mode | independent ↔ normalized | PASSED |
+| 335 | **CompareStore** | Cleanup all state | Frames empty, UNINITIALIZED | PASSED |
+| 336 | **CompareStore** | Progress percentages 0% and 100% | 0→0%, 100→100% both sides | PASSED |
+| 337 | **CompareStore** | FINISHED state detection | bothFinished=true, FINISHED state | PASSED |
+| 338 | **CompareStore** | Time complexity from catalog | O(N²) for both | PASSED |
+| 339 | **RenderScheduler** | Register callbacks and invoke on tick | leftCb and rightCb called once | PASSED |
+| 340 | **RenderScheduler** | No duplicate loop start | Second startSchedulerLoop ignored | PASSED |
+| 341 | **RenderScheduler** | Stop scheduler and cancel animation frame | cancelAnimationFrame called | PASSED |
+| 342 | **RenderScheduler** | Cleanup nullifies callbacks | Stop + nullify after cleanup | PASSED |
