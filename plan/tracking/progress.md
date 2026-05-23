@@ -169,6 +169,20 @@ Tài liệu này theo dõi chi tiết tiến độ hoàn thành **code thực t�
 | **Integration** | App.vue "So sánh" tab | ✅ CODE DONE | New "So sánh" tab in `App.vue`, `index.ts` barrel export |
 | **Tests** | 33 Unit Tests | ✅ CODE DONE | `UnifiedPlaybackCoordinator.spec.ts` (10), `useCompareAlgorithmsStore.spec.ts` (19), `UnifiedRenderScheduler.spec.ts` (4) — ALL PASS |
 
+### Phase 2 Concurrency Visualizer — Thread Rails & DFS Deadlock Detector
+
+| Bước | Nội dung | Trạng thái CODE | Chi tiết |
+| :--- | :--- | :--- | :--- |
+| **Types** | ThreadInstance, LockInstance, ConcurrencyScenario, DeadlockResult, PlaybackMode | ✅ CODE DONE | `concurrency-viz/types/concurrency.types.ts` — ThreadState (READY/RUNNING/BLOCKED/FINISHED), ScenarioStep, ConcurrencySnapshot |
+| **Engine** | ConcurrencySimulationEngine (Thread State Machine + Mutex Lock Queue) | ✅ CODE DONE | `engine/ConcurrencySimulationEngine.ts` — acquireLock (BLOCKED queue), releaseLock (wake signal), moveThread (progress 0-100), incrementCounter, getEngineState |
+| **Engine** | DeadlockDetector (DFS Wait-For Graph Cycle Detection) | ✅ CODE DONE | `engine/ConcurrencySimulationEngine.ts` — static detectDeadlock, WFG adjacency list, DFS recStack cycle detection, cycleThreadIds extraction |
+| **Store** | useConcurrencyStore Pinia Setup Store | ✅ CODE DONE | `store/useConcurrencyStore.ts` — scenario initialization, step-by-step execution, history snapshots (scrub backward), deadlock detection per step, togglePlayPause, scrubToStep, setMutexEnabled, setSpeed, cleanup |
+| **Scenarios** | 4 Concurrency Scenario Presets | ✅ CODE DONE | `scenarios/concurrencyScenarios.ts` — Race Condition (2 threads, 1 Mutex, 24 steps), Deadlock Demo (2 threads, 2 locks, 12 steps), Producer-Consumer (2 threads, 1 lock, 18 steps), Dining Philosophers (5 threads, 5 forks, 20 steps) |
+| **Component** | ThreadRailsCanvas.vue (Thread Rails + Critical Section + Mutex Lock) | ✅ CODE DONE | `components/ThreadRailsCanvas.vue` — Slate thread rails, Cyan/Amber/Emerald runner nodes (RUNNING/BLOCKED/FINISHED), Critical Section gate (rose overlay), Mutex padlock icon (open Cyan / locked Amber), Shared Counter display, Deadlock Neon Rose pulse animation, deadlock alert overlay |
+| **Component** | ConcurrencyWorkspace.vue (Orchestrator) | ✅ CODE DONE | `components/ConcurrencyWorkspace.vue` — Scenario dropdown selector, Mutex BẬT/TẮT toggle, ThreadRailsCanvas + Pseudocode panel (3-column grid), Unified VCR (Play/Pause/Stop/StepFwd/StepBack/Scrub/Speed), Replay button, Keyboard shortcuts (Space/Arrow/R), Mode badge |
+| **Integration** | App.vue "Đa luồng" tab | ✅ CODE DONE | New "Đa luồng" tab in `App.vue`, `index.ts` barrel export |
+| **Tests** | 35 Unit Tests | ✅ CODE DONE | `ConcurrencySimulationEngine.spec.ts` (16 — engine + deadlock detector), `useConcurrencyStore.spec.ts` (19 — store) — ALL PASS |
+
 ---
 
 ## 3. Kiểm Kê Code Thực Tế Đã Có (File Inventory)

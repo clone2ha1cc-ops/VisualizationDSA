@@ -80,6 +80,13 @@
         </section>
       </template>
 
+      <!-- Concurrency Visualizer Tab -->
+      <template v-else-if="activeTab === 'concurrency'">
+        <section class="flex-1 min-h-0">
+          <ConcurrencyWorkspace />
+        </section>
+      </template>
+
       <!-- Interactive Playground Tab -->
       <template v-else-if="activeTab === 'playground'">
         <section class="flex-1 min-h-0">
@@ -229,6 +236,7 @@ import { GamificationPanel } from "./features/gamification";
 import { InteractivePlayground } from "./features/interactive-playground";
 import { CodeWorkspace } from "./features/code-to-visualization";
 import { CompareWorkspace } from "./features/compare-algorithms";
+import { ConcurrencyWorkspace } from "./features/concurrency-viz";
 
 const activeTab = ref("sorting");
 
@@ -238,6 +246,7 @@ const tabs = [
   { id: "animation", name: "Animation" },
   { id: "code-ide", name: "Code IDE" },
   { id: "compare", name: "So sánh" },
+  { id: "concurrency", name: "Đa luồng" },
   { id: "graph", name: "Graph" },
   { id: "playground", name: "Playground" },
   { id: "oop", name: "OOP" },

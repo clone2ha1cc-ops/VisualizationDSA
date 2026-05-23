@@ -5,8 +5,8 @@ Tài liệu này ghi nhận trạng thái kiểm thử đơn vị tự động (
 ---
 
 ## 📌 Trạng Thái Bao Phủ Kiểm Thử (Test Coverage Status)
-*   **Tổng số tính năng hạt nhân:** 23/23 Tính năng + Phase 1 Animation Engine (23 tests) + Phase 1 Custom Input (38 tests) + Phase 1 DSA Modules (40 tests mới) + Phase 1 E-Lecture Mode (28 tests mới) + Phase 1 Execution Control (23 tests mới) + Phase 1 Interactive Playground (31 tests mới) + Phase 1 Pseudocode Sync (37 tests mới) + Phase 1 Quiz System (54 tests mới) + Phase 2 Code-to-Visualization (32 tests mới) + Phase 2 Compare Algorithms (33 tests mới).
-*   **Trạng thái Vitest Suite:** 🟢 100% PASSED (375/376 — 1 pre-existing ForceDirectedLayout failure).
+*   **Tổng số tính năng hạt nhân:** 23/23 Tính năng + Phase 1 Animation Engine (23 tests) + Phase 1 Custom Input (38 tests) + Phase 1 DSA Modules (40 tests mới) + Phase 1 E-Lecture Mode (28 tests mới) + Phase 1 Execution Control (23 tests mới) + Phase 1 Interactive Playground (31 tests mới) + Phase 1 Pseudocode Sync (37 tests mới) + Phase 1 Quiz System (54 tests mới) + Phase 2 Code-to-Visualization (32 tests mới) + Phase 2 Compare Algorithms (33 tests mới) + Phase 2 Concurrency Visualizer (35 tests mới).
+*   **Trạng thái Vitest Suite:** 🟢 100% PASSED (410/411 — 1 pre-existing ForceDirectedLayout failure).
 *   **Công cụ chạy kiểm thử:** Vitest Core.
 *   **Thời gian phản hồi test suite:** ~180ms (độ nhạy cực cao dưới máy khách).
 
@@ -403,3 +403,45 @@ Tài liệu này ghi nhận trạng thái kiểm thử đơn vị tự động (
 | 340 | **RenderScheduler** | No duplicate loop start | Second startSchedulerLoop ignored | PASSED |
 | 341 | **RenderScheduler** | Stop scheduler and cancel animation frame | cancelAnimationFrame called | PASSED |
 | 342 | **RenderScheduler** | Cleanup nullifies callbacks | Stop + nullify after cleanup | PASSED |
+
+---
+
+## Phase 2 Concurrency Visualizer — 35 Unit Tests (ConcurrencySimulationEngine + DeadlockDetector + useConcurrencyStore)
+
+| STT | Phân hệ kiểm thử | Tính năng hạt nhân được xác thực | Phương thức kiểm tra | Trạng thái |
+| :--- | :--- | :--- | :--- | :--- |
+| 343 | **SimEngine** | Initialize threads and locks | 2 threads, L1 lock, heldByThreadId=null, counter=0 | PASSED |
+| 344 | **SimEngine** | Acquire lock successfully when free | acquireLock(T1,L1)=true, heldByThreadId=T1, state=RUNNING | PASSED |
+| 345 | **SimEngine** | Block thread when lock held by another | acquireLock(T2,L1)=false, state=BLOCKED, waitingForLock=L1 | PASSED |
+| 346 | **SimEngine** | Release lock and wake waiting thread | releaseLock(T1,L1) → T2 acquires, state=RUNNING | PASSED |
+| 347 | **SimEngine** | Move thread progress | moveThread(T1,50) → progress=50, state=RUNNING | PASSED |
+| 348 | **SimEngine** | Finish thread at 100% progress | moveThread(T1,100) → state=FINISHED | PASSED |
+| 349 | **SimEngine** | Not move blocked thread | BLOCKED thread stays at progress=0 | PASSED |
+| 350 | **SimEngine** | Increment and read shared counter | incrementCounter×2 → readCounter=2 | PASSED |
+| 351 | **SimEngine** | Clamp progress at 100 | moveThread(60)+moveThread(60) → progress=100 | PASSED |
+| 352 | **SimEngine** | Not release lock held by different thread | releaseLock(T2,L1) ignored, T1 still holds | PASSED |
+| 353 | **Deadlock** | No deadlock when no waiting threads | isDeadlocked=false, cycleThreadIds=[] | PASSED |
+| 354 | **Deadlock** | Circular deadlock between two threads | T1→L2→T2→L1→T1 cycle detected | PASSED |
+| 355 | **Deadlock** | No deadlock when thread waits but no cycle | T2 waits T1 (no reverse), isDeadlocked=false | PASSED |
+| 356 | **Deadlock** | Dining philosophers 5-thread deadlock | P0→P1→P2→P3→P4→P0 circular WFG detected | PASSED |
+| 357 | **Deadlock** | Empty threads list | isDeadlocked=false | PASSED |
+| 358 | **Deadlock** | Waiting for non-existent lock | isDeadlocked=false | PASSED |
+| 359 | **ConcStore** | Default state (IDLE, no threads) | threads=[], isPlaying=false, playbackMode=IDLE | PASSED |
+| 360 | **ConcStore** | Initialize race-condition scenario | 2 threads (T1,T2), READY state, totalSteps>0 | PASSED |
+| 361 | **ConcStore** | Initialize deadlock-demo scenario | 2 threads, locks L1+L2 | PASSED |
+| 362 | **ConcStore** | Initialize dining-philosophers scenario | 5 threads, 5 locks (F0-F4) | PASSED |
+| 363 | **ConcStore** | Step forward correctly | currentStepIndex increments by 1 | PASSED |
+| 364 | **ConcStore** | Step backward correctly | currentStepIndex decrements by 1 via history | PASSED |
+| 365 | **ConcStore** | Not step backward past zero | currentStepIndex stays 0 | PASSED |
+| 366 | **ConcStore** | Detect deadlock in deadlock-demo | isDeadlocked=true, playbackMode=DEADLOCKED | PASSED |
+| 367 | **ConcStore** | Not step forward when deadlocked | currentStepIndex unchanged after deadlock | PASSED |
+| 368 | **ConcStore** | Toggle play/pause | PLAYING↔PAUSED transitions | PASSED |
+| 369 | **ConcStore** | Stop and reset simulation | currentStepIndex=0, playbackMode=IDLE | PASSED |
+| 370 | **ConcStore** | Set speed within bounds | 0.1→0.25, 10→4, 2→2 | PASSED |
+| 371 | **ConcStore** | Scrub to specific step | scrubToStep(5) → currentStepIndex=5 | PASSED |
+| 372 | **ConcStore** | Scrub backward via history | scrubToStep(8)→scrubToStep(3) → currentStepIndex=3 | PASSED |
+| 373 | **ConcStore** | Toggle mutex and reinitialize | mutexEnabled=false, currentStepIndex=0 | PASSED |
+| 374 | **ConcStore** | Compute progress percent | 0% at start, >0% at half | PASSED |
+| 375 | **ConcStore** | List all scenario options | 4 scenarios (race-condition, deadlock-demo, producer-consumer, dining-philosophers) | PASSED |
+| 376 | **ConcStore** | Finish race-condition without deadlock | isDeadlocked=false, sharedCounter>0 | PASSED |
+| 377 | **ConcStore** | Cleanup resources | threads=[], playbackMode=IDLE | PASSED |
