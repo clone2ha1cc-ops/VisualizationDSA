@@ -41,9 +41,9 @@
       </div>
       <!-- Sidebar (40%): Pseudocode + Custom Input stacked -->
       <div class="flex-[4] flex flex-col gap-2 min-h-0">
-        <!-- Pseudocode -->
+        <!-- Pseudocode Sync (Multilingual Code Panel + Watch Variables) -->
         <div class="flex-1 rounded-xl overflow-hidden border border-slate-800 shadow-lg min-h-0">
-          <AnimPseudoCodePanel />
+          <MultilingualCodePanel />
         </div>
         <!-- Custom Input Form -->
         <div class="flex-1 rounded-xl overflow-hidden border border-slate-800 shadow-lg min-h-0">
@@ -65,19 +65,35 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue';
+import { computed, watch } from 'vue';
 import CanvasLayer from './CanvasLayer.vue';
-import AnimPseudoCodePanel from './AnimPseudoCodePanel.vue';
 import ExplanationPanel from './ExplanationPanel.vue';
 import AnimControlPanel from './AnimControlPanel.vue';
 import { CustomInputForm } from '../../custom-input';
 import { useInputStore } from '../../custom-input/store/useInputStore';
 import { LectureOverlay, useLectureStore, loadLecture, hasLecture } from '../../e-lecture';
+import { MultilingualCodePanel, usePseudocodeStore, loadPseudocodeScript as loadPsScript } from '../../pseudocode-sync';
 import { useAnimationStore } from '../store/useAnimationStore';
 
 const inputStore = useInputStore();
 const lectureStore = useLectureStore();
 const animStore = useAnimationStore();
+const pseudocodeStore = usePseudocodeStore();
+
+watch(
+  () => animStore.algorithmId,
+  (newId) => {
+    if (!newId) {
+      pseudocodeStore.resetStore();
+      return;
+    }
+    const script = loadPsScript(newId);
+    if (script) {
+      pseudocodeStore.loadPseudocodeScript(script.languages);
+    }
+  },
+  { immediate: true },
+);
 
 const hasLectureAvailable = computed(() => {
   return hasLecture(animStore.algorithmId);

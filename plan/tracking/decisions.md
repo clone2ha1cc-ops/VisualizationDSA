@@ -189,3 +189,30 @@ Các ADR sau đây được ghi trong tài liệu đặc tả nhưng **chưa có
   - Frontend: interactive-playground/store/usePlaygroundStore.ts, engine/GraphGeometryEngine.ts, engine/ForceDirectedEngine.ts, services/GraphParser.ts
   - Components: PlaygroundCanvas.vue, FloatingToolbar.vue, InteractivePlayground.vue
   - Tests: interactivePlayground.spec.ts (31 tests)
+
+---
+
+## ADR-PSEUDOCODE-SYNC: LogicalId Cross-Language Mapping cho Phase 1 Pseudocode Sync
+
+- **Trạng thái:** ✅ IMPLEMENTED
+- **Ngữ cảnh:** Hệ thống cần đồng bộ real-time giữa Canvas animation frames và dòng mã nguồn đa ngôn ngữ (C++, Java, Python, JavaScript), đồng thời hiển thị biến Watch Panel động theo từng bước thuật toán.
+- **Quyết định:** Áp dụng LogicalId Cross-Language Mapping Architecture:
+  1. **LogicalId abstraction:** Mỗi dòng code đều gắn `logicalId` trừu tượng (FUNC_DECL, COMPARE_STEP, SWAP_STEP) — cùng logicalId ánh xạ sang dòng vật lý khác nhau tùy ngôn ngữ (C++ line 5 = Python line 6).
+  2. **FrameDTO extension:** Mở rộng interface `FrameDTO` với `activeLogicalLineId` và `variables: Record<string, string|number>` — mỗi frame biết đang thực thi dòng logic nào và giá trị biến tại thời điểm đó.
+  3. **PseudocodeSyncEngine:** Core logic 6 static methods — `getPhysicalLineNumber` (logicalId→physical line), `findFirstFrameIndexForLogicalLine` (Click-to-Snap), `findAllFrameIndicesForLogicalLine`, `getNextCycleFrameIndex` (cycle navigation), `transformVariablesForWatch`, `getOccurrenceCount`.
+  4. **usePseudocodeStore:** Pinia Setup Store lắng nghe `useAnimationStore.activeFrame` reactive — tự động tính `activePhysicalLineNumber` và `watchVariablesList` mà không cần event bus hay manual subscription.
+  5. **Script registry pattern:** `scriptLoader.ts` + `PseudocodeScript` interface — thêm thuật toán mới = chỉ tạo 1 file script TypeScript, không sửa store hay component.
+- **Hệ quả:**
+  - Chuyển ngôn ngữ tab tức thì, highlight dòng tự động cập nhật qua logicalId mapping.
+  - Click-to-Snap luôn nhảy tới FIRST occurrence (BEHAVIOR_SPEC), cycle navigation qua tất cả occurrences.
+  - Watch Panel hiển thị biến live, ẩn undefined/null (Out-of-Scope handling).
+  - Occurrence badge (1/5) cho các dòng thực thi nhiều lần (nested loops).
+  - Mở rộng sang thuật toán mới = chỉ thêm 1 script file + cập nhật dummy generator.
+- **File liên quan:**
+  - Types: animation-engine/types/animation.types.ts (FrameDTO extended), pseudocode-sync/types/pseudocode.types.ts
+  - Engine: pseudocode-sync/engine/PseudocodeSyncEngine.ts
+  - Store: pseudocode-sync/store/usePseudocodeStore.ts, animation-engine/store/useAnimationStore.ts (activeFrame alias)
+  - Components: pseudocode-sync/components/MultilingualCodePanel.vue, VariableWatchPanel.vue
+  - Scripts: pseudocode-sync/scripts/bubble-sort.pseudocode.ts, scriptLoader.ts
+  - Integration: animation-engine/components/VisualizationPlayer.vue, animation-engine/services/algorithmApi.ts
+  - Tests: PseudocodeSyncEngine.spec.ts (15), usePseudocodeStore.spec.ts (15), scriptLoader.spec.ts (7) — 37 tests total

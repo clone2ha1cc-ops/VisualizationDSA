@@ -15,6 +15,8 @@ export interface FrameDTO {
   explanation: string;
   dataState: number[];
   highlights: HighlightIndices;
+  activeLogicalLineId?: string;
+  variables?: Record<string, string | number>;
 }
 
 export interface AlgorithmResult {

@@ -5,8 +5,8 @@ Tài liệu này ghi nhận trạng thái kiểm thử đơn vị tự động (
 ---
 
 ## 📌 Trạng Thái Bao Phủ Kiểm Thử (Test Coverage Status)
-*   **Tổng số tính năng hạt nhân:** 23/23 Tính năng + Phase 1 Animation Engine (23 tests) + Phase 1 Custom Input (38 tests) + Phase 1 DSA Modules (40 tests mới) + Phase 1 E-Lecture Mode (28 tests mới) + Phase 1 Execution Control (23 tests mới) + Phase 1 Interactive Playground (31 tests mới).
-*   **Trạng thái Vitest Suite:** 🟢 100% PASSED (219/220 — 1 pre-existing ForceDirectedLayout failure).
+*   **Tổng số tính năng hạt nhân:** 23/23 Tính năng + Phase 1 Animation Engine (23 tests) + Phase 1 Custom Input (38 tests) + Phase 1 DSA Modules (40 tests mới) + Phase 1 E-Lecture Mode (28 tests mới) + Phase 1 Execution Control (23 tests mới) + Phase 1 Interactive Playground (31 tests mới) + Phase 1 Pseudocode Sync (37 tests mới).
+*   **Trạng thái Vitest Suite:** 🟢 100% PASSED (256/257 — 1 pre-existing ForceDirectedLayout failure).
 *   **Công cụ chạy kiểm thử:** Vitest Core.
 *   **Thời gian phản hồi test suite:** ~180ms (độ nhạy cực cao dưới máy khách).
 
@@ -205,3 +205,57 @@ Tài liệu này ghi nhận trạng thái kiểm thử đơn vị tự động (
 | 172 | **GraphParser** | Empty graph payload | Empty nodes/adjacencyList | 🟢 PASSED |
 | 173 | **GraphParser** | Single node connectivity | Not isolated (own component) | 🟢 PASSED |
 | 174 | **GeometryEngine** | pointToSegmentDistance | 10px perpendicular distance correct | 🟢 PASSED |
+
+### Phase 1 Pseudocode Sync — 37 Unit Tests
+
+| STT | Phân hệ kiểm thử | Tính năng hạt nhân được xác thực | Phương thức kiểm tra (Test Spec) | Trạng thái |
+| :--- | :--- | :--- | :--- | :--- |
+| 175 | **SyncEngine** | getPhysicalLineNumber C++ | SWAP_STEP → line 5 in C++ | 🟢 PASSED |
+| 176 | **SyncEngine** | getPhysicalLineNumber Python | SWAP_STEP → line 6 in Python | 🟢 PASSED |
+| 177 | **SyncEngine** | getPhysicalLineNumber Java | COMPARE_STEP → line 4 in Java | 🟢 PASSED |
+| 178 | **SyncEngine** | Unknown language returns null | rust → null | 🟢 PASSED |
+| 179 | **SyncEngine** | Unknown logicalId returns null | UNKNOWN_STEP → null | 🟢 PASSED |
+| 180 | **SyncEngine** | FUNC_DECL cross-language consistency | Line 1 in all 3 languages | 🟢 PASSED |
+| 181 | **SyncEngine** | findFirstFrameIndex SWAP_STEP | Returns index 3 | 🟢 PASSED |
+| 182 | **SyncEngine** | findFirstFrameIndex COMPARE_STEP | Returns index 2 | 🟢 PASSED |
+| 183 | **SyncEngine** | findFirstFrameIndex non-existent | Returns -1 | 🟢 PASSED |
+| 184 | **SyncEngine** | findFirstFrameIndex FUNC_DECL | Returns index 0 | 🟢 PASSED |
+| 185 | **SyncEngine** | findAllFrameIndices COMPARE_STEP | Returns [2, 4, 7] | 🟢 PASSED |
+| 186 | **SyncEngine** | findAllFrameIndices SWAP_STEP | Returns [3, 5] | 🟢 PASSED |
+| 187 | **SyncEngine** | findAllFrameIndices non-existent | Returns [] | 🟢 PASSED |
+| 188 | **SyncEngine** | transformVariablesForWatch basic | {i:0, j:1, n:5} → 3 VariableState | 🟢 PASSED |
+| 189 | **SyncEngine** | transformVariablesForWatch float | 3.14159 → 3.14 rounded | 🟢 PASSED |
+| 190 | **SyncEngine** | transformVariablesForWatch empty | {} → [] | 🟢 PASSED |
+| 191 | **SyncEngine** | transformVariablesForWatch string | {status:'sorting'} preserved | 🟢 PASSED |
+| 192 | **SyncEngine** | transformVariablesForWatch integer | {count:42} unchanged | 🟢 PASSED |
+| 193 | **SyncEngine** | getOccurrenceCount COMPARE_STEP | Returns 3 | 🟢 PASSED |
+| 194 | **SyncEngine** | getOccurrenceCount SWAP_STEP | Returns 2 | 🟢 PASSED |
+| 195 | **SyncEngine** | getOccurrenceCount non-existent | Returns 0 | 🟢 PASSED |
+| 196 | **SyncEngine** | getNextCycleFrameIndex forward | After frame 2 → frame 4 | 🟢 PASSED |
+| 197 | **SyncEngine** | getNextCycleFrameIndex wrap | After frame 7 → frame 2 (wrap) | 🟢 PASSED |
+| 198 | **SyncEngine** | getNextCycleFrameIndex first | Before any → frame 3 | 🟢 PASSED |
+| 199 | **SyncEngine** | getNextCycleFrameIndex non-existent | Returns -1 | 🟢 PASSED |
+| 200 | **SyncEngine** | findCodeLineByLogicalId found | SWAP_STEP → {lineNumber:2, text:'swap'} | 🟢 PASSED |
+| 201 | **SyncEngine** | findCodeLineByLogicalId not found | UNKNOWN → null | 🟢 PASSED |
+| 202 | **PseudocodeStore** | Initial default state | selectedLanguage='cpp', codeLanguages=[] | 🟢 PASSED |
+| 203 | **PseudocodeStore** | loadPseudocodeScript | 2 languages loaded, isScriptLoaded=true | 🟢 PASSED |
+| 204 | **PseudocodeStore** | activeCodeLines for language | Returns C++ lines, first logicalId='FUNC_DECL' | 🟢 PASSED |
+| 205 | **PseudocodeStore** | changeLanguage + update lines | Python lines with 'def bubble_sort' text | 🟢 PASSED |
+| 206 | **PseudocodeStore** | cycleLanguage round-robin | cpp → python → cpp | 🟢 PASSED |
+| 207 | **PseudocodeStore** | availableLanguages | ['cpp', 'python'] | 🟢 PASSED |
+| 208 | **PseudocodeStore** | activePhysicalLineNumber from frame | COMPARE_STEP → line 3 | 🟢 PASSED |
+| 209 | **PseudocodeStore** | activePhysicalLineNumber language switch | SWAP_STEP → 4 (cpp), 4 (python) | 🟢 PASSED |
+| 210 | **PseudocodeStore** | null activePhysicalLineNumber no frames | Returns null | 🟢 PASSED |
+| 211 | **PseudocodeStore** | watchVariablesList from frame | {i:2, j:3, n:5} → 3 items | 🟢 PASSED |
+| 212 | **PseudocodeStore** | empty watchVariablesList no frames | Returns [] | 🟢 PASSED |
+| 213 | **PseudocodeStore** | snapToLogicalLine jumps frame | SWAP_STEP → currentIndex=2 | 🟢 PASSED |
+| 214 | **PseudocodeStore** | getOccurrenceInfo counts | COMPARE_STEP total=2 | 🟢 PASSED |
+| 215 | **PseudocodeStore** | resetStore clears state | cpp, [], isScriptLoaded=false | 🟢 PASSED |
+| 216 | **PseudocodeStore** | fallback language if missing | javascript → cpp (first available) | 🟢 PASSED |
+| 217 | **ScriptLoader** | loads bubble-sort | algorithmId='bubble-sort' | 🟢 PASSED |
+| 218 | **ScriptLoader** | 4 languages for bubble-sort | cpp, java, python, javascript | 🟢 PASSED |
+| 219 | **ScriptLoader** | lines have logicalId | All lines have lineNumber, text, logicalId | 🟢 PASSED |
+| 220 | **ScriptLoader** | cross-language logicalId consistency | Same executable logicalIds across 4 languages | 🟢 PASSED |
+| 221 | **ScriptLoader** | unknown algorithm returns null | null for 'unknown-algo' | 🟢 PASSED |
+| 222 | **ScriptLoader** | hasPseudocodeScript true | true for 'bubble-sort' | 🟢 PASSED |
+| 223 | **ScriptLoader** | hasPseudocodeScript false | false for 'unknown' | 🟢 PASSED |
