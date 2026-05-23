@@ -48,6 +48,8 @@ export function generateDummyBubbleSortResult(inputData: number[]): AlgorithmRes
     explanation: 'Khởi tạo mảng đầu vào và chuẩn bị sắp xếp.',
     dataState: [...arr],
     highlights: { compare: [], swap: [], sorted: [] },
+    activeLogicalLineId: 'FUNC_DECL',
+    variables: { n },
   });
 
   for (let i = 0; i < n - 1; i++) {
@@ -58,6 +60,8 @@ export function generateDummyBubbleSortResult(inputData: number[]): AlgorithmRes
         explanation: `So sánh A[${j}] (${arr[j]}) và A[${j + 1}] (${arr[j + 1]})`,
         dataState: [...arr],
         highlights: { compare: [j, j + 1], swap: [], sorted: [...sortedIndices] },
+        activeLogicalLineId: 'COMPARE_STEP',
+        variables: { i, j, n },
       });
 
       if (arr[j] > arr[j + 1]) {
@@ -69,6 +73,8 @@ export function generateDummyBubbleSortResult(inputData: number[]): AlgorithmRes
           explanation: `Hoán vị A[${j}] và A[${j + 1}] vì ${arr[j + 1]} > ${arr[j]}`,
           dataState: [...arr],
           highlights: { compare: [], swap: [j, j + 1], sorted: [...sortedIndices] },
+          activeLogicalLineId: 'SWAP_STEP',
+          variables: { i, j, n, temp: arr[j] },
         });
       }
     }
@@ -80,6 +86,8 @@ export function generateDummyBubbleSortResult(inputData: number[]): AlgorithmRes
       explanation: `Phần tử ${arr[n - i - 1]} đã cố định tại index ${n - i - 1}.`,
       dataState: [...arr],
       highlights: { compare: [], swap: [], sorted: [...sortedIndices] },
+      activeLogicalLineId: 'OUTER_LOOP',
+      variables: { i, n },
     });
   }
 
@@ -90,6 +98,8 @@ export function generateDummyBubbleSortResult(inputData: number[]): AlgorithmRes
     explanation: 'Mảng đã được sắp xếp tăng dần hoàn chỉnh!',
     dataState: [...arr],
     highlights: { compare: [], swap: [], sorted: [...sortedIndices] },
+    activeLogicalLineId: 'FUNC_DECL',
+    variables: { n },
   });
 
   return {

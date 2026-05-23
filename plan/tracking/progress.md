@@ -107,6 +107,20 @@ Tài liệu này theo dõi chi tiết tiến độ hoàn thành **code thực t�
 | **Integration** | App.vue Playground tab | ✅ CODE DONE | New "Playground" tab in App.vue, full-screen InteractivePlayground component |
 | **Tests** | 31 Unit Tests | ✅ CODE DONE | `interactivePlayground.spec.ts` — Store (11), GeometryEngine (8), ForceDirectedEngine (4), GraphParser (8) — ALL PASS |
 
+### Phase 1 Pseudocode Sync — Đồng bộ Mã giả Đa Ngôn ngữ & Watch Panel
+
+| Bước | Nội dung | Trạng thái CODE | Chi tiết |
+| :--- | :--- | :--- | :--- |
+| **Types** | FrameDTO extension + Pseudocode interfaces | ✅ CODE DONE | `animation.types.ts` extended (activeLogicalLineId, variables), `pseudocode.types.ts` (CodeLine, LanguageCode, VariableState, PseudocodeScript, SupportedLanguage) |
+| **Engine** | PseudocodeSyncEngine core logic | ✅ CODE DONE | `engine/PseudocodeSyncEngine.ts` — getPhysicalLineNumber (logicalId→line mapping), findFirstFrameIndexForLogicalLine (Click-to-Snap), findAllFrameIndicesForLogicalLine, getNextCycleFrameIndex, transformVariablesForWatch, getOccurrenceCount |
+| **Store** | usePseudocodeStore Pinia Setup Store | ✅ CODE DONE | `store/usePseudocodeStore.ts` — selectedLanguage, codeLanguages, activeCodeLines, activePhysicalLineNumber, watchVariablesList, changeLanguage, cycleLanguage, loadPseudocodeScript, snapToLogicalLine, snapToNextOccurrence, getOccurrenceInfo, resetStore |
+| **Component** | MultilingualCodePanel.vue | ✅ CODE DONE | `components/MultilingualCodePanel.vue` — 4-language Glassmorphic tabs (C++/Java/Python/JavaScript), JetBrains Mono font, emerald neon highlight, auto-scroll active line, Click-to-Snap (cycle navigation), occurrence badge (1/5), syntax highlighting, Tab key language cycle |
+| **Component** | VariableWatchPanel.vue | ✅ CODE DONE | `components/VariableWatchPanel.vue` — dynamic variable badges (TransitionGroup fade-in/out), Cyan neon values, Glassmorphism card, hide empty state |
+| **Script** | Bubble Sort pseudocode (4 languages) | ✅ CODE DONE | `scripts/bubble-sort.pseudocode.ts` — cpp/java/python/javascript, 5 logicalIds (FUNC_DECL, OUTER_LOOP, INNER_LOOP, COMPARE_STEP, SWAP_STEP), `scriptLoader.ts` registry |
+| **Integration** | VisualizationPlayer + Dummy Generators | ✅ CODE DONE | `VisualizationPlayer.vue` replaced AnimPseudoCodePanel with MultilingualCodePanel, auto-load script on algorithmId change, `algorithmApi.ts` dummy BubbleSort updated with activeLogicalLineId + variables per frame |
+| **Store Ext** | useAnimationStore activeFrame alias | ✅ CODE DONE | Added `activeFrame` computed alias for `currentFrame` in `useAnimationStore.ts` |
+| **Tests** | 37 Unit Tests | ✅ CODE DONE | `PseudocodeSyncEngine.spec.ts` (15), `usePseudocodeStore.spec.ts` (15), `scriptLoader.spec.ts` (7) — ALL PASS |
+
 ---
 
 ## 3. Kiểm Kê Code Thực Tế Đã Có (File Inventory)

@@ -36,6 +36,8 @@ export const useAnimationStore = defineStore('animation', () => {
     return frames.value[currentIndex.value] ?? null;
   });
 
+  const activeFrame = currentFrame;
+
   const isFinished = computed<boolean>(() => {
     if (frames.value.length === 0) return false;
     return currentIndex.value === frames.value.length - 1;
@@ -207,6 +209,7 @@ export const useAnimationStore = defineStore('animation', () => {
     playbackSpeed,
     interactionLocked,
     currentFrame,
+    activeFrame,
     isFinished,
     totalSteps,
     progressPercent,
