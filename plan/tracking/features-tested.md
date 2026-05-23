@@ -5,7 +5,7 @@ Tài liệu này ghi nhận trạng thái kiểm thử đơn vị tự động (
 ---
 
 ## 📌 Trạng Thái Bao Phủ Kiểm Thử (Test Coverage Status)
-*   **Tổng số tính năng hạt nhân:** 23/23 Tính năng + Phase 1 Animation Engine (23 tests mới).
+*   **Tổng số tính năng hạt nhân:** 23/23 Tính năng + Phase 1 Animation Engine (23 tests) + Phase 1 Custom Input (38 tests mới).
 *   **Trạng thái Vitest Suite:** 🟢 100% PASSED.
 *   **Công cụ chạy kiểm thử:** Vitest Core.
 *   **Thời gian phản hồi test suite:** ~180ms (độ nhạy cực cao dưới máy khách).
@@ -54,3 +54,17 @@ Tài liệu này ghi nhận trạng thái kiểm thử đơn vị tự động (
 | 36 | **Dummy Engine** | Sequential stepIds | Tất cả frames có stepId liên tục từ 1 đến N. | 🟢 PASSED |
 | 37 | **Dummy Engine** | Single-element array | Trả ít nhất 1 frame, dataState giữ nguyên. | 🟢 PASSED |
 | 38 | **Dummy Engine** | Compare highlights validation | Compare frames luôn chứa đúng 2 index liền kề. | 🟢 PASSED |
+| 39 | **Input Store** | Initial state defaults | rawText='', maxLimit=50, isLoading=false. | 🟢 PASSED |
+| 40 | **Input Store** | parsedArray Regex parsing | Phân tách chuỗi thô thành int[], từ chối ký tự lạ. | 🟢 PASSED |
+| 41 | **Input Store** | Negative/single number parsing | Hỗ trợ -5, +3, số đơn lẻ '42'. | 🟢 PASSED |
+| 42 | **Input Store** | isValidFormat Regex check | true cho '12, 5, 8', false cho '12, a', '5,,3', '12.5'. | 🟢 PASSED |
+| 43 | **Input Store** | isWithinLimit guard | true khi N <= maxLimit, false khi vượt. | 🟢 PASSED |
+| 44 | **Input Store** | canExecute composite gate | false khi rỗng/sai format/vượt limit/loading, true khi hợp lệ. | 🟢 PASSED |
+| 45 | **Input Store** | setLimit action | Cập nhật maxLimit thành giá trị mới. | 🟢 PASSED |
+| 46 | **Input Store** | generateRandomInput random | Sinh mảng ngẫu nhiên [10,99], đếm đúng size. | 🟢 PASSED |
+| 47 | **Input Store** | generateRandomInput nearly-sorted | Mảng gần sắp xếp, tối đa 2 cặp đảo. | 🟢 PASSED |
+| 48 | **Input Store** | generateRandomInput reversed | Mảng giảm dần hoàn toàn. | 🟢 PASSED |
+| 49 | **Input Store** | generateRandomInput clamp | Kẹp size không vượt maxLimit. | 🟢 PASSED |
+| 50 | **Input Store** | clear action | Reset rawText, apiErrorMessage, isLoading. | 🟢 PASSED |
+| 51 | **Input Store** | submitCustomInput guard | Không gọi API khi canExecute=false. | 🟢 PASSED |
+| 52 | **Input Store** | submitCustomInput fallback | Fallback sang dummy engine khi API unreachable. | 🟢 PASSED |

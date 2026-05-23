@@ -46,6 +46,14 @@ Tài liệu này theo dõi chi tiết tiến độ hoàn thành **code thực t�
 | **Step 3** | Canvas Rendering Layer + PseudoCode Sync | ✅ CODE DONE | `CanvasLayer.vue` (coordinate calc, color palette, Lerp EaseOut, ResizeObserver), `AnimPseudoCodePanel.vue` (activeLine highlight) |
 | **Step 4** | Backend API + E2E Integration | ✅ CODE DONE | `BubbleSortExecutor.cs`, `AlgorithmsController.cs` (POST /api/v1/algorithms/execute), Brotli/Gzip compression, `VisualizationPlayer.vue` orchestrator |
 
+### Phase 1 Custom Input Generator — Zero Trust Input Pipeline
+
+| Bước | Nội dung | Trạng thái CODE | Chi tiết |
+| :--- | :--- | :--- | :--- |
+| **Step 1** | UI Form & Local Validation | ✅ CODE DONE | `CustomInputForm.vue` (TextArea, Regex validation, smart generation dropdown, visual feedback), `useInputStore.ts` (Pinia store, parsedArray, canExecute computed) |
+| **Step 2** | Backend Defense & Parsing Pipeline | ✅ CODE DONE | `InputParser.cs` (Regex + int[] parsing), `ConstraintResolver.cs` (per-algorithm safety limits), `CustomInputRequestDto.cs`, `POST /api/v1/algorithms/custom-execute` with CancellationToken 2s timeout |
+| **Step 3** | Integration & Pinia Store Setup | ✅ CODE DONE | `useInputStore.submitCustomInput()` → API call → fallback dummy → `animationStore.loadResult()`, loading overlay on Canvas, keyboard shortcuts (Ctrl+Enter, Ctrl+Shift+R, Esc) |
+
 ---
 
 ## 3. Kiểm Kê Code Thực Tế Đã Có (File Inventory)
