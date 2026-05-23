@@ -1,106 +1,173 @@
 <template>
-  <div class="min-h-screen flex flex-col bg-[#070b13] text-[#f8fafc]">
-    <!-- Cyber Navbar -->
-    <header class="flex items-center justify-between px-7 py-4 bg-[#0e1726]/65 backdrop-blur-md border-b border-[#1e293b]/80 sticky top-0 z-50">
-      <div class="flex items-center gap-3">
-        <div class="flex items-center justify-center bg-gradient-to-br from-cyan-500 to-blue-600 w-[38px] h-[38px] rounded-xl shadow-[0_4px_14px_rgba(6,182,212,0.3)]">
-          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="text-white">
-            <line x1="6" y1="3" x2="6" y2="15" />
-            <circle cx="18" cy="6" r="3" />
-            <circle cx="6" cy="18" r="3" />
-            <path d="M18 9a9 9 0 0 1-9 9" />
-          </svg>
+  <div
+    class="h-screen flex flex-col bg-slate-950 text-slate-200 overflow-hidden"
+  >
+    <!-- Header -->
+    <header class="flex-shrink-0 bg-slate-900 border-b border-slate-800">
+      <div class="flex items-center justify-between px-4 py-3">
+        <!-- Logo -->
+        <div class="flex items-center gap-3">
+          <div
+            class="w-8 h-8 rounded-lg bg-cyan-600 flex items-center justify-center"
+          >
+            <span class="text-white font-bold text-sm">A</span>
+          </div>
+          <div>
+            <h1 class="text-base font-bold text-white">AlgoLens</h1>
+            <p class="text-[10px] text-slate-400">DSA Visualization</p>
+          </div>
         </div>
-        <div class="flex flex-col">
-          <h1 class="text-[19px] font-extrabold tracking-tight text-white m-0 flex items-center gap-2">
-            Algolens <span class="text-[10px] font-bold uppercase tracking-[0.8px] bg-cyan-500/15 border border-cyan-500/30 text-cyan-500 px-1.5 py-0.5 rounded">DSA Sandbox</span>
-          </h1>
-          <p class="text-[11px] text-slate-400 font-medium m-0 mt-[1px]">Trực quan hóa Thuật toán Bằng Động Họa Cực Hạn</p>
-        </div>
-      </div>
 
-      <!-- Mid-status indicator -->
-      <div class="flex items-center gap-2 px-3.5 py-1.5 bg-emerald-500/10 border border-emerald-500/20 text-emerald-500 text-[11px] font-mono font-bold rounded-xl">
-        <span class="w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,1)] animate-pulse"></span>
-        <span>JavaScript Sandbox VM Active</span>
-      </div>
+        <!-- Tab Navigation -->
+        <nav class="flex items-center gap-1">
+          <button
+            v-for="tab in tabs"
+            :key="tab.id"
+            @click="activeTab = tab.id"
+            class="px-4 py-2 rounded-lg text-xs font-medium whitespace-nowrap transition-colors"
+            :class="
+              activeTab === tab.id
+                ? 'bg-slate-700 text-white'
+                : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800'
+            "
+          >
+            {{ tab.name }}
+          </button>
+        </nav>
 
-      <!-- Navbar controls -->
-      <div class="flex items-center">
-        <a 
-          href="https://github.com" 
-          target="_blank" 
-          class="flex items-center gap-2 px-4 py-2 bg-[#0d1527]/50 border border-[#1e293b]/80 text-slate-400 text-xs font-semibold no-underline rounded-xl transition-all duration-300 hover:text-white hover:border-white/15 hover:bg-slate-800/40 active:scale-95"
+        <!-- GitHub -->
+        <a
+          href="https://github.com"
+          target="_blank"
+          class="text-slate-400 hover:text-white transition-colors"
         >
-          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4" />
-            <path d="M9 18c-4.51 2-5-2-7-2" />
+          <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+            <path
+              d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"
+            />
           </svg>
-          <span>GitHub Documentation</span>
         </a>
       </div>
     </header>
 
-    <!-- Main Grid Dashboard layout -->
-    <main class="flex-1 w-full max-w-[1600px] mx-auto p-6">
-      <div class="grid grid-cols-1 xl:grid-cols-[7.5fr_4.5fr] gap-6">
-        
-        <!-- Left column: Canvas & Control Console -->
-        <section class="flex flex-col gap-6">
-          <div class="flex items-center justify-between px-1">
-            <h2 class="text-[12.5px] font-bold uppercase tracking-[0.8px] text-slate-500 flex items-center gap-2 m-0">
-              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="text-cyan-500">
-                <rect width="18" height="18" x="3" y="3" rx="2" />
-                <path d="M3 9h18" />
-                <path d="M9 21V9" />
-              </svg>
-              Sorting Visualizer — Sprint 2
-            </h2>
-            <div style="display:flex; gap:8px; align-items:center;">
-              <span class="text-[10px] font-bold uppercase tracking-[0.07em] bg-rose-500/10 border border-rose-500/35 text-rose-500 px-2 py-0.5 rounded">Sprint 2 · DSA Library</span>
-              <div class="text-[11px] text-slate-500 font-medium">Kéo để di chuyển / Cuộn để Zoom</div>
+    <!-- Main Content -->
+    <main class="flex-1 flex flex-col overflow-hidden p-4 gap-4">
+      <!-- Visualizer Area -->
+      <section
+        class="flex-1 min-h-0 bg-slate-900 border border-slate-800 rounded-lg overflow-hidden"
+      >
+        <div class="h-full flex flex-col">
+          <div
+            class="flex items-center justify-between px-4 py-2 border-b border-slate-800 bg-slate-800/50"
+          >
+            <div class="flex items-center gap-3">
+              <div class="w-2 h-2 rounded-full bg-cyan-500"></div>
+              <span class="text-sm font-medium text-slate-200"
+                >Array Sorting</span
+              >
+              <span
+                class="text-xs px-2 py-0.5 bg-slate-700 text-slate-400 rounded"
+                >Bubble Sort</span
+              >
             </div>
           </div>
+          <div
+            class="flex-1 overflow-auto p-4 flex items-center justify-center"
+          >
+            <ArrayBarVisualizer />
+          </div>
+        </div>
+      </section>
 
-          <!-- ✅ Sprint 2: Array Bar Sorting Visualizer -->
-          <ArrayBarVisualizer />
-
-          <!-- Sprint 1 legacy canvas (hidden in sprint-2 mode) -->
-          <!-- <AlgorithmCanvas /> -->
-          
-          <VcrControlPanel />
+      <!-- Bottom Panel -->
+      <div class="flex-shrink-0 h-[300px] flex gap-4">
+        <!-- VCR Controls -->
+        <section
+          class="w-[400px] flex-shrink-0 bg-slate-900 border border-slate-800 rounded-lg overflow-hidden flex flex-col"
+        >
+          <div class="px-4 py-2 border-b border-slate-800 bg-slate-800/50">
+            <span class="text-xs font-medium text-slate-400 uppercase"
+              >Controls</span
+            >
+          </div>
+          <div class="flex-1 overflow-hidden">
+            <VcrControlPanel />
+          </div>
         </section>
 
-        <!-- Right column: Code input & step highlight interpreter -->
-        <section class="flex flex-col gap-6">
-          <CodeEditor />
-          <PseudocodeViewer />
+        <!-- Code View -->
+        <section
+          class="flex-1 bg-slate-900 border border-slate-800 rounded-lg overflow-hidden flex flex-col"
+        >
+          <div
+            class="px-4 py-2 border-b border-slate-800 bg-slate-800/50 flex items-center justify-between"
+          >
+            <span class="text-xs font-medium text-slate-400 uppercase"
+              >Source Code</span
+            >
+            <div class="flex items-center gap-2">
+              <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+              <span class="text-xs text-slate-500">Ready</span>
+            </div>
+          </div>
+          <div class="flex-1 overflow-hidden">
+            <CodeEditor />
+          </div>
         </section>
 
+        <!-- Pseudocode View -->
+        <section
+          class="flex-1 bg-slate-900 border border-slate-800 rounded-lg overflow-hidden flex flex-col"
+        >
+          <div class="px-4 py-2 border-b border-slate-800 bg-slate-800/50">
+            <span class="text-xs font-medium text-slate-400 uppercase"
+              >Pseudocode</span
+            >
+          </div>
+          <div class="flex-1 overflow-auto">
+            <PseudocodePanel />
+          </div>
+        </section>
       </div>
     </main>
-
-    <!-- Footer -->
-    <footer class="text-center p-6 text-[11px] text-slate-500 border-t border-[#0d1527]/80 bg-[#070b13] mt-auto">
-      <p>© 2026 Algolens Sandbox - Phát triển bởi Antigravity AI</p>
-    </footer>
   </div>
 </template>
 
 <script setup lang="ts">
-import { onMounted } from 'vue';
+import { ref } from "vue";
+import { ArrayBarVisualizer } from "./features/algorithm-sandbox";
+import { VcrControlPanel } from "./features/vcr-player";
+import { CodeEditor, PseudocodePanel } from "./features/code-editor";
 
-// ─── Feature Modules (Modular Architecture) ───────────────────────────────────
-import { useVcrStore }                               from './features/vcr-player';
-import { AlgorithmCanvas, ArrayBarVisualizer }       from './features/algorithm-sandbox';
-import { VcrControlPanel }                           from './features/vcr-player';
-import { CodeEditor, PseudocodeViewer }              from './features/code-editor';
+const activeTab = ref("sorting");
 
-const vcrStore = useVcrStore();
-
-onMounted(() => {
-  // Sprint 2: ArrayBarVisualizer tự quản lý frames
-  // Sprint 1 legacy: vcrStore.compileAndLoad();
-});
+const tabs = [
+  { id: "sorting", name: "Sorting" },
+  { id: "graph", name: "Graph" },
+  { id: "oop", name: "OOP" },
+  { id: "solid", name: "SOLID" },
+  { id: "di", name: "DI/IoC" },
+  { id: "patterns", name: "Patterns" },
+  { id: "state", name: "Stack/Heap" },
+  { id: "system", name: "System" },
+  { id: "quiz", name: "Quiz" },
+];
 </script>
 
+<style>
+/* Custom Scrollbar Only */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #334155;
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #475569;
+}
+</style>

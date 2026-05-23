@@ -1,14 +1,14 @@
 import { describe, it, expect } from 'vitest';
 import { 
   QuizEvaluationEngine, 
-  QuizQuestion, 
+  type QuizQuestion, 
   LecturePlaybackCoordinator, 
-  SlideEvent 
+  type SlideEvent 
 } from '../service/QuizEvaluationEngine';
 
 describe('Sprint 4 Interactive Quiz & Lecture Unit Tests', () => {
   it('Should successfully transition slide index and trigger playback sync callbacks', () => {
-    let triggeredEvent: SlideEvent | null = null;
+    let triggeredEvent: any = null;
     const mockEvents: SlideEvent[] = [
       { slideId: 'slide-1', triggerFrameIndex: 0, highlightSourceLine: 1 },
       { slideId: 'slide-2', triggerFrameIndex: 5, highlightSourceLine: 10 }

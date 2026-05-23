@@ -382,7 +382,6 @@ const jumpToSlide = (idx: number) => {
   if (idx >= 0 && idx < slides.value.length) {
     currentSlideIndex.value = idx;
     // Đồng bộ ngược lại vào class coordinator
-    const event = slideEvents[idx];
     autoSyncWithVisualizer();
   }
 };

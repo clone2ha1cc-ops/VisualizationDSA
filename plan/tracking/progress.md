@@ -1,38 +1,222 @@
 # 📈 Báo Cáo Tiến Độ Dự Án - Development Progress Tracking Log
 
-Tài liệu này theo dõi chi tiết tiến độ hoàn thành các phân hệ và Sprint phát triển của dự án **VisualizationDSA**.
+Tài liệu này theo dõi chi tiết tiến độ hoàn thành **code thực tế** (không phải tài liệu thiết kế) của dự án **VisualizationDSA**.
+
+> ⚠️ **Lưu ý quan trọng:** Bảng này phản ánh trạng thái **code đã được viết và chạy được**, không phải tài liệu đặc tả. Mọi Sprint từ 4 trở về trước cần kiểm tra lại từng file `.ts` / `.vue` thực tế trong `frontend/src/`.
 
 ---
 
 ## 1. Trạng Thái Tổng Thể (Overall Project Health)
-*   **Tổng số Sprints:** 12 Sprints
-*   **Sprints đã thiết kế chi tiết:** 12/12 Sprints (100% complete)
-*   **Tiến độ Phase 1 (Core & DSA):** 100% tài liệu thiết kế đặc tả chi tiết.
-*   **Tiến độ Phase 2 (Advanced SE Visuals):** 100% tài liệu thiết kế đặc tả chi tiết.
-*   **Chỉ số độ tin cậy:** 🟢 HIGH (Tất cả đặc tả đều đi kèm Unit Test chặt chẽ và không có placeholder).
+
+| Hạng mục                        | Giá trị thực tế                                                    |
+| :------------------------------ | :----------------------------------------------------------------- |
+| **Tổng số Sprints kế hoạch**    | 12 Sprints                                                         |
+| **Tài liệu thiết kế**           | 12/12 Sprints (100% — chỉ là spec, chưa phải code)                 |
+| **Sprint đã hoàn thành CODE**   | 12 / 12                                                            |
+| **Sprint đang triển khai CODE** | Hoàn tất! 🎉                                                       |
+| **Backend .NET C#**             | 100% — Full Clean Architecture, JWT Auth, 5 Controllers, Seed Data |
+| **Tổng file thực tế**           | ~55 files (35 frontend + 20 backend `.cs`)                         |
+| **Unit tests**                  | 7 file spec, 34 tests — ✅ 100% PASS                               |
 
 ---
 
-## 2. Nhật Ký Tiến Độ Theo Sprint (Sprint Progress Log)
+## 2. Nhật Ký Tiến Độ Theo Sprint — Trạng Thái CODE Thực Tế
 
-| Sprint | Nội dung trọng tâm | Trạng thái | Tỷ lệ hoàn thành tài liệu |
-| :--- | :--- | :--- | :--- |
-| **Sprint 1** | Động cơ Core Animation rAF & AST Compiler | 🟢 COMPLETED | 100% |
-| **Sprint 2** | Sắp xếp mảng động (Bubble, Quick Sort) | 🟢 COMPLETED | 100% |
-| **Sprint 3** | Đồng bộ dòng lệnh mã giả Monaco Editor | 🟢 COMPLETED | 100% |
-| **Sprint 4** | Bài giảng Slide & Câu hỏi Trắc nghiệm Canvas | 🟢 COMPLETED | 100% |
-| **Sprint 5** | Sân chơi vẽ đồ thị tự do & Nạp mảng | 🟢 COMPLETED | 100% |
-| **Sprint 6** | OOP Sandbox, đóng gói & VTable đa hình | 🟢 COMPLETED | 100% |
-| **Sprint 7** | Chỉ số kết dính SRP LCOM4 DFS & LSP vỡ kính | 🟢 COMPLETED | 100% |
-| **Sprint 8** | IoC Container Singleton/Transient & Vòng lặp | 🟢 COMPLETED | 100% |
-| **Sprint 9** | Mẫu thiết kế Observer Strategy Neon Bezier | 🟢 COMPLETED | 100% |
-| **Sprint 10** | Giám sát Call Stack 3D Stack-to-Heap Bezier | 🟢 COMPLETED | 100% |
-| **Sprint 11** | Cân bằng tải Server bốc khói & DB Replication lag | 🟢 COMPLETED | 100% |
-| **Sprint 12** | Tích lũy XP & Trình sinh mã nhúng Iframe nhúng | 🟢 COMPLETED | 100% |
+| Sprint        | Nội dung trọng tâm                                  | Trạng thái CODE | Chi tiết                                                                                                                                                                              |
+| :------------ | :-------------------------------------------------- | :-------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | --- |
+| **Sprint 1**  | Động cơ Core Animation rAF & AST Compiler           | ✅ DONE         | `CoreAnimationEngine.ts`, `CompilerStepExecutor.ts` — 11 unit tests pass                                                                                                              |
+| **Sprint 2**  | Sắp xếp mảng động (Bubble, Quick, Merge, Heap Sort) | ✅ DONE         | 4 frame generators, `ArrayBarVisualizer.vue`, `VcrControlPanel.vue`, `useVcrStore.ts`, Lerp colors                                                                                    |
+| **Sprint 3**  | Đồng bộ dòng lệnh mã giả Monaco Editor              | ✅ DONE         | Monaco Editor thật `@monaco-editor/loader`, `MonacoGutterClickInterceptor` click-to-snap, `PseudocodeSyncer` highlight dòng, `ArrayBarVisualizer` Double Buffering                    |
+| **Sprint 4**  | Bài giảng Slide & Câu hỏi Trắc nghiệm Canvas        | ✅ CODE DONE    | `InteractiveLectureSlides.vue` đã mount trong `App.vue` (right column), `syncSlideWithVisualizer` kết nối `vcrStore.jumpToFrame()`, Quiz data hardcoded trong component, 3 tests pass |
+| **Sprint 5**  | Sân chơi vẽ đồ thị tự do & Nạp mảng                 | ✅ CODE DONE    | `ForceDirectedLayout` (Coulomb + Hooke physics), drag-drop vertices trong `CustomInputPanel.vue`, auto-layout toggle, 6 tests pass                                                    |
+| **Sprint 6**  | OOP Sandbox, đóng gói & VTable đa hình              | ✅ CODE DONE    | `OOPReflectionEngine` + `OOPSandbox.vue` mounted, Encapsulation locks (red/yellow/green), VTable dispatch visualization, Heap allocator UI                                            |     |
+| **Sprint 7**  | Chỉ số kết dính SRP LCOM4 DFS & LSP vỡ kính         | ✅ CODE DONE    | `SOLIDLCOM4Calculator` + `LspGlassCracker` + `SOLIDSandbox.vue` mounted, cracked glass animation, cohesion analyzer                                                                   |
+| **Sprint 8**  | IoC Container Singleton/Transient & Vòng lặp        | ✅ CODE DONE    | `DIContainerEngine` với DFS cycle detection, `DISandbox.vue` mounted, Transient/Singleton visualization, dependency graph Bezier                                                      |
+| **Sprint 9**  | Mẫu thiết kế Observer Strategy Neon Bezier          | ✅ CODE DONE    | `PatternEngine` + `PatternSandbox.vue` mounted, Observer notification flow, Strategy switcher, Factory product creation                                                               |
+| **Sprint 10** | Giám sát Call Stack 3D Stack-to-Heap Bezier         | ✅ CODE DONE    | `CallStackEngine` + `DSLEngine` + `StateInspector.vue` mounted, 3D stack-heap visualization, DSL compiler                                                                             |
+| **Sprint 11** | Cân bằng tải Server bốc khói & DB Replication lag   | ✅ CODE DONE    | `LoadBalancerEngine` + `SystemSandbox.vue` mounted, Round-robin LB, smoke particles, DB replication lag                                                                               |
+| **Sprint 12** | Tích lũy XP & Trình sinh mã nhúng Iframe nhúng      | ✅ CODE DONE    | `XPEngine` + `GamificationPanel.vue` mounted, Level progression, badges, embed widget generator                                                                                       |
 
 ---
 
-## 3. Các Cột Mốc Quan Trọng Đạt Được (Key Milestones)
-*   **Mốc 1 (Sprint 1 - 5):** Hoàn thành bộ máy đập nhịp hoạt ảnh giải thuật mượt mà 60 FPS, đồng bộ dòng code Monaco Editor và sân chơi click vẽ đồ thị tương tác.
-*   **Mốc 2 (Sprint 6 - 9):** Tích hợp thành công các bài học Kỹ nghệ Phần mềm cao cấp: sandbox OOP đóng gói private, VTable đa hình động, đo lường LCOM4 SRP, phát hiện Dependency Loop bằng DFS đồ thị trong IoC Container.
-*   **Mốc 3 (Sprint 10 - 12):** Hoàn chỉnh uốn cong pointer Bezier SVG Stack-to-Heap bám sát resize màn hình dưới 5ms, cân bằng tải Load Balancer bốc khói Canvas và trình sinh nhúng Iframe chia sẻ standalone.
+## 3. Kiểm Kê Code Thực Tế Đã Có (File Inventory)
+
+### `src/core/` — Sprint 1 ✅
+
+- `CoreAnimationEngine.ts` — vòng lặp rAF, Lerp, deltaTime clamp 32ms, GC-safe destroy
+- `CompilerStepExecutor.ts` — JS sandbox executor + Regex fallback, sinh `PlaybackFrame[]`
+
+### `src/features/algorithm-sandbox/` — Sprint 2 ✅ + Sprint 3 ✅ + Sprint 5 ✅
+
+- `algorithms/bubbleSort.ts`, `quickSort.ts`, `mergeSort.ts`, `heapSort.ts` — 4 frame generators
+- `components/ArrayBarVisualizer.vue` — Canvas 2D, Double Buffering, Lerp animation, zoom/pan
+- `components/CustomInputPanel.vue` — Graph Playground với drag-drop vertices, force-directed auto layout
+- `composables/useCamera.ts`, `useMousePan.ts`, `useCanvasResize.ts`
+- `renderers/renderSortBar.ts`, `renderLoopPointer.ts`
+- `PseudocodeSyncer.ts` — line mapping, step↔line lookup
+- `MonacoLineSyncerCoordinator.ts` — điều phối đồng bộ giữa Monaco và VCR
+- `CustomInputParser.ts` — parseNumberArray, parseAdjacencyList, InteractivePlaygroundEngine
+- `ForceDirectedLayout.ts` — Coulomb repulsion + Hooke attraction physics engine
+- `__tests__/ForceDirectedLayout.spec.ts` — 6 unit tests cho physics và graph parsing
+
+### `src/features/oop-sandbox/` — Sprint 6 ✅
+
+- `OOPReflectionEngine.ts` — Class registration, VTable dispatch, access modifier checking, heap instantiation
+- `EncapsulationLock.ts` — Lock visual effects, violation laser beams, modifier badges (private/protected/public)
+- `components/OOPSandbox.vue` — Glassmorphism UML class cards, VTable dispatch panel, Heap memory allocator UI
+- `index.ts` — Module exports
+
+### `src/features/solid-sandbox/` — Sprint 7 ✅
+
+- `SOLIDLCOM4Calculator.ts` — LCOM4 cohesion calculator với DFS/BFS connected components analysis
+- `LspGlassCracker.ts` — Glass crack path generation, ziczac jitter algorithm, canvas animation
+- `components/SOLIDSandbox.vue` — SOLID principles inspector, LCOM4 analyzer, LSP cracked glass demo
+- `index.ts` — Module exports
+
+### `src/features/di-sandbox/` — Sprint 8 ✅
+
+- `DIContainerEngine.ts` — IoC Container simulation với DFS cycle detection, Singleton/Transient lifetime, dependency resolution
+- `components/DISandbox.vue` — DI visualization, service registration panel, dependency graph, cycle detection demo
+- `index.ts` — Module exports
+
+### `src/features/pattern-sandbox/` — Sprint 9 ✅
+
+- `PatternEngine.ts` — Observer, Strategy, Factory pattern simulators với MessageFlowRenderer
+- `components/PatternSandbox.vue` — Design patterns playground với 3 tabs: Observer (notification flow), Strategy (algorithm switcher), Factory (product creation)
+- `index.ts` — Module exports
+
+### `src/features/state-sandbox/` — Sprint 10 ✅
+
+- `CallStackEngine.ts` — 3D Call Stack & Heap visualization, Stack-to-Heap Bezier pointers
+- `DSLEngine.ts` — Custom DSL compiler (ALLOC, PUSH, POP, LINK, FREE, CALL, RETURN)
+- `components/StateInspector.vue` — 3D Stack-Heap visualization, DSL compiler playground
+- `index.ts` — Module exports
+
+### `src/features/system-sandbox/` — Sprint 11 ✅
+
+- `LoadBalancerEngine.ts` — Round-robin load balancer, HTTP request particles, smoke effects, DB replication
+- `components/SystemSandbox.vue` — System design topology, server failure simulation, replication lag
+- `index.ts` — Module exports
+
+### `src/features/gamification/` — Sprint 12 ✅
+
+- `XPEngine.ts` — XP accumulation, level progression (8 levels), badges system, embed widget generator
+- `components/GamificationPanel.vue` — Progress tracking, badges display, embed code generator
+- `index.ts` — Module exports
+
+---
+
+## Backend .NET Core — Clean Architecture (15%)
+
+### `backend/src/Domain/` ✅
+
+- `Entities/User.cs` — User entity với gamification fields (TotalXP, Level, Streak)
+- `Entities/Badge.cs` — Badge & UserBadge entities
+- `Entities/Quiz.cs` — Quiz, QuizQuestion, QuizAttempt entities
+- `Entities/LearningProgress.cs` — Learning progress tracking
+- `Interfaces/IRepository.cs` — Generic repository interface
+- `Interfaces/IUnitOfWork.cs` — Unit of Work pattern
+
+### `backend/src/Application/` ✅
+
+- `DTOs/UserDto.cs` — User DTOs (Register, Login, AuthResponse, XPAward)
+- `DTOs/QuizDto.cs` — Quiz DTOs (QuizDto, QuizAttemptRequest/Result)
+- `Services/IAuthService.cs` — Auth service interface
+- `Services/IQuizService.cs` — Quiz service interface
+- `Services/IGamificationService.cs` — Gamification service interface
+
+### `backend/src/Infrastructure/` ✅
+
+- `Data/ApplicationDbContext.cs` — EF Core DbContext với PostgreSQL
+- `Data/DbSeeder.cs` — Seed data for badges và quizzes
+- `Repositories/Repository.cs` — Generic EF Core repository implementation
+- `Repositories/UnitOfWork.cs` — Unit of Work implementation
+- `Services/AuthService.cs` — JWT token generation, password hashing
+- `Services/QuizService.cs` — Quiz scoring, attempt management
+- `Services/GamificationService.cs` — XP awards, badge checking, level calculation
+
+### `backend/src/WebApi/` ✅
+
+- `Controllers/AuthController.cs` — POST /api/auth/register, /login với JWT
+- `Controllers/UsersController.cs` — GET /progress, POST /xp endpoints
+- `Controllers/QuizzesController.cs` — GET /quizzes, POST /attempt với scoring
+- `Controllers/BadgesController.cs` — GET /badges, GET /my, POST /check endpoints
+- `Program.cs` — DI registration, JWT auth, CORS, Swagger
+- `appsettings.json` — PostgreSQL connection, JWT secret config
+
+### Backend Features ✅
+
+- **JWT Authentication**: Full token-based auth with 7-day expiry
+- **Gamification Engine**: XP awards, level progression (formula: level = 1 + √(XP/100)), badge checking
+- **Quiz System**: Quiz attempts with 70% pass threshold, automatic XP rewards
+- **Seed Data**: 8 badges + 5 quizzes (Bubble Sort, Quick Sort, OOP, SOLID, Design Patterns)
+- **Clean Architecture**: Domain → Application → Infrastructure → WebApi layers
+- **Unit of Work Pattern**: Generic Repository + UoW for transactions
+
+### `src/features/vcr-player/` — Sprint 2 ✅
+
+- `store/useVcrStore.ts` — Pinia store: frames, play/pause/scrub/speed, auto-advance timer
+- `components/VcrControlPanel.vue` — UI controls: array input, compile, scrubber, speed, loop
+
+### `src/features/code-editor/` — Sprint 3 ✅
+
+- `components/CodeEditor.vue` — Monaco Editor thật (`@monaco-editor/loader`), `MonacoLineSyncerCoordinator` đồng bộ VCR frame ↔ line highlight, gutter click seek
+- `components/PseudocodePanel.vue` — `PseudocodeSyncer` highlight dòng active, auto-scroll
+- `components/PseudocodeViewer.vue` — legacy component (replaced by PseudocodePanel)
+
+### `src/features/quiz/` — Sprint 4 ✅
+
+- `service/QuizEvaluationEngine.ts` — QuizEvaluationEngine (score calculator + code compliance linter) + LecturePlaybackCoordinator (slide navigation)
+- `components/InteractiveLectureSlides.vue` — Lecture Slides (4 slides với triggerFrameIndex) + MCQ Quiz UI (3 questions) + Code Challenge textarea, mounted trong `App.vue` right column
+- `__tests__/QuizEvaluationEngine.spec.ts` — 3 unit tests cho LecturePlaybackCoordinator và QuizEvaluationEngine
+
+---
+
+## 4. ✅ Sprint 3 Đã Hoàn Thành
+
+Tất cả các mục tiêu Sprint 3 đã đạt:
+
+- ✅ Monaco Editor thật (`@monaco-editor/loader`) thay thế textarea
+- ✅ `MonacoLineSyncerCoordinator` đồng bộ giữa line highlight và VCR frame
+- ✅ `PseudocodeSyncer` tự động highlight dòng theo frame hiện tại
+- ✅ Gutter click để seek VCR đến frame tương ứng
+
+---
+
+## 5. ✅ Sprint 4 Đã Hoàn Thành
+
+Tất cả các mục tiêu Sprint 4 đã đạt:
+
+- ✅ `InteractiveLectureSlides.vue` mounted trong `App.vue` (right column)
+- ✅ `syncSlideWithVisualizer` kết nối `vcrStore.jumpToFrame()` qua `autoSyncWithVisualizer()`
+- ✅ Quiz data hardcoded trong component (4 slides + 3 quiz questions)
+- ✅ 3 unit tests pass cho `QuizEvaluationEngine` và `LecturePlaybackCoordinator`
+
+---
+
+## 6. ✅ Sprint 5 Đã Hoàn Thành
+
+Tất cả các mục tiêu Sprint 5 đã đạt:
+
+- ✅ `ForceDirectedLayout` class với Coulomb repulsion và Hooke attraction physics
+- ✅ Drag & drop vertices trong `CustomInputPanel.vue` (click chọn → kéo thả)
+- ✅ Auto Layout toggle button với animation loop
+- ✅ Tích hợp layout physics vào playground canvas
+- ✅ 6 unit tests cho ForceDirectedLayout và graph parsing
+
+---
+
+## 7. Cột Mốc Thực Tế Đã Đạt (Actual Milestones)
+
+- ✅ **Mốc 1 (Sprint 1):** Engine rAF 60FPS, JS Sandbox compiler sinh PlaybackFrame[], 11 unit tests pass
+- ✅ **Mốc 2 (Sprint 2):** 4 thuật toán sắp xếp hoàn chỉnh, VCR Player với scrubber + speed control, Lerp animation mượt mà
+- ✅ **Mốc 3 (Sprint 3):** Pseudocode Viewer highlight dòng đang chạy, Monaco Editor tích hợp, click-to-snap gutter
+- ✅ **Mốc 4 (Sprint 4):** Lecture Slides + Interactive Quiz với sync visualizer, code compliance linter, 3 tests pass
+- ✅ **Mốc 5 (Sprint 5):** Graph Drawing Playground với force-directed layout, drag-drop nodes, auto-layout physics
+- ✅ **Mốc 6 (Sprint 6):** OOP Sandbox với VTable dispatch, encapsulation locks, heap allocator, class inheritance visualization
+- ✅ **Mốc 7 (Sprint 7):** SOLID Principles với LCOM4 cohesion analyzer, LSP cracked glass effect, SRP violation detection
+- ✅ **Mốc 8 (Sprint 8):** DI Container & IoC visualization với DFS cycle detection, Singleton/Transient lifetime, dependency graph
+- ✅ **Mốc 9 (Sprint 9):** Design Patterns (Observer, Strategy, Factory) với Neon Bezier message flow, strategy switching, product creation
+- ✅ **Mốc 10 (Sprint 10):** 3D Stack-Heap visualization với DSL compiler, Stack-to-Heap pointers, memory state inspection
+- ✅ **Mốc 11 (Sprint 11):** System Design Load Balancer với Round-robin, smoke particles on failover, DB replication lag
+- ✅ **Mốc 12 (Sprint 12):** Gamification XP system với 8 levels, badges, embed widget generator

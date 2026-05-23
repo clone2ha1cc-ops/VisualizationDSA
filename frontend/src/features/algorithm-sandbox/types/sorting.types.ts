@@ -5,7 +5,7 @@
 
 // ─── BAR ELEMENT ──────────────────────────────────────────────────────────────
 /** Trạng thái trực quan của một cột bar trong hoạt ảnh sắp xếp */
-export type BarStatus = 'IDLE' | 'COMPARING' | 'PIVOT' | 'SWAPPED' | 'SORTED';
+export type BarStatus = "IDLE" | "COMPARING" | "PIVOT" | "SWAPPED" | "SORTED";
 
 export interface BarElement {
   value: number;
@@ -19,6 +19,13 @@ export interface BarElement {
 
 // ─── SORT FRAME ───────────────────────────────────────────────────────────────
 /** Một khung hình snapshot của dòng thời gian sắp xếp */
+export interface SubArray {
+  start: number;
+  end: number;
+  level: number;
+  isActive: boolean;
+}
+
 export interface SortFrame {
   stepIndex: number;
   arrayState: number[];
@@ -34,10 +41,14 @@ export interface SortFrame {
   description: string;
   /** Tên thuật toán */
   algorithm: SortAlgorithm;
+  /** Merge sort: các sub-arrays đang hiển thị */
+  subArrays?: SubArray[];
+  /** Merge sort: phạm vi đang merge */
+  mergeRange?: { start: number; end: number };
 }
 
 // ─── ALGORITHM ENUM ───────────────────────────────────────────────────────────
-export type SortAlgorithm = 'bubble' | 'quick' | 'merge' | 'heap';
+export type SortAlgorithm = "bubble" | "quick" | "merge" | "heap";
 
 // ─── SWAP INTERPOLATION ───────────────────────────────────────────────────────
 /** Kết quả tính toán nội suy hoán vị Lerp + cung parabol */

@@ -1,4 +1,4 @@
-import type { AnimatedItem, RGB } from '../types/canvas.types';
+import type { AnimatedItem } from '../types/canvas.types';
 
 /**
  * renderArrayBar — vẽ một card/bar đại diện cho phần tử trong mảng.

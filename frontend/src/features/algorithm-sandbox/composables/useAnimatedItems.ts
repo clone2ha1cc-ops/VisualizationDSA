@@ -1,4 +1,4 @@
-import { ref, watch } from 'vue';
+import { ref } from 'vue';
 import { CoreAnimationEngine } from '../../../core/CoreAnimationEngine';
 import type { PlaybackFrame } from '../../../core/CompilerStepExecutor';
 import type { AnimatedItem, RGB } from '../types/canvas.types';
@@ -70,8 +70,8 @@ export function useAnimatedItems() {
   };
 
   const updateItemStatuses = (frame: PlaybackFrame) => {
-    const comparing   = frame.canvasStateSnapshot.comparingIndices  || [];
-    const swapping    = frame.canvasStateSnapshot.swappingIndices   || [];
+    const comparing: number[]   = frame.canvasStateSnapshot.comparingIndices  || [];
+    const swapping: number[]    = frame.canvasStateSnapshot.swappingIndices   || [];
     const highlighted = frame.canvasStateSnapshot.highlightedIndices || [];
 
     items.value.forEach((item, idx) => {

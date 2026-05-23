@@ -1,5 +1,6 @@
 import { describe, it, expect, beforeEach } from 'vitest';
-import { PseudocodeSyncer, LineMapping } from '../PseudocodeSyncer';
+import { PseudocodeSyncer, type LineMapping } from '../PseudocodeSyncer';
+import { CompilerStepExecutor } from '../../../core/CompilerStepExecutor';
 
 describe('Sprint 3 Pseudocode Synchronization Unit Tests', () => {
   let syncer: PseudocodeSyncer;
@@ -34,3 +35,26 @@ describe('Sprint 3 Pseudocode Synchronization Unit Tests', () => {
     expect(step).toBeNull();
   });
 });
+
+describe('CompilerStepExecutor.generateStepToLineMapping Unit Tests', () => {
+  it('Should generate clean StepToLineMapping from frames and sourceCode', () => {
+    const sourceCode = `let a = 1;\nlet b = 2;\nreturn a + b;`;
+    const frames = [
+      { stepIndex: 0, lineNumber: 1, canvasStateSnapshot: { array: [] }, description: '' },
+      { stepIndex: 1, lineNumber: 3, canvasStateSnapshot: { array: [] }, description: '' }
+    ];
+    const mappings = CompilerStepExecutor.generateStepToLineMapping(sourceCode, frames);
+    expect(mappings.length).toBe(2);
+    expect(mappings[0]).toEqual({
+      stepIndex: 0,
+      lineNumber: 1,
+      codeSnippet: 'let a = 1;'
+    });
+    expect(mappings[1]).toEqual({
+      stepIndex: 1,
+      lineNumber: 3,
+      codeSnippet: 'return a + b;'
+    });
+  });
+});
+

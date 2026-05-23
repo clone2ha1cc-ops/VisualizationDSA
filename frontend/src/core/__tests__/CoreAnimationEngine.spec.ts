@@ -40,7 +40,7 @@ describe('1. CoreAnimationEngine Unit Test Suit', () => {
     const mockCallback = vi.fn();
 
     // Mock requestAnimationFrame
-    let rafCallback: FrameRequestCallback | null = null;
+    let rafCallback: any = null;
     const mockRaf = vi.spyOn(globalThis, 'requestAnimationFrame').mockImplementation((cb) => {
       rafCallback = cb;
       return 123;
@@ -68,7 +68,7 @@ describe('1. CoreAnimationEngine Unit Test Suit', () => {
       recordedDelta = dt;
     };
 
-    let rafCallback: FrameRequestCallback | null = null;
+    let rafCallback: any = null;
     vi.spyOn(globalThis, 'requestAnimationFrame').mockImplementation((cb) => {
       rafCallback = cb;
       return 456;

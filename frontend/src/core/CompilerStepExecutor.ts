@@ -11,6 +11,12 @@ export interface PlaybackFrame {
   description: string;
 }
 
+export interface StepToLineMapping {
+  stepIndex: number;
+  lineNumber: number;
+  codeSnippet: string;
+}
+
 export class CompilerStepExecutor {
   /**
    * Biên dịch mã nguồn giải thuật sinh Playback Frames.
@@ -395,5 +401,21 @@ export class CompilerStepExecutor {
     });
 
     return frames;
+  }
+
+  /**
+   * Tạo bản đồ ánh xạ từ bước giải thuật sang dòng code.
+   */
+  public static generateStepToLineMapping(sourceCode: string, frames: PlaybackFrame[]): StepToLineMapping[] {
+    const lines = sourceCode.split('\n');
+    return frames.map(frame => {
+      const lineIdx = frame.lineNumber - 1;
+      const snippet = (lineIdx >= 0 && lineIdx < lines.length) ? lines[lineIdx].trim() : '';
+      return {
+        stepIndex: frame.stepIndex,
+        lineNumber: frame.lineNumber,
+        codeSnippet: snippet
+      };
+    });
   }
 }

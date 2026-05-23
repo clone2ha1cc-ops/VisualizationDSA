@@ -6,8 +6,54 @@ const POINTER_COLORS: Record<string, string> = {
 };
 
 /**
- * renderLoopPointer — vẽ arrow pointer cho biến vòng lặp (i, j, k...).
- * Pure function: không có side effect ngoài draw calls lên ctx.
+ * renderLoopPointer — vẽ arrow pointer cho một biến vòng lặp (i, j, k...).
+ */
+export function renderLoopPointer(
+  ctx: CanvasRenderingContext2D,
+  varName: string,
+  currentX: number,
+  slotWidth: number,
+  offsetY: number = 0
+) {
+  const x = currentX + slotWidth / 2;
+  const arrowY = 45 - offsetY;
+  const color = POINTER_COLORS[varName] ?? '#e2e8f0';
+
+  ctx.save();
+  ctx.fillStyle = color;
+  ctx.strokeStyle = color;
+  ctx.lineWidth = 1.5;
+
+  // Arrow triangle
+  ctx.beginPath();
+  ctx.moveTo(x, 70);
+  ctx.lineTo(x - 5, 62);
+  ctx.lineTo(x + 5, 62);
+  ctx.closePath();
+  ctx.fill();
+
+  // Arrow stem
+  ctx.beginPath();
+  ctx.moveTo(x, 70);
+  ctx.lineTo(x, arrowY);
+  ctx.stroke();
+
+  // Label badge
+  ctx.beginPath();
+  ctx.roundRect(x - 12, arrowY - 18, 24, 18, 4);
+  ctx.fill();
+
+  ctx.fillStyle = '#0f172a';
+  ctx.font = 'bold 11px "Outfit", "Inter", sans-serif';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText(varName, x, arrowY - 9);
+
+  ctx.restore();
+}
+
+/**
+ * renderLoopPointers — vẽ arrow pointer cho nhiều biến vòng lặp.
  */
 export function renderLoopPointers(
   ctx: CanvasRenderingContext2D,
@@ -22,41 +68,8 @@ export function renderLoopPointers(
     if (idx < 0 || idx >= items.length) return;
 
     const item = items[idx];
-    const x = item.currentX + slotWidth / 2;
-    const arrowY = 45 - pointerOffset;
-    const color = POINTER_COLORS[varName] ?? '#e2e8f0';
-
-    ctx.save();
-    ctx.fillStyle = color;
-    ctx.strokeStyle = color;
-    ctx.lineWidth = 1.5;
-
-    // Arrow triangle
-    ctx.beginPath();
-    ctx.moveTo(x, 70);
-    ctx.lineTo(x - 5, 62);
-    ctx.lineTo(x + 5, 62);
-    ctx.closePath();
-    ctx.fill();
-
-    // Arrow stem
-    ctx.beginPath();
-    ctx.moveTo(x, 70);
-    ctx.lineTo(x, arrowY);
-    ctx.stroke();
-
-    // Label badge
-    ctx.beginPath();
-    ctx.roundRect(x - 12, arrowY - 18, 24, 18, 4);
-    ctx.fill();
-
-    ctx.fillStyle = '#0f172a';
-    ctx.font = 'bold 11px "Outfit", "Inter", sans-serif';
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle';
-    ctx.fillText(varName, x, arrowY - 9);
-
-    ctx.restore();
+    renderLoopPointer(ctx, varName, item.currentX, slotWidth, pointerOffset);
     pointerOffset += 24;
   });
 }
+
