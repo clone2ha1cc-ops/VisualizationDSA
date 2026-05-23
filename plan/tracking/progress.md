@@ -93,6 +93,20 @@ Tài liệu này theo dõi chi tiết tiến độ hoàn thành **code thực t�
 | **Component** | AnimControlPanel.vue rewrite | ✅ CODE DONE | Replay button (↩ khi FINISHED), YouTube-style neon slider (emerald progress track), Dynamic Tooltip, Speed dropdown (0.25x-4.0x), Glassmorphism backdrop-blur, E-Lecture lock (opacity 0.5 + pointer-events none) |
 | **Tests** | 23 Unit Tests | ✅ CODE DONE | `executionControl.spec.ts` — Speed Presets (1), Speed Preferences localStorage (5), Throttled Scrubbing (3), Replay Logic (3), Keyboard Hotkeys (9), Tooltip Logic (2) — ALL PASS |
 
+### Phase 1 Interactive Playground — Sân chơi vẽ đồ thị tương tác (Canvas + Physics)
+
+| Bước | Nội dung | Trạng thái CODE | Chi tiết |
+| :--- | :--- | :--- | :--- |
+| **Store** | usePlaygroundStore (Pinia Setup Store) | ✅ CODE DONE | `store/usePlaygroundStore.ts` — 5 tool modes, NodeDTO/EdgeDTO, addNode/addEdge/deleteNode(cascade)/updateEdgeWeight/moveNode, max 30 nodes, selectNode/selectEdge |
+| **Engine** | GraphGeometryEngine (Hit Detection + Arrow Routing) | ✅ CODE DONE | `engine/GraphGeometryEngine.ts` — hitTestNode (Euclidean), hitTestEdge (point-to-segment), calculateArrowPlacement (atan2 border contact), isWithinSnapDistance, edgeMidpoint |
+| **Engine** | ForceDirectedEngine (Physics Simulation) | ✅ CODE DONE | `engine/ForceDirectedEngine.ts` — Coulomb repulsion (K=4000), Hooke spring (K=0.05, L=150), damping 0.85, stability detection, canvas boundary clamping, skip dragged node |
+| **Component** | PlaygroundCanvas.vue (Canvas 2D + Mouse Events) | ✅ CODE DONE | Single canvas element, 5 tool mode handlers (SELECT drag, ADD_NODE click, ADD_EDGE rubber-band, WEIGHT click-edge, DELETE click), snap glow highlight, arrowhead rendering, weight labels |
+| **Component** | FloatingToolbar.vue (Glassmorphism Toolbar) | ✅ CODE DONE | 5 tool buttons (SELECT/ADD_NODE/ADD_EDGE/WEIGHT/DELETE), physics toggle, clear all, keyboard shortcuts (V/N/E/W/Del/Backspace), emerald active glow |
+| **Component** | InteractivePlayground.vue (Orchestrator) | ✅ CODE DONE | Status bar (node/edge count, mode badge), Export/Import JSON, Run algorithm (adjacency list output), Weight popover (auto-focus, Enter/Blur/Esc), Toast notifications, JSON output panel |
+| **Service** | GraphParser (Graph-to-JSON Converter) | ✅ CODE DONE | `services/GraphParser.ts` — toAdjacencyList (undirected), findIsolatedNodes (BFS connectivity), exportToJSON, importFromJSON (schema validation) |
+| **Integration** | App.vue Playground tab | ✅ CODE DONE | New "Playground" tab in App.vue, full-screen InteractivePlayground component |
+| **Tests** | 31 Unit Tests | ✅ CODE DONE | `interactivePlayground.spec.ts` — Store (11), GeometryEngine (8), ForceDirectedEngine (4), GraphParser (8) — ALL PASS |
+
 ---
 
 ## 3. Kiểm Kê Code Thực Tế Đã Có (File Inventory)
@@ -159,6 +173,18 @@ Tài liệu này theo dõi chi tiết tiến độ hoàn thành **code thực t�
 - `XPEngine.ts` — XP accumulation, level progression (8 levels), badges system, embed widget generator
 - `components/GamificationPanel.vue` — Progress tracking, badges display, embed code generator
 - `index.ts` — Module exports
+
+### `src/features/interactive-playground/` — Phase 1 Interactive Playground ✅
+
+- `store/usePlaygroundStore.ts` — Pinia Setup Store, 5 tool modes, NodeDTO/EdgeDTO, cascade delete, max 30 nodes
+- `engine/GraphGeometryEngine.ts` — Euclidean hit detection, atan2 arrowhead placement, point-to-segment edge hit, snap distance
+- `engine/ForceDirectedEngine.ts` — Coulomb repulsion + Hooke spring forces, damping 0.85, stability detection, canvas boundary clamping
+- `services/GraphParser.ts` — toAdjacencyList (undirected), findIsolatedNodes (BFS), exportToJSON, importFromJSON
+- `components/PlaygroundCanvas.vue` — HTML5 Canvas 2D, 5 tool mode mouse handlers, physics render loop 60 FPS, snap glow, arrowheads
+- `components/FloatingToolbar.vue` — Glassmorphism vertical toolbar, 5 tool icons, physics toggle, clear all, keyboard shortcuts
+- `components/InteractivePlayground.vue` — Orchestrator: status bar, Export/Import JSON, Run algorithm, Weight popover, Toast notifications
+- `__tests__/interactivePlayground.spec.ts` — 31 unit tests (Store 11, Geometry 8, Physics 4, Parser 8)
+- `index.ts` — Barrel exports
 
 ---
 

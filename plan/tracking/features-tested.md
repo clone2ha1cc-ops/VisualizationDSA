@@ -5,8 +5,8 @@ Tài liệu này ghi nhận trạng thái kiểm thử đơn vị tự động (
 ---
 
 ## 📌 Trạng Thái Bao Phủ Kiểm Thử (Test Coverage Status)
-*   **Tổng số tính năng hạt nhân:** 23/23 Tính năng + Phase 1 Animation Engine (23 tests) + Phase 1 Custom Input (38 tests) + Phase 1 DSA Modules (40 tests mới) + Phase 1 E-Lecture Mode (28 tests mới) + Phase 1 Execution Control (23 tests mới).
-*   **Trạng thái Vitest Suite:** 🟢 100% PASSED (188/189 — 1 pre-existing ForceDirectedLayout failure).
+*   **Tổng số tính năng hạt nhân:** 23/23 Tính năng + Phase 1 Animation Engine (23 tests) + Phase 1 Custom Input (38 tests) + Phase 1 DSA Modules (40 tests mới) + Phase 1 E-Lecture Mode (28 tests mới) + Phase 1 Execution Control (23 tests mới) + Phase 1 Interactive Playground (31 tests mới).
+*   **Trạng thái Vitest Suite:** 🟢 100% PASSED (219/220 — 1 pre-existing ForceDirectedLayout failure).
 *   **Công cụ chạy kiểm thử:** Vitest Core.
 *   **Thời gian phản hồi test suite:** ~180ms (độ nhạy cực cao dưới máy khách).
 
@@ -169,3 +169,39 @@ Tài liệu này ghi nhận trạng thái kiểm thử đơn vị tự động (
 | 141 | **Hotkeys** | Space replay from FINISHED | goToFrame(0) + play from end | 🟢 PASSED |
 | 142 | **Tooltip** | truncateText long string | Truncates at maxLength + '...' | 🟢 PASSED |
 | 143 | **Tooltip** | truncateText empty string | Returns empty string | 🟢 PASSED |
+
+### Phase 1 Interactive Playground — 31 Unit Tests
+
+| STT | Phân hệ kiểm thử | Tính năng hạt nhân được xác thực | Phương thức kiểm tra (Test Spec) | Trạng thái |
+| :--- | :--- | :--- | :--- | :--- |
+| 144 | **PlaygroundStore** | Initial SELECT mode + empty | mode='SELECT', nodes=[], edges=[] | 🟢 PASSED |
+| 145 | **PlaygroundStore** | addNode auto-label A,B,C | 3 nodes, labels A/B/C, radius 20 | 🟢 PASSED |
+| 146 | **PlaygroundStore** | Max 30 nodes limit | 31st addNode returns null | 🟢 PASSED |
+| 147 | **PlaygroundStore** | addEdge between nodes | Creates edge with weight=1 | 🟢 PASSED |
+| 148 | **PlaygroundStore** | Self-loop prevention | addEdge(a, a) returns null | 🟢 PASSED |
+| 149 | **PlaygroundStore** | Duplicate edge prevention | Second addEdge + reverse both null | 🟢 PASSED |
+| 150 | **PlaygroundStore** | updateEdgeWeight valid range | Accepts 42, rejects 0 and 1000 | 🟢 PASSED |
+| 151 | **PlaygroundStore** | Cascade delete edges | Removing node A removes A-B, A-C edges | 🟢 PASSED |
+| 152 | **PlaygroundStore** | clearAll reset | Empties nodes, edges, selection | 🟢 PASSED |
+| 153 | **PlaygroundStore** | setMode clears selection | Switching mode resets selectedNodeId | 🟢 PASSED |
+| 154 | **PlaygroundStore** | moveNode position | Updates x/y coordinates | 🟢 PASSED |
+| 155 | **GeometryEngine** | hitTestNode inside circle | Returns node when click inside | 🟢 PASSED |
+| 156 | **GeometryEngine** | hitTestNode miss | Returns null when far away | 🟢 PASSED |
+| 157 | **GeometryEngine** | hitTestNode boundary | Returns node at exact radius | 🟢 PASSED |
+| 158 | **GeometryEngine** | ArrowPlacement border contact | Start/end at circle borders, not centers | 🟢 PASSED |
+| 159 | **GeometryEngine** | hitTestEdge within threshold | Detects edge at 3px distance | 🟢 PASSED |
+| 160 | **GeometryEngine** | hitTestEdge miss | Returns null at 100px distance | 🟢 PASSED |
+| 161 | **GeometryEngine** | Snap distance detection | true within 40px, false beyond | 🟢 PASSED |
+| 162 | **GeometryEngine** | Edge midpoint | Correct (200,100) for (100,100)-(300,100) | 🟢 PASSED |
+| 163 | **ForceDirected** | Repulsion separates overlapping | dist > 10 after 50 ticks | 🟢 PASSED |
+| 164 | **ForceDirected** | Spring pulls far nodes | finalDist < initialDist after 100 ticks | 🟢 PASSED |
+| 165 | **ForceDirected** | Dragged node skipped | Position unchanged during drag | 🟢 PASSED |
+| 166 | **ForceDirected** | Stability detection | isStable=true after 300 ticks | 🟢 PASSED |
+| 167 | **GraphParser** | Adjacency list undirected | Both A→B and B→A with weight 8 | 🟢 PASSED |
+| 168 | **GraphParser** | findIsolatedNodes disconnected | Node D isolated from A-B-C | 🟢 PASSED |
+| 169 | **GraphParser** | findIsolatedNodes connected | Empty array for connected graph | 🟢 PASSED |
+| 170 | **GraphParser** | Export + reimport roundtrip | 3 nodes, 2 edges preserved | 🟢 PASSED |
+| 171 | **GraphParser** | Invalid JSON import | Returns null for bad input | 🟢 PASSED |
+| 172 | **GraphParser** | Empty graph payload | Empty nodes/adjacencyList | 🟢 PASSED |
+| 173 | **GraphParser** | Single node connectivity | Not isolated (own component) | 🟢 PASSED |
+| 174 | **GeometryEngine** | pointToSegmentDistance | 10px perpendicular distance correct | 🟢 PASSED |

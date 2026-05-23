@@ -165,3 +165,27 @@ Các ADR sau đây được ghi trong tài liệu đặc tả nhưng **chưa có
   - Component: animation-engine/components/AnimControlPanel.vue (rewritten)
   - Store: animation-engine/store/useAnimationStore.ts (added togglePlay)
   - Tests: executionControl.spec.ts (23 tests)
+
+---
+
+## ADR-PLAYGROUND-CANVAS: Mathematical Collision Canvas cho Phase 1 Interactive Playground
+
+- **Trạng thái:** ✅ IMPLEMENTED
+- **Ngữ cảnh:** Interactive Playground cần cho phép người dùng vẽ đồ thị tự do (nodes + edges) với khả năng co giãn đàn hồi, nhưng DOM-based rendering (div per node) gây giật lag khi kết hợp Force-Directed Physics ở 60 FPS.
+- **Quyết định:** Áp dụng 100% HTML5 Canvas 2D Context + Mathematical Collision Checking:
+  1. **Single Event Listener pattern:** Chỉ đăng ký 1 bộ mousedown/mousemove/mouseup lên canvas, dùng Euclidean distance để hit-test nodes và point-to-segment distance để hit-test edges.
+  2. **GraphGeometryEngine:** Thuật toán atan2 tính arrowhead placement dừng sát viền ngoài node (không đâm xuyên tâm).
+  3. **ForceDirectedEngine:** Coulomb repulsion (K=4000) + Hooke spring (K=0.05, L=150) + damping 0.85 + stability auto-stop.
+  4. **Pinia usePlaygroundStore:** 5 tool modes (SELECT/ADD_NODE/ADD_EDGE/WEIGHT/DELETE), NodeDTO/EdgeDTO, cascade delete, max 30 nodes constraint.
+  5. **GraphParser:** Client-side graph-to-adjacency-list converter + BFS connectivity check + JSON export/import.
+  6. **Glassmorphism FloatingToolbar:** Vertical toolbar với backdrop-filter blur(12px), emerald active glow, keyboard shortcuts (V/N/E/W/Del).
+- **Hệ quả:**
+  - 60 FPS mượt mà cho đồ thị 30 nodes + 100 edges với physics simulation.
+  - Rubber-band dashed line + snap glow khi vẽ edge.
+  - Weight popover tại midpoint cạnh (auto-focus, Enter/Blur/Esc).
+  - Isolated node detection trước khi submit API (BFS connectivity).
+  - Export/Import JSON file cho chia sẻ bản vẽ.
+- **File liên quan:**
+  - Frontend: interactive-playground/store/usePlaygroundStore.ts, engine/GraphGeometryEngine.ts, engine/ForceDirectedEngine.ts, services/GraphParser.ts
+  - Components: PlaygroundCanvas.vue, FloatingToolbar.vue, InteractivePlayground.vue
+  - Tests: interactivePlayground.spec.ts (31 tests)

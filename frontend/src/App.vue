@@ -66,6 +66,13 @@
         </section>
       </template>
 
+      <!-- Interactive Playground Tab -->
+      <template v-else-if="activeTab === 'playground'">
+        <section class="flex-1 min-h-0">
+          <InteractivePlayground />
+        </section>
+      </template>
+
       <!-- Default Sorting Layout -->
       <template v-else>
       <!-- Visualizer Area -->
@@ -205,6 +212,7 @@ import { StateInspector } from "./features/state-sandbox";
 import { SystemSandbox } from "./features/system-sandbox";
 import { InteractiveLectureSlides } from "./features/quiz";
 import { GamificationPanel } from "./features/gamification";
+import { InteractivePlayground } from "./features/interactive-playground";
 
 const activeTab = ref("sorting");
 
@@ -213,6 +221,7 @@ const tabs = [
   { id: "dsa", name: "DSA Modules" },
   { id: "animation", name: "Animation" },
   { id: "graph", name: "Graph" },
+  { id: "playground", name: "Playground" },
   { id: "oop", name: "OOP" },
   { id: "solid", name: "SOLID" },
   { id: "di", name: "DI/IoC" },
