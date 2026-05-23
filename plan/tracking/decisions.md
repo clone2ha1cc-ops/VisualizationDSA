@@ -74,3 +74,23 @@ Các ADR sau đây được ghi trong tài liệu đặc tả nhưng **chưa có
   - Backend: Domain/Engine/AlgorithmBase.cs, BubbleSortExecutor.cs, FrameDTO.cs, AlgorithmsController.cs
   - Frontend: useAnimationStore.ts, CanvasLayer.vue, VisualizationPlayer.vue, algorithmApi.ts
   - Tests: useAnimationStore.spec.ts (16 tests), algorithmApi.spec.ts (7 tests)
+
+---
+
+## ADR-ZERO-TRUST-INPUT: Zero Trust Input Pipeline cho Phase 1 Custom Input Generator
+
+- **Trạng thái:** ✅ IMPLEMENTED
+- **Ngữ cảnh:** Tính năng Custom Input cho phép người dùng nhập dữ liệu tự do, tạo rủi ro bảo mật (DDoS qua mảng lớn, injection qua ký tự lạ).
+- **Quyết định:** Áp dụng nguyên lý Zero Trust Input Pipeline — xác thực 3 tầng:
+  1. Frontend Regex validation (instant UI feedback, khóa nút Execute khi sai).
+  2. Backend InputParser (Regex C# quét lại toàn bộ chuỗi thô).
+  3. Backend ConstraintResolver (giới hạn phần tử tối đa per-algorithm) + CancellationToken 2s timeout.
+- **Hệ quả:**
+  - Bảo vệ CPU server khỏi payload mảng khổng lồ.
+  - UX phản hồi tức thì (viền đỏ/xanh/cam, đếm phần tử real-time).
+  - Sinh mảng ngẫu nhiên thông minh (random/nearly-sorted/reversed) hoàn toàn client-side.
+  - Fallback sang dummy engine khi Backend unreachable.
+- **File liên quan:**
+  - Backend: Domain/Input/InputParser.cs, ConstraintResolver.cs, Application/DTOs/CustomInputRequestDto.cs, AlgorithmsController.cs (custom-execute endpoint)
+  - Frontend: custom-input/store/useInputStore.ts, custom-input/components/CustomInputForm.vue
+  - Tests: useInputStore.spec.ts (38 tests)
