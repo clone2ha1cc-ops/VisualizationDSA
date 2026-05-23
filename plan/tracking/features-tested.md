@@ -5,8 +5,8 @@ Tài liệu này ghi nhận trạng thái kiểm thử đơn vị tự động (
 ---
 
 ## 📌 Trạng Thái Bao Phủ Kiểm Thử (Test Coverage Status)
-*   **Tổng số tính năng hạt nhân:** 23/23 Tính năng + Phase 1 Animation Engine (23 tests) + Phase 1 Custom Input (38 tests) + Phase 1 DSA Modules (40 tests mới) + Phase 1 E-Lecture Mode (28 tests mới) + Phase 1 Execution Control (23 tests mới) + Phase 1 Interactive Playground (31 tests mới) + Phase 1 Pseudocode Sync (37 tests mới).
-*   **Trạng thái Vitest Suite:** 🟢 100% PASSED (256/257 — 1 pre-existing ForceDirectedLayout failure).
+*   **Tổng số tính năng hạt nhân:** 23/23 Tính năng + Phase 1 Animation Engine (23 tests) + Phase 1 Custom Input (38 tests) + Phase 1 DSA Modules (40 tests mới) + Phase 1 E-Lecture Mode (28 tests mới) + Phase 1 Execution Control (23 tests mới) + Phase 1 Interactive Playground (31 tests mới) + Phase 1 Pseudocode Sync (37 tests mới) + Phase 1 Quiz System (54 tests mới).
+*   **Trạng thái Vitest Suite:** 🟢 100% PASSED (310/311 — 1 pre-existing ForceDirectedLayout failure).
 *   **Công cụ chạy kiểm thử:** Vitest Core.
 *   **Thời gian phản hồi test suite:** ~180ms (độ nhạy cực cao dưới máy khách).
 
@@ -259,3 +259,62 @@ Tài liệu này ghi nhận trạng thái kiểm thử đơn vị tự động (
 | 221 | **ScriptLoader** | unknown algorithm returns null | null for 'unknown-algo' | 🟢 PASSED |
 | 222 | **ScriptLoader** | hasPseudocodeScript true | true for 'bubble-sort' | 🟢 PASSED |
 | 223 | **ScriptLoader** | hasPseudocodeScript false | false for 'unknown' | 🟢 PASSED |
+
+### Phase 1 Quiz System — 54 Unit Tests
+
+| STT | Phân hệ kiểm thử | Tính năng hạt nhân được xác thực | Phương thức kiểm tra (Test Spec) | Trạng thái |
+| :--- | :--- | :--- | :--- | :--- |
+| 224 | **VerificationEngine** | MC correct answer | selectedIndex=1, correctOptionIndex=1 → true | 🟢 PASSED |
+| 225 | **VerificationEngine** | MC incorrect answer | selectedIndex=0, correctOptionIndex=1 → false | 🟢 PASSED |
+| 226 | **VerificationEngine** | TF correct answer | selectedIndex=0 (Đúng), correctOptionIndex=0 → true | 🟢 PASSED |
+| 227 | **VerificationEngine** | TF incorrect answer | selectedIndex=1, correctOptionIndex=0 → false | 🟢 PASSED |
+| 228 | **VerificationEngine** | Out-of-range index | selectedIndex=99 → false | 🟢 PASSED |
+| 229 | **VerificationEngine** | Canvas correct node click | (202,198) hits node_C (200,200,r=20) → true | 🟢 PASSED |
+| 230 | **VerificationEngine** | Canvas wrong node click | (102,98) hits node_A, target=node_C → false | 🟢 PASSED |
+| 231 | **VerificationEngine** | Canvas empty space click | (500,500) no node hit → false, 'chưa trúng' | 🟢 PASSED |
+| 232 | **VerificationEngine** | Non-CANVAS_TARGET type | MC question + canvas click → 'không tương thích' | 🟢 PASSED |
+| 233 | **VerificationEngine** | Boundary click (exact radius) | (220,200) distance=20=radius → true | 🟢 PASSED |
+| 234 | **VerificationEngine** | Just outside radius | (221,200) distance=21>20 → false | 🟢 PASSED |
+| 235 | **VerificationEngine** | Empty nodes array | No nodes → false, 'chưa trúng' | 🟢 PASSED |
+| 236 | **StatsManager** | Default stats empty localStorage | totalAttempts=0, streak=0, completedQuizzes=[] | 🟢 PASSED |
+| 237 | **StatsManager** | Save correct attempt + streak | totalAttempts=1, correctAnswers=1, streak=1 | 🟢 PASSED |
+| 238 | **StatsManager** | Incorrect resets streak | 2 correct → 1 incorrect → streak=0 | 🟢 PASSED |
+| 239 | **StatsManager** | Accumulate streak | 3 consecutive correct → streak=3 | 🟢 PASSED |
+| 240 | **StatsManager** | No duplicate quiz IDs | saveAttempt(true,'q1')×2 → only 1 'q1' | 🟢 PASSED |
+| 241 | **StatsManager** | Incorrect not in completedQuizzes | saveAttempt(false,'q1') → 'q1' not in list | 🟢 PASSED |
+| 242 | **StatsManager** | Clear stats | All values reset to 0/[] | 🟢 PASSED |
+| 243 | **StatsManager** | Corrupted localStorage | 'not-valid-json' → defaults returned | 🟢 PASSED |
+| 244 | **StatsManager** | Persistence across getStats | Multiple reads return same values | 🟢 PASSED |
+| 245 | **SchemaValidator** | Valid MC checkpoint | frameIndex+id+type+options+correctOptionIndex → valid | 🟢 PASSED |
+| 246 | **SchemaValidator** | Missing checkpoints array | {questions:[]} → invalid | 🟢 PASSED |
+| 247 | **SchemaValidator** | Null input | null → invalid | 🟢 PASSED |
+| 248 | **SchemaValidator** | Missing frameIndex | No frameIndex → error 'frameIndex' | 🟢 PASSED |
+| 249 | **SchemaValidator** | MC missing options | No options array → error 'options' | 🟢 PASSED |
+| 250 | **SchemaValidator** | CANVAS_TARGET missing targetNodeId | No targetNodeId → error 'targetNodeId' | 🟢 PASSED |
+| 251 | **SchemaValidator** | Missing question id | No id field → error 'id' | 🟢 PASSED |
+| 252 | **SchemaValidator** | Missing explanation | No explanation → error 'explanation' | 🟢 PASSED |
+| 253 | **SchemaValidator** | Valid CANVAS_TARGET | targetNodeId present → valid | 🟢 PASSED |
+| 254 | **SchemaValidator** | Multiple checkpoints | 2 checkpoints (MC+TF) → valid | 🟢 PASSED |
+| 255 | **SchemaValidator** | Missing question object | {frameIndex:3} → error 'question' | 🟢 PASSED |
+| 256 | **QuizStore** | Initialize empty state | activeQuestion=null, isQuizActive=false | 🟢 PASSED |
+| 257 | **QuizStore** | Load checkpoints | 3 checkpoints loaded, session counts=0 | 🟢 PASSED |
+| 258 | **QuizStore** | Trigger at matching frameIndex | frameIndex=1 → activeQuestion.id='q1', locked | 🟢 PASSED |
+| 259 | **QuizStore** | No trigger at non-matching frame | frameIndex=3 → activeQuestion=null | 🟢 PASSED |
+| 260 | **QuizStore** | No re-trigger completed checkpoint | After dismiss, same frame → no trigger | 🟢 PASSED |
+| 261 | **QuizStore** | Submit correct MC answer | selectedIndex=1 → isCorrect=true, session 1/1 | 🟢 PASSED |
+| 262 | **QuizStore** | Submit incorrect MC answer | selectedIndex=0 → isCorrect=false, session 0/1 | 🟢 PASSED |
+| 263 | **QuizStore** | Double submit prevention | Second submit ignored, sessionTotal=1 | 🟢 PASSED |
+| 264 | **QuizStore** | Dismiss resets active state | activeQuestion=null, isSubmitted=false | 🟢 PASSED |
+| 265 | **QuizStore** | Session accuracy calculation | 1 correct + 1 incorrect → 50% | 🟢 PASSED |
+| 266 | **QuizStore** | Canvas correct node click | (202,198) → node_C matched, isCorrect=true | 🟢 PASSED |
+| 267 | **QuizStore** | Canvas wrong node click | (102,98) → node_A matched, isCorrect=false | 🟢 PASSED |
+| 268 | **QuizStore** | Canvas empty space ignored | (500,500) → isSubmitted=false (no submit) | 🟢 PASSED |
+| 269 | **QuizStore** | allCheckpointsCompleted | After 3/3 checkpoints → true | 🟢 PASSED |
+| 270 | **QuizStore** | Reset quiz store | All state cleared to initial | 🟢 PASSED |
+| 271 | **QuizStore** | No trigger when quiz active | Active q1, frame 5 → still q1 | 🟢 PASSED |
+| 272 | **QuizStore** | isCanvasTargetMode for CANVAS_TARGET | CANVAS_TARGET → true | 🟢 PASSED |
+| 273 | **QuizStore** | isCanvasTargetMode for MC | MULTIPLE_CHOICE → false | 🟢 PASSED |
+| 274 | **QuizLoader** | Load bubble-sort script | algorithmId='bubble-sort', checkpoints>0 | 🟢 PASSED |
+| 275 | **QuizLoader** | Unknown algorithm returns null | 'unknown-algo' → null | 🟢 PASSED |
+| 276 | **QuizLoader** | hasQuizScript detection | 'bubble-sort'→true, 'unknown'→false | 🟢 PASSED |
+| 277 | **QuizLoader** | Valid question structures | All checkpoints have id, prompt, explanation, valid type | 🟢 PASSED |

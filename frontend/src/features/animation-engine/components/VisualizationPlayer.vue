@@ -16,6 +16,18 @@
         <!-- E-Lecture Overlay -->
         <LectureOverlay />
 
+        <!-- Quiz Checkpoint Overlay -->
+        <QuizCardOverlay />
+
+        <!-- Quiz Summary -->
+        <QuizSummaryCard
+          :visible="showQuizSummary"
+          :correct="quizStore.sessionCorrect"
+          :total="quizStore.sessionTotal"
+          @retry="retryQuiz"
+          @close="closeQuizSummary"
+        />
+
         <!-- E-Lecture Toggle Button -->
         <button
           v-if="!lectureStore.isActive && hasLectureAvailable"
@@ -65,7 +77,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, watch } from 'vue';
+import { computed, ref, watch } from 'vue';
 import CanvasLayer from './CanvasLayer.vue';
 import ExplanationPanel from './ExplanationPanel.vue';
 import AnimControlPanel from './AnimControlPanel.vue';
@@ -73,26 +85,55 @@ import { CustomInputForm } from '../../custom-input';
 import { useInputStore } from '../../custom-input/store/useInputStore';
 import { LectureOverlay, useLectureStore, loadLecture, hasLecture } from '../../e-lecture';
 import { MultilingualCodePanel, usePseudocodeStore, loadPseudocodeScript as loadPsScript } from '../../pseudocode-sync';
+import { QuizCardOverlay, QuizSummaryCard, useQuizStore, loadQuizScript } from '../../quiz-system';
 import { useAnimationStore } from '../store/useAnimationStore';
 
 const inputStore = useInputStore();
 const lectureStore = useLectureStore();
 const animStore = useAnimationStore();
 const pseudocodeStore = usePseudocodeStore();
+const quizStore = useQuizStore();
+
+const showQuizSummary = ref(false);
 
 watch(
   () => animStore.algorithmId,
   (newId) => {
     if (!newId) {
       pseudocodeStore.resetStore();
+      quizStore.resetQuizStore();
       return;
     }
     const script = loadPsScript(newId);
     if (script) {
       pseudocodeStore.loadPseudocodeScript(script.languages);
     }
+    const quizScript = loadQuizScript(newId);
+    if (quizScript) {
+      quizStore.loadCheckpoints(quizScript.checkpoints);
+    } else {
+      quizStore.resetQuizStore();
+    }
   },
   { immediate: true },
+);
+
+watch(
+  () => animStore.currentIndex,
+  (newIndex) => {
+    if (quizStore.checkpoints.length > 0) {
+      quizStore.checkFrameForQuiz(newIndex);
+    }
+  },
+);
+
+watch(
+  () => quizStore.allCheckpointsCompleted,
+  (completed) => {
+    if (completed && quizStore.sessionTotal > 0) {
+      showQuizSummary.value = true;
+    }
+  },
 );
 
 const hasLectureAvailable = computed(() => {
@@ -104,6 +145,20 @@ async function openLecture(): Promise<void> {
   if (script) {
     lectureStore.startLecture(script);
   }
+}
+
+function retryQuiz(): void {
+  showQuizSummary.value = false;
+  quizStore.resetQuizStore();
+  const quizScript = loadQuizScript(animStore.algorithmId);
+  if (quizScript) {
+    quizStore.loadCheckpoints(quizScript.checkpoints);
+  }
+  animStore.stop();
+}
+
+function closeQuizSummary(): void {
+  showQuizSummary.value = false;
 }
 </script>
 

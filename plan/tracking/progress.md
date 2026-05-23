@@ -121,6 +121,22 @@ Tài liệu này theo dõi chi tiết tiến độ hoàn thành **code thực t�
 | **Store Ext** | useAnimationStore activeFrame alias | ✅ CODE DONE | Added `activeFrame` computed alias for `currentFrame` in `useAnimationStore.ts` |
 | **Tests** | 37 Unit Tests | ✅ CODE DONE | `PseudocodeSyncEngine.spec.ts` (15), `usePseudocodeStore.spec.ts` (15), `scriptLoader.spec.ts` (7) — ALL PASS |
 
+### Phase 1 Quiz System — Hệ thống Trắc nghiệm Tương tác (Interactive Quiz Checkpoints)
+
+| Bước | Nội dung | Trạng thái CODE | Chi tiết |
+| :--- | :--- | :--- | :--- |
+| **Types** | QuizQuestion, QuizCheckpoint, CanvasNodeDTO, VerificationResult, UserQuizStats | ✅ CODE DONE | `quiz-system/types/quiz.types.ts` — QuestionType union (MULTIPLE_CHOICE, TRUE_FALSE, CANVAS_TARGET), QuizScript, QuizCheckpoint |
+| **Engine** | QuizVerificationEngine (MC/TF + Canvas Euclidean Hit) | ✅ CODE DONE | `quiz-system/engine/QuizVerificationEngine.ts` — verifyOptionAnswer, verifyCanvasClickAnswer (Euclidean distance node hit detection) |
+| **Engine** | QuizStatsManager (localStorage persistence) | ✅ CODE DONE | `quiz-system/engine/QuizStatsManager.ts` — getStats, saveAttempt (streak tracking), clearStats, STORAGE_KEY `dsa_quiz_statistics` |
+| **Engine** | QuizSchemaValidator (JSON structure validation) | ✅ CODE DONE | `quiz-system/engine/QuizSchemaValidator.ts` — validateQuizJson (MC options, CANVAS_TARGET targetNodeId, required fields) |
+| **Store** | useQuizStore Pinia Setup Store | ✅ CODE DONE | `quiz-system/store/useQuizStore.ts` — checkpoint detection, triggerCheckpointQuestion, submitOptionAnswer, handleCanvasClickAnswer, dismissQuestionAndContinue, resetQuizStore, sessionAccuracy, allCheckpointsCompleted |
+| **Component** | QuizCardOverlay.vue (Glassmorphism Overlay) | ✅ CODE DONE | `quiz-system/components/QuizCardOverlay.vue` — Glassmorphism backdrop-blur, MC/TF option buttons, Neon Emerald correct glow, Rose Red incorrect shake, feedback explanation panel, continue button |
+| **Component** | QuizSummaryCard.vue (Score Summary) | ✅ CODE DONE | `quiz-system/components/QuizSummaryCard.vue` — accuracy/correct/streak badges, Glassmorphism card, retry/close actions, dynamic summary message |
+| **Script** | Bubble Sort quiz (4 checkpoints) | ✅ CODE DONE | `quiz-system/scripts/bubble-sort.quiz.ts` — 4 checkpoints (MC + TF), frames 1/5/10/16, `quizLoader.ts` registry |
+| **LectureStore Ext** | lockLectureInteraction/unlockLectureInteraction/resumeLecturePlayback | ✅ CODE DONE | Extended `useLectureStore.ts` — 3 new actions for quiz-triggered playback lock and auto-resume |
+| **Integration** | VisualizationPlayer checkpoint watch | ✅ CODE DONE | `VisualizationPlayer.vue` — QuizCardOverlay + QuizSummaryCard, watch currentIndex for checkpoint detection, watch algorithmId for quiz script loading, watch allCheckpointsCompleted for summary |
+| **Tests** | 54 Unit Tests | ✅ CODE DONE | `QuizVerificationEngine.spec.ts` (12), `QuizStatsManager.spec.ts` (9), `QuizSchemaValidator.spec.ts` (11), `useQuizStore.spec.ts` (18), `quizLoader.spec.ts` (4) — ALL PASS |
+
 ---
 
 ## 3. Kiểm Kê Code Thực Tế Đã Có (File Inventory)
