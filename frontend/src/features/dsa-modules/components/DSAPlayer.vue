@@ -267,9 +267,39 @@ onBeforeUnmount(() => {
 
 <style scoped>
 .ctrl-btn {
-  @apply w-8 h-8 rounded-lg bg-slate-800 border border-slate-700 text-slate-300 hover:bg-slate-700 hover:text-white transition-colors flex items-center justify-center text-sm;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 0.5rem;
+  background-color: #1e293b;
+  border: 1px solid #334155;
+  color: #cbd5e1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.875rem;
+  transition: color 0.15s, background-color 0.15s;
+  cursor: pointer;
+}
+.ctrl-btn:hover {
+  background-color: #334155;
+  color: #ffffff;
 }
 .ctrl-btn-primary {
-  @apply w-10 h-10 rounded-full bg-cyan-600 hover:bg-cyan-500 text-white transition-colors flex items-center justify-center text-base font-bold;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 9999px;
+  background-color: #0891b2;
+  border: none;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  font-weight: 700;
+  transition: background-color 0.15s;
+  cursor: pointer;
+}
+.ctrl-btn-primary:hover {
+  background-color: #06b6d4;
 }
 </style>
