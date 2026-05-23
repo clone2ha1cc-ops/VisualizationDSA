@@ -298,3 +298,27 @@ Các ADR sau đây được ghi trong tài liệu đặc tả nhưng **chưa có
   - Module: compare-algorithms/index.ts (barrel export)
   - Integration: App.vue ("So sánh" tab)
   - Tests: UnifiedPlaybackCoordinator.spec.ts (10), useCompareAlgorithmsStore.spec.ts (19), UnifiedRenderScheduler.spec.ts (4) — 33 tests total
+
+---
+
+## ADR-15: Concurrency Visualizer — Event-Driven Thread Simulation & DFS Deadlock Detection
+
+- **Trạng thái:** ✅ IMPLEMENTED
+- **Ngữ cảnh:** Sinh viên cần hiểu cơ chế đa luồng (Race Condition, Deadlock, Producer-Consumer, Dining Philosophers) nhưng OS thread thật không thể pause/scrub/replay.
+- **Quyết định:** Triển khai Event-Driven Simulation Engine 100% client-side, mô phỏng Thread State Machine (READY → RUNNING → BLOCKED ↔ RUNNING → FINISHED) qua chuỗi `ScenarioStep[]` tuần tự. Mutex Lock dùng queue-based acquisition: thread bị BLOCKED nếu lock đã chiếm, tự thức dậy (RUNNING) khi lock được giải phóng. Deadlock detection qua DFS trên Wait-For Graph (WFG) — adjacency list: Thread A → Thread B khi A chờ lock mà B giữ. Chu trình DFS (recStack) = Deadlock.
+- **Kiến trúc:**
+  - `ConcurrencySimulationEngine` — acquireLock (queue), releaseLock (wake signal), moveThread (progress 0-100%), incrementCounter, getEngineState.
+  - `DeadlockDetector` — static detectDeadlock: build WFG adjacency, DFS with recStack, extract cycleThreadIds.
+  - `useConcurrencyStore` — Pinia setup store: step-by-step execution, history snapshots (scrub backward via snapshot restore), deadlock check after every step, togglePlayPause, scrubToStep, setMutexEnabled.
+  - `ThreadRailsCanvas.vue` — Horizontal rails (Slate), runner nodes (Cyan/Amber/Emerald neon), Critical Section gate (rose overlay), Mutex padlock icon (open/locked), Deadlock Neon Rose pulse animation.
+  - 4 scenario presets: Race Condition (24 steps), Deadlock Demo (12 steps), Producer-Consumer (18 steps), Dining Philosophers (20 steps).
+- **Hệ quả:** Sinh viên toggle Mutex BẬT/TẮT để thấy Race Condition vs Synchronized. Deadlock tự phát hiện với neon rose alert. Toàn bộ pausable/seekable/replayable.
+- **File liên quan:**
+  - Types: concurrency-viz/types/concurrency.types.ts
+  - Engine: concurrency-viz/engine/ConcurrencySimulationEngine.ts (includes DeadlockDetector)
+  - Store: concurrency-viz/store/useConcurrencyStore.ts
+  - Scenarios: concurrency-viz/scenarios/concurrencyScenarios.ts (4 presets)
+  - Components: ThreadRailsCanvas.vue, ConcurrencyWorkspace.vue
+  - Module: concurrency-viz/index.ts (barrel export)
+  - Integration: App.vue ("Đa luồng" tab)
+  - Tests: ConcurrencySimulationEngine.spec.ts (16), useConcurrencyStore.spec.ts (19) — 35 tests total
