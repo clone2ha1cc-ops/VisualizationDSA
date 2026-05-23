@@ -115,6 +115,22 @@ export const useLectureStore = defineStore('lecture', () => {
     }
   }
 
+  function lockLectureInteraction(): void {
+    animStore.pause();
+    animStore.setInteractionLocked(true);
+  }
+
+  function unlockLectureInteraction(): void {
+    animStore.setInteractionLocked(false);
+  }
+
+  function resumeLecturePlayback(): void {
+    animStore.setInteractionLocked(false);
+    if (isActive.value && !isLastSlide.value) {
+      nextSlide();
+    }
+  }
+
   function exitLecture(): void {
     if (isWaitingForAnimation.value) {
       animStore.cancelPlayUntil();
@@ -147,5 +163,8 @@ export const useLectureStore = defineStore('lecture', () => {
     prevSlide,
     goToSlide,
     exitLecture,
+    lockLectureInteraction,
+    unlockLectureInteraction,
+    resumeLecturePlayback,
   };
 });

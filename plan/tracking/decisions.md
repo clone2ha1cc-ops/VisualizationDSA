@@ -216,3 +216,31 @@ Các ADR sau đây được ghi trong tài liệu đặc tả nhưng **chưa có
   - Scripts: pseudocode-sync/scripts/bubble-sort.pseudocode.ts, scriptLoader.ts
   - Integration: animation-engine/components/VisualizationPlayer.vue, animation-engine/services/algorithmApi.ts
   - Tests: PseudocodeSyncEngine.spec.ts (15), usePseudocodeStore.spec.ts (15), scriptLoader.spec.ts (7) — 37 tests total
+
+---
+
+## ADR-12: In-Canvas Hit-Target Verification (Euclidean Distance Quiz Engine)
+
+- **Trạng thái:** ✅ IMPLEMENTED — `quiz-system/engine/QuizVerificationEngine.ts`
+- **Ngữ cảnh:** Phase 1 Quiz System cần hỗ trợ câu hỏi CANVAS_TARGET — người học click trực tiếp vào node trên Canvas để trả lời, thay vì chọn phương án A/B/C/D truyền thống. Cần phương pháp xác minh va chạm (hit detection) chính xác.
+- **Quyết định:**
+  1. **Euclidean distance hit detection:** Sử dụng khoảng cách Euclid `d = sqrt((x - node.x)² + (y - node.y)²)` để xác định node nào bị click. Nếu `d ≤ node.radius` → hit. Tối ưu bằng so sánh `d² ≤ r²` tránh `Math.sqrt()`.
+  2. **Client-Side Verification:** Toàn bộ chấm điểm diễn ra ở trình duyệt qua `QuizVerificationEngine` static methods — không cần API roundtrip.
+  3. **Checkpoint Registry Pattern:** `quizLoader.ts` + `QuizScript` interface — thêm thuật toán mới = chỉ tạo 1 file quiz script, không sửa store hay component.
+  4. **localStorage Stats Persistence:** `QuizStatsManager` lưu thống kê (totalAttempts, correctAnswers, streak, completedQuizzes) vào `dsa_quiz_statistics` key, xử lý corrupted data gracefully.
+  5. **Checkpoint Repetition Prevention:** `completedCheckpointIndexes` array ngăn câu hỏi trigger lại khi tua ngược timeline.
+  6. **Lecture Interaction Lock:** Khi quiz active, `useLectureStore.lockLectureInteraction()` pause animation + set `interactionLocked=true`, `dismissQuestionAndContinue()` unlock.
+- **Hệ quả:**
+  - Câu hỏi MC/TF/CANVAS_TARGET đều xử lý qua cùng quiz store pipeline.
+  - Blank space click bỏ qua (không đếm sai), chỉ submit khi đúng matchedNodeId.
+  - Glassmorphism overlay + Neon glow (emerald/rose) + shake animation cho UX feedback tức thì.
+  - Quiz Summary Card hiển thị accuracy/streak/correct badges khi hoàn thành tất cả checkpoints.
+  - Mở rộng sang thuật toán mới = chỉ thêm 1 quiz script file + register vào quizLoader.
+- **File liên quan:**
+  - Types: quiz-system/types/quiz.types.ts
+  - Engine: quiz-system/engine/QuizVerificationEngine.ts, QuizStatsManager.ts, QuizSchemaValidator.ts
+  - Store: quiz-system/store/useQuizStore.ts, e-lecture/store/useLectureStore.ts (lock/unlock/resume)
+  - Components: quiz-system/components/QuizCardOverlay.vue, QuizSummaryCard.vue
+  - Scripts: quiz-system/scripts/bubble-sort.quiz.ts, quizLoader.ts
+  - Integration: animation-engine/components/VisualizationPlayer.vue (checkpoint watch)
+  - Tests: QuizVerificationEngine.spec.ts (12), QuizStatsManager.spec.ts (9), QuizSchemaValidator.spec.ts (11), useQuizStore.spec.ts (18), quizLoader.spec.ts (4) — 54 tests total
