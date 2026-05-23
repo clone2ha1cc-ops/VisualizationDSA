@@ -355,3 +355,13 @@ Tài liệu này ghi nhận trạng thái kiểm thử đơn vị tự động (
 | 307 | **CompilerStore** | Double compilation prevention | Second call ignored while compiling | PASSED |
 | 308 | **CompilerStore** | cancelExecution | terminateActiveSession called, isCompiling=false | PASSED |
 | 309 | **CompilerStore** | Error line info in log | errorLine=3 log contains Dong so 3 | PASSED |
+
+### Phase 2 Code-to-Visualization Compiler — 5 UI End-to-End Tests
+
+| STT | Phân hệ kiểm thử | Tính năng hạt nhân được xác thực | Phương thức kiểm tra | Trạng thái |
+| :--- | :--- | :--- | :--- | :--- |
+| UI-1 | **CodeWorkspace** | Empty state (Monaco + Console + Canvas) | Code IDE tab loads: dark theme, Bubble Sort code, Console 0 dòng, UNINITIALIZED green dot | PASSED |
+| UI-2 | **Full Pipeline** | AST compile → Worker execute → Canvas animate | RUN → Console INFO→SUCCESS→SUCCESS, 71 frames generated, 9 bars animate with compare/swap highlights | PASSED |
+| UI-3 | **ASTInstrumentation** | Syntax error detection + error glow | Broken JS → rose dot, red glow border, [LỖI] Unexpected token error | PASSED |
+| UI-4 | **WorkerCoordinator** | Infinite loop protection (__loopCounter guard) | while(true) → loop guard at 5000, [LỖI] error, UI responsive | PASSED |
+| UI-5 | **CodeWorkspace** | Invalid input array rejection | "abc, def" → red border, RUN blocked, no new console logs | PASSED |

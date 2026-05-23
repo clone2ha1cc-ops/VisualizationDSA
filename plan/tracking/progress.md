@@ -151,6 +151,8 @@ Tài liệu này theo dõi chi tiết tiến độ hoàn thành **code thực t�
 | **Integration** | App.vue Code IDE tab + module barrel export | ✅ CODE DONE | New "Code IDE" tab in `App.vue`, `index.ts` barrel export |
 | **Dependencies** | acorn, acorn-walk, escodegen + @types | ✅ CODE DONE | `acorn`, `acorn-walk`, `escodegen`, `@types/escodegen`, `@types/estree` |
 | **Tests** | 32 Unit Tests | ✅ CODE DONE | `ASTInstrumentationEngine.spec.ts` (14), `WorkerLifecycleCoordinator.spec.ts` (7), `useLiveCompilerStore.spec.ts` (11) — ALL PASS |
+| **Bug Fix** | 3 Runtime Bugs Fixed | ✅ CODE DONE | Bug 1: Vue Proxy spread `[...inputArray.value]` (useLiveCompilerStore.ts); Bug 2: `__loopCounter` duplicate removed from Function params (WorkerLifecycleCoordinator.ts); Bug 3: `appendAutoInvoke()` appends `functionName(arr)` call (ASTInstrumentationEngine.ts:60-78) |
+| **UI Testing** | 5 UI End-to-End Tests | ✅ ALL PASSED | Empty state, Success flow (71 frames), Syntax error, Infinite loop (5000 guard), Invalid input — PR #11 comment with screenshots |
 
 ---
 
