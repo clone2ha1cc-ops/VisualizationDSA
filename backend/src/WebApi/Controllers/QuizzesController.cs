@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Asp.Versioning;
 using System;
 using System.Collections.Generic;
 using System.Security.Claims;
@@ -9,8 +10,9 @@ using VisualizationDSA.Application.Services;
 
 namespace VisualizationDSA.WebApi.Controllers
 {
+    [ApiVersion("1.0")]
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("api/v{version:apiVersion}/[controller]")]
     [Authorize]
     public class QuizzesController : ControllerBase
     {
@@ -54,10 +56,10 @@ namespace VisualizationDSA.WebApi.Controllers
         }
 
         [HttpGet("history")]
-        public async Task<ActionResult<IEnumerable<QuizAttempt>>> GetHistory()
+        public async Task<ActionResult<IEnumerable<QuizAttemptDto>>> GetHistory([FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10)
         {
-            var userId = GetCurrentUserId();
-            var history = await _quizService.GetUserQuizHistoryAsync(userId);
+            var userId  = GetCurrentUserId();
+            var history = await _quizService.GetUserQuizHistoryAsync(userId, pageNumber, pageSize);
             return Ok(history);
         }
 

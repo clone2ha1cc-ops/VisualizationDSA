@@ -7,6 +7,8 @@ namespace VisualizationDSA.Application.Services
     {
         Task<AuthResponse> RegisterAsync(RegisterRequest request);
         Task<AuthResponse> LoginAsync(LoginRequest request);
-        Task<UserDto> GetCurrentUserAsync(string userId);
+        Task<AuthResponse> RefreshTokenAsync(string refreshToken);
+        Task              LogoutAsync(string refreshToken);
+        Task<UserDto>      GetCurrentUserAsync(string userId);
     }
 }

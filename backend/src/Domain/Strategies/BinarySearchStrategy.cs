@@ -1,3 +1,7 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
 using VisualizationDSA.Domain.Engine;
 
 namespace VisualizationDSA.Domain.Strategies;
@@ -32,7 +36,7 @@ public class BinarySearchStrategy : AlgorithmStrategyBase
         };
     }
 
-    public override List<FrameDTO> Execute(int[] inputData)
+    public override List<FrameDTO> Execute(int[] inputData, CancellationToken cancellationToken = default)
     {
         InitializeRecorder();
 
@@ -48,6 +52,7 @@ public class BinarySearchStrategy : AlgorithmStrategyBase
 
         for (int k = 0; k < searchArr.Length - 1; k++)
         {
+            cancellationToken.ThrowIfCancellationRequested();
             if (searchArr[k] > searchArr[k + 1])
             {
                 throw new ArgumentException(
@@ -65,6 +70,7 @@ public class BinarySearchStrategy : AlgorithmStrategyBase
 
         while (low <= high)
         {
+            cancellationToken.ThrowIfCancellationRequested();
             int mid = (low + high) / 2;
 
             CaptureBinaryFrame(searchArr, 3,

@@ -33,7 +33,8 @@ Chào mừng bạn đến với **Deep Decomposition Master Index** của **Visu
 - [14. DI Visualizer](./phase2-di-visualization) `❌ SPEC ONLY`
 - [15. Embed Widget](./phase2-embed-widget) `❌ SPEC ONLY`
 - [16. Export & Share](./phase2-export-share) `❌ SPEC ONLY`
-- [17. Gamification System](./phase2-gamification) `❌ SPEC ONLY`
+- **[17. Gamification System](./phase2-gamification)** `✅ CODE DONE` — **Phase 2 Gamification System**: Đồng bộ XP engine và bảng Levels giữa frontend `XPEngine.ts` ↔ backend `User.cs` và `GamificationService.cs`, tích hợp `useQuizStore` đồng bộ kết quả trực tiếp với backend `POST /quizzes/attempt`, thêm endpoint `GET /gamification/config` và `GET /users/me/badges`.
+
 - [18. Learning Path](./phase2-learning-path) `❌ SPEC ONLY`
 - [19. Multi-View Layout](./phase2-multi-view) `❌ SPEC ONLY`
 - [20. OOP Concepts Visualizer](./phase2-oop-visualization) `❌ SPEC ONLY` ~~`[XONG]`~~

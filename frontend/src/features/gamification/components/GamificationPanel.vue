@@ -105,10 +105,10 @@
         >
           <div class="flex items-center gap-3">
             <div 
-              class="w-10 h-10 rounded-lg flex items-center justify-center text-xl"
+              class="w-10 h-10 rounded-lg flex items-center justify-center"
               :style="{ backgroundColor: badge.color + '20', border: `1px solid ${badge.color}` }"
             >
-              {{ badge.icon }}
+              <BaseIcon :name="badge.id" class="w-5 h-5" :style="{ color: badge.color }" />
             </div>
             <div>
               <div class="text-xs font-bold" :style="{ color: badge.color }">{{ badge.name }}</div>
@@ -124,10 +124,10 @@
           <div 
             v-for="badge in lockedBadges" 
             :key="badge.id"
-            class="px-3 py-2 rounded-lg bg-slate-900/30 border border-slate-800 text-slate-600 opacity-50"
+            class="px-3 py-2 rounded-lg bg-slate-900/30 border border-slate-800 text-slate-600 opacity-50 flex items-center gap-1.5"
           >
-            <span class="text-sm">{{ badge.icon }}</span>
-            <span class="text-[10px] ml-1">{{ badge.name }}</span>
+            <BaseIcon :name="badge.id" class="w-4 h-4 text-slate-500" />
+            <span class="text-[10px]">{{ badge.name }}</span>
           </div>
         </div>
       </div>
@@ -191,8 +191,8 @@
 
     <!-- Level Up Notification -->
     <div v-if="showLevelUp" class="p-3 bg-gradient-to-r from-yellow-900/50 to-amber-900/30 border border-yellow-700/50 rounded-lg animate-pulse">
-      <div class="flex items-center gap-2">
-        <span class="text-xl">🎉</span>
+      <div class="flex items-center gap-3">
+        <BaseIcon name="success" class="w-6 h-6 text-yellow-400" />
         <div>
           <div class="text-sm font-bold text-yellow-400">Level Up!</div>
           <div class="text-[10px] text-yellow-300">You've reached Level {{ progress.currentLevel }}</div>

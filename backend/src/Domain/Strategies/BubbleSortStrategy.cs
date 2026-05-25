@@ -1,3 +1,4 @@
+using System.Threading;
 using VisualizationDSA.Domain.Engine;
 
 namespace VisualizationDSA.Domain.Strategies;
@@ -25,7 +26,7 @@ public class BubbleSortStrategy : AlgorithmStrategyBase
         };
     }
 
-    public override List<FrameDTO> Execute(int[] inputData)
+    public override List<FrameDTO> Execute(int[] inputData, CancellationToken cancellationToken = default)
     {
         InitializeRecorder();
         int[] arr = (int[])inputData.Clone();
@@ -36,8 +37,10 @@ public class BubbleSortStrategy : AlgorithmStrategyBase
 
         for (int i = 0; i < n - 1; i++)
         {
+            cancellationToken.ThrowIfCancellationRequested();
             for (int j = 0; j < n - i - 1; j++)
             {
+                cancellationToken.ThrowIfCancellationRequested();
                 CaptureState(arr, 2,
                     $"So sánh A[{j}] ({arr[j]}) và A[{j + 1}] ({arr[j + 1]})",
                     compares: new List<int> { j, j + 1 },

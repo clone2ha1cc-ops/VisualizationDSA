@@ -1,3 +1,4 @@
+using System.Threading;
 using VisualizationDSA.Domain.Engine;
 
 namespace VisualizationDSA.Domain.Strategies;
@@ -26,7 +27,7 @@ public class LinearSearchStrategy : AlgorithmStrategyBase
         };
     }
 
-    public override List<FrameDTO> Execute(int[] inputData)
+    public override List<FrameDTO> Execute(int[] inputData, CancellationToken cancellationToken = default)
     {
         InitializeRecorder();
 
@@ -47,6 +48,7 @@ public class LinearSearchStrategy : AlgorithmStrategyBase
         bool found = false;
         for (int i = 0; i < searchArr.Length; i++)
         {
+            cancellationToken.ThrowIfCancellationRequested();
             CaptureSearchFrame(searchArr, 2,
                 $"Kiểm tra A[{i}] = {searchArr[i]} có bằng target ({target})?",
                 target,

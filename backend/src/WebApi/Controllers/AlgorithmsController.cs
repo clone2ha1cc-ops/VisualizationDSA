@@ -1,3 +1,4 @@
+using Asp.Versioning;
 using Microsoft.AspNetCore.Mvc;
 using VisualizationDSA.Application.DTOs;
 using VisualizationDSA.Domain.Engine;
@@ -6,8 +7,9 @@ using VisualizationDSA.Domain.Strategies;
 
 namespace VisualizationDSA.WebApi.Controllers;
 
+[ApiVersion("1.0")]
 [ApiController]
-[Route("api/v1/[controller]")]
+[Route("api/v{version:apiVersion}/[controller]")]
 public class AlgorithmsController : ControllerBase
 {
     private readonly IEnumerable<IAlgorithmStrategy> _strategies;
@@ -95,7 +97,7 @@ public class AlgorithmsController : ControllerBase
 
         try
         {
-            var frames = strategy.Execute(request.InputData);
+            var frames = strategy.Execute(request.InputData, HttpContext.RequestAborted);
             var result = new AlgorithmResult
             {
                 AlgorithmId = strategy.AlgorithmId,
@@ -179,7 +181,7 @@ public class AlgorithmsController : ControllerBase
         {
             var result = await Task.Run(() =>
             {
-                var frames = strategy.Execute(parsedArray);
+                var frames = strategy.Execute(parsedArray, linkedSource.Token);
                 return new AlgorithmResult
                 {
                     AlgorithmId = strategy.AlgorithmId,
@@ -221,4 +223,85 @@ public class AlgorithmsController : ControllerBase
             _ => "Medium"
         };
     }
+
+    /// <summary>
+    /// So sánh nhiều thuật toán cùng một input — trả về frames + server-side timing.
+    /// POST /api/v1/algorithms/compare
+    /// ✅ B1: Batch execute thay vì N requests riêng lẻ từ frontend.
+    /// </summary>
+    [HttpPost("compare")]
+    public ActionResult<IEnumerable<CompareResultDto>> Compare([FromBody] CompareRequestDto request)
+    {
+        if (request.AlgorithmIds == null || request.AlgorithmIds.Length == 0)
+            return BadRequest(new { errorType = "EMPTY_ALGORITHMS", message = "Danh sách thuật toán không được rỗng." });
+
+        if (request.InputData == null || request.InputData.Length == 0)
+            return BadRequest(new { errorType = "EMPTY_INPUT", message = "Dữ liệu đầu vào không được rỗng." });
+
+        if (request.AlgorithmIds.Length > 4)
+            return BadRequest(new { errorType = "TOO_MANY_ALGORITHMS", message = "Tối đa 4 thuật toán mỗi lần so sánh." });
+
+        var results = new List<CompareResultDto>();
+
+        foreach (var algorithmId in request.AlgorithmIds)
+        {
+            var strategy = _strategies.FirstOrDefault(s =>
+                s.AlgorithmId.Equals(algorithmId, StringComparison.OrdinalIgnoreCase));
+
+            if (strategy == null)
+            {
+                results.Add(new CompareResultDto
+                {
+                    AlgorithmId = algorithmId,
+                    Error       = $"Thuật toán '{algorithmId}' không tồn tại."
+                });
+                continue;
+            }
+
+            var sw = System.Diagnostics.Stopwatch.StartNew();
+            try
+            {
+                var frames = strategy.Execute(request.InputData, HttpContext.RequestAborted);
+                sw.Stop();
+
+                results.Add(new CompareResultDto
+                {
+                    AlgorithmId     = strategy.AlgorithmId,
+                    Name            = strategy.Name,
+                    ElapsedMs       = sw.Elapsed.TotalMilliseconds,
+                    FrameCount      = frames.Count,
+                    TimeComplexity  = strategy.GetMetadata().TimeComplexity,
+                    SpaceComplexity = strategy.GetMetadata().SpaceComplexity,
+                    Frames          = frames
+                });
+            }
+            catch (Exception ex)
+            {
+                sw.Stop();
+                results.Add(new CompareResultDto
+                {
+                    AlgorithmId = algorithmId,
+                    Error       = ex.Message
+                });
+            }
+        }
+
+        return Ok(results);
+    }
+}
+
+/// <summary>Request DTO cho /compare endpoint.</summary>
+public record CompareRequestDto(string[] AlgorithmIds, int[] InputData);
+
+/// <summary>Result DTO cho từng thuật toán trong /compare response.</summary>
+public class CompareResultDto
+{
+    public string  AlgorithmId     { get; set; } = string.Empty;
+    public string? Name            { get; set; }
+    public double  ElapsedMs       { get; set; }
+    public int     FrameCount      { get; set; }
+    public string? TimeComplexity  { get; set; }
+    public string? SpaceComplexity { get; set; }
+    public System.Collections.Generic.List<VisualizationDSA.Domain.Engine.FrameDTO>? Frames { get; set; }
+    public string? Error           { get; set; }
 }

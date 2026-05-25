@@ -1,3 +1,7 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
 using VisualizationDSA.Domain.Engine;
 
 namespace VisualizationDSA.Domain.Strategies;
@@ -41,7 +45,7 @@ public class BSTStrategy : AlgorithmStrategyBase
         };
     }
 
-    public override List<FrameDTO> Execute(int[] inputData)
+    public override List<FrameDTO> Execute(int[] inputData, CancellationToken cancellationToken = default)
     {
         InitializeRecorder();
         int nodeIdCounter = 0;
@@ -51,7 +55,8 @@ public class BSTStrategy : AlgorithmStrategyBase
 
         foreach (int val in inputData)
         {
-            root = Insert(root, val, ref nodeIdCounter, root);
+            cancellationToken.ThrowIfCancellationRequested();
+            root = Insert(root, val, ref nodeIdCounter, root, cancellationToken);
         }
 
         CaptureBSTFrame(root, 0,
@@ -59,7 +64,7 @@ public class BSTStrategy : AlgorithmStrategyBase
             new List<int>());
 
         var inorderResult = new List<int>();
-        InorderTraversal(root, inorderResult);
+        InorderTraversal(root, inorderResult, cancellationToken);
 
         CaptureBSTFrame(root, 0,
             $"Duyệt LNR hoàn tất: [{string.Join(", ", inorderResult)}]",
@@ -68,8 +73,9 @@ public class BSTStrategy : AlgorithmStrategyBase
         return _frames;
     }
 
-    private BSTNode Insert(BSTNode? node, int value, ref int idCounter, BSTNode? root)
+    private BSTNode Insert(BSTNode? node, int value, ref int idCounter, BSTNode? root, CancellationToken cancellationToken)
     {
+        cancellationToken.ThrowIfCancellationRequested();
         if (node == null)
         {
             var newNode = new BSTNode { Id = ++idCounter, Value = value };
@@ -89,7 +95,7 @@ public class BSTStrategy : AlgorithmStrategyBase
                 new List<int>(),
                 highlightNodeId: node.Id);
 
-            node.Left = Insert(node.Left, value, ref idCounter, root);
+            node.Left = Insert(node.Left, value, ref idCounter, root, cancellationToken);
         }
         else
         {
@@ -98,17 +104,18 @@ public class BSTStrategy : AlgorithmStrategyBase
                 new List<int>(),
                 highlightNodeId: node.Id);
 
-            node.Right = Insert(node.Right, value, ref idCounter, root);
+            node.Right = Insert(node.Right, value, ref idCounter, root, cancellationToken);
         }
 
         return node;
     }
 
-    private void InorderTraversal(BSTNode? node, List<int> result)
+    private void InorderTraversal(BSTNode? node, List<int> result, CancellationToken cancellationToken)
     {
         if (node == null) return;
+        cancellationToken.ThrowIfCancellationRequested();
 
-        InorderTraversal(node.Left, result);
+        InorderTraversal(node.Left, result, cancellationToken);
 
         result.Add(node.Value);
 
@@ -117,7 +124,7 @@ public class BSTStrategy : AlgorithmStrategyBase
             result,
             highlightNodeId: node.Id);
 
-        InorderTraversal(node.Right, result);
+        InorderTraversal(node.Right, result, cancellationToken);
     }
 
     private void CaptureBSTFrame(

@@ -1,3 +1,4 @@
+using System.Threading;
 using VisualizationDSA.Domain.Engine;
 
 namespace VisualizationDSA.Domain.Strategies;
@@ -28,7 +29,7 @@ public class InsertionSortStrategy : AlgorithmStrategyBase
         };
     }
 
-    public override List<FrameDTO> Execute(int[] inputData)
+    public override List<FrameDTO> Execute(int[] inputData, CancellationToken cancellationToken = default)
     {
         InitializeRecorder();
         int[] arr = (int[])inputData.Clone();
@@ -41,6 +42,7 @@ public class InsertionSortStrategy : AlgorithmStrategyBase
 
         for (int i = 1; i < n; i++)
         {
+            cancellationToken.ThrowIfCancellationRequested();
             int key = arr[i];
             int j = i - 1;
 
@@ -51,6 +53,7 @@ public class InsertionSortStrategy : AlgorithmStrategyBase
 
             while (j >= 0 && arr[j] > key)
             {
+                cancellationToken.ThrowIfCancellationRequested();
                 CaptureState(arr, 3,
                     $"A[{j}] ({arr[j]}) > key ({key}). Dịch A[{j}] sang phải.",
                     compares: new List<int> { j },

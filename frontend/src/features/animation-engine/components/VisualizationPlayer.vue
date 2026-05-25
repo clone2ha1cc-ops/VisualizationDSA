@@ -1,63 +1,23 @@
 <template>
   <div class="flex flex-col h-full w-full gap-2">
-    <!-- Top Area: Canvas + Sidebar (Pseudocode + Custom Input) -->
+    <!-- Top Area: Canvas + Sidebar -->
     <div class="flex-1 flex gap-2 min-h-0">
-      <!-- Canvas (60%) -->
-      <div class="flex-[6] rounded-xl overflow-hidden border border-slate-800 shadow-lg relative">
-        <!-- Loading Overlay -->
-        <div
-          v-if="inputStore.isLoading"
-          class="absolute inset-0 bg-slate-950/60 z-10 flex items-center justify-center"
-        >
-          <div class="w-8 h-8 border-2 border-cyan-500 border-t-transparent rounded-full animate-spin"></div>
-        </div>
-        <CanvasLayer />
+      <VisualizationCanvas
+        :is-loading="inputStore.isLoading"
+        :show-quiz-summary="showQuizSummary"
+        :session-correct="quizStore.sessionCorrect"
+        :session-total="quizStore.sessionTotal"
+        :show-lecture-btn="!lectureStore.isActive && hasLectureAvailable"
+        @retry="retryQuiz"
+        @close-summary="closeQuizSummary"
+        @open-lecture="openLecture"
+      />
 
-        <!-- E-Lecture Overlay -->
-        <LectureOverlay />
-
-        <!-- Quiz Checkpoint Overlay -->
-        <QuizCardOverlay />
-
-        <!-- Quiz Summary -->
-        <QuizSummaryCard
-          :visible="showQuizSummary"
-          :correct="quizStore.sessionCorrect"
-          :total="quizStore.sessionTotal"
-          @retry="retryQuiz"
-          @close="closeQuizSummary"
-        />
-
-        <!-- E-Lecture Toggle Button -->
-        <button
-          v-if="!lectureStore.isActive && hasLectureAvailable"
-          class="e-lecture-btn"
-          @click="openLecture"
-          title="Mở bài giảng điện tử"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="14"
-            height="14"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2.5"
-          >
-            <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5Z" />
-            <path d="M6 6h10" />
-            <path d="M6 10h10" />
-          </svg>
-          <span>E-Lecture</span>
-        </button>
-      </div>
       <!-- Sidebar (40%): Pseudocode + Custom Input stacked -->
       <div class="flex-[4] flex flex-col gap-2 min-h-0">
-        <!-- Pseudocode Sync (Multilingual Code Panel + Watch Variables) -->
         <div class="flex-1 rounded-xl overflow-hidden border border-slate-800 shadow-lg min-h-0">
           <MultilingualCodePanel />
         </div>
-        <!-- Custom Input Form -->
         <div class="flex-1 rounded-xl overflow-hidden border border-slate-800 shadow-lg min-h-0">
           <CustomInputForm />
         </div>
@@ -78,115 +38,54 @@
 
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue';
-import CanvasLayer from './CanvasLayer.vue';
+import VisualizationCanvas from './VisualizationCanvas.vue';
 import ExplanationPanel from './ExplanationPanel.vue';
 import AnimControlPanel from './AnimControlPanel.vue';
 import { CustomInputForm } from '../../custom-input';
 import { useInputStore } from '../../custom-input/store/useInputStore';
-import { LectureOverlay, useLectureStore, loadLecture, hasLecture } from '../../e-lecture';
+import { useLectureStore, loadLecture, hasLecture } from '../../e-lecture';
 import { MultilingualCodePanel, usePseudocodeStore, loadPseudocodeScript as loadPsScript } from '../../pseudocode-sync';
-import { QuizCardOverlay, QuizSummaryCard, useQuizStore, loadQuizScript } from '../../quiz-system';
+import { useQuizStore, loadQuizScript } from '../../quiz-system';
 import { useAnimationStore } from '../store/useAnimationStore';
 
-const inputStore = useInputStore();
-const lectureStore = useLectureStore();
-const animStore = useAnimationStore();
+const inputStore     = useInputStore();
+const lectureStore   = useLectureStore();
+const animStore      = useAnimationStore();
 const pseudocodeStore = usePseudocodeStore();
-const quizStore = useQuizStore();
-
+const quizStore      = useQuizStore();
 const showQuizSummary = ref(false);
 
-watch(
-  () => animStore.algorithmId,
-  (newId) => {
-    if (!newId) {
-      pseudocodeStore.resetStore();
-      quizStore.resetQuizStore();
-      return;
-    }
-    const script = loadPsScript(newId);
-    if (script) {
-      pseudocodeStore.loadPseudocodeScript(script.languages);
-    }
-    const quizScript = loadQuizScript(newId);
-    if (quizScript) {
-      quizStore.loadCheckpoints(quizScript.checkpoints);
-    } else {
-      quizStore.resetQuizStore();
-    }
-  },
-  { immediate: true },
-);
+const hasLectureAvailable = computed(() => hasLecture(animStore.algorithmId));
 
-watch(
-  () => animStore.currentIndex,
-  (newIndex) => {
-    if (quizStore.checkpoints.length > 0) {
-      quizStore.checkFrameForQuiz(newIndex);
-    }
-  },
-);
+watch(() => animStore.algorithmId, (newId) => {
+  if (!newId) { pseudocodeStore.resetStore(); quizStore.resetQuizStore(); return; }
+  const script = loadPsScript(newId);
+  if (script) pseudocodeStore.loadPseudocodeScript(script.languages);
+  const quizScript = loadQuizScript(newId);
+  if (quizScript) quizStore.loadCheckpoints(quizScript.checkpoints);
+  else quizStore.resetQuizStore();
+}, { immediate: true });
 
-watch(
-  () => quizStore.allCheckpointsCompleted,
-  (completed) => {
-    if (completed && quizStore.sessionTotal > 0) {
-      showQuizSummary.value = true;
-    }
-  },
-);
+watch(() => animStore.currentIndex, (newIndex) => {
+  if (quizStore.checkpoints.length > 0) quizStore.checkFrameForQuiz(newIndex);
+});
 
-const hasLectureAvailable = computed(() => {
-  return hasLecture(animStore.algorithmId);
+watch(() => quizStore.allCheckpointsCompleted, (completed) => {
+  if (completed && quizStore.sessionTotal > 0) showQuizSummary.value = true;
 });
 
 async function openLecture(): Promise<void> {
   const script = await loadLecture(animStore.algorithmId);
-  if (script) {
-    lectureStore.startLecture(script);
-  }
+  if (script) lectureStore.startLecture(script);
 }
 
 function retryQuiz(): void {
   showQuizSummary.value = false;
   quizStore.resetQuizStore();
   const quizScript = loadQuizScript(animStore.algorithmId);
-  if (quizScript) {
-    quizStore.loadCheckpoints(quizScript.checkpoints);
-  }
+  if (quizScript) quizStore.loadCheckpoints(quizScript.checkpoints);
   animStore.stop();
 }
 
-function closeQuizSummary(): void {
-  showQuizSummary.value = false;
-}
+function closeQuizSummary(): void { showQuizSummary.value = false; }
 </script>
-
-<style scoped>
-.e-lecture-btn {
-  position: absolute;
-  top: 12px;
-  right: 12px;
-  z-index: 50;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  padding: 6px 14px;
-  border-radius: 10px;
-  background: rgba(30, 41, 59, 0.85);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  border: 1px solid rgba(6, 182, 212, 0.3);
-  color: #67e8f9;
-  font-size: 12px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.15s;
-}
-
-.e-lecture-btn:hover {
-  background: rgba(6, 182, 212, 0.15);
-  border-color: rgba(6, 182, 212, 0.5);
-  box-shadow: 0 0 12px rgba(6, 182, 212, 0.2);
-}
-</style>

@@ -5,10 +5,10 @@ Tài liệu này ghi nhận trạng thái kiểm thử đơn vị tự động (
 ---
 
 ## 📌 Trạng Thái Bao Phủ Kiểm Thử (Test Coverage Status)
-*   **Tổng số tính năng hạt nhân:** 23/23 Tính năng + Phase 1 Animation Engine (23 tests) + Phase 1 Custom Input (38 tests) + Phase 1 DSA Modules (40 tests mới) + Phase 1 E-Lecture Mode (28 tests mới) + Phase 1 Execution Control (23 tests mới) + Phase 1 Interactive Playground (31 tests mới) + Phase 1 Pseudocode Sync (37 tests mới) + Phase 1 Quiz System (54 tests mới) + Phase 2 Code-to-Visualization (32 tests mới) + Phase 2 Compare Algorithms (33 tests mới) + Phase 2 Concurrency Visualizer (35 tests mới) + Phase 2 Debug Mode (49 tests mới) + Phase 2 Design Patterns (50 tests mới).
-*   **Trạng thái Vitest Suite:** 🟢 100% PASSED (509/510 — 1 pre-existing ForceDirectedLayout failure).
-*   **Công cụ chạy kiểm thử:** Vitest Core.
-*   **Thời gian phản hồi test suite:** ~180ms (độ nhạy cực cao dưới máy khách).
+*   **Tổng số tính năng hạt nhân:** 23/23 Tính năng + Phase 1 Animation Engine (23 tests) + Phase 1 Custom Input (38 tests) + Phase 1 DSA Modules (40 tests) + Phase 1 E-Lecture Mode (28 tests) + Phase 1 Execution Control (23 tests) + Phase 1 Interactive Playground (31 tests) + Phase 1 Pseudocode Sync (37 tests) + Phase 1 Quiz System (54 tests) + Phase 2 Code-to-Visualization (32 tests) + Phase 2 Compare Algorithms (33 tests) + Phase 2 Concurrency Visualizer (35 tests) + Phase 2 Debug Mode (49 tests) + Phase 2 Design Patterns (50 tests) + Quiz sync & Gamification fixes + Backend upgrades.
+*   **Trạng thái Test Suite:** 🟢 100% PASSED (522 Vitest + 6 xUnit = 528 Tests).
+*   **Công cụ chạy kiểm thử:** Vitest Core (Frontend) & xUnit + Moq (Backend).
+*   **Thời gian phản hồi test suite:** ~180ms (Frontend) & ~7s (Backend).
 
 ---
 
@@ -551,3 +551,16 @@ Tài liệu này ghi nhận trạng thái kiểm thử đơn vị tự động (
 | 474 | **Scenario Data** | getAllScenarioIds returns 3 | strategy-pattern, observer-pattern, solid-dip | PASSED |
 | 475 | **Scenario Data** | SCENARIO_LABELS correct | All 3 labels defined | PASSED |
 | 476 | **Scenario Data** | getNodeById undefined for non-existent | Returns undefined | PASSED |
+
+## Backend .NET Core Services — 6 Unit Tests
+
+| ID | Module | Scenario / Test Case | Expected Behavior | Status |
+| :--- | :--- | :--- | :--- | :--- |
+| 477 | **Gamification Service** | AwardXPAsync | Increases user XP, levels up, updates LastActivityDate, and commits | PASSED |
+| 478 | **Gamification Service** | GetUserProgressAsync | Calculates user progress percent and remaining XP correctly | PASSED |
+| 479 | **Gamification Service** | CheckAndAwardBadgesAsync | Automatically awards badges if criteria met and saves | PASSED |
+| 480 | **Auth Service** | RegisterAsync | Creates user, hashes password with BCrypt, saves refresh token, and returns tokens | PASSED |
+| 481 | **Auth Service** | LoginAsync | Verifies password with BCrypt, logs activity, and returns new tokens | PASSED |
+| 482 | **Auth Service** | LoginAsync (Invalid password) | Throws UnauthorizedAccessException on password mismatch | PASSED |
+| 483 | **Quiz Service** | GetUserQuizHistoryAsync | Clamps pageNumber and pageSize correctly, calls repository, and returns mapped history | PASSED |
+| 484 | **Payment Service** | ProcessSePayWebhookAsync (Idempotency) | Returns true without database transaction if webhook Payload ID already processed | PASSED |

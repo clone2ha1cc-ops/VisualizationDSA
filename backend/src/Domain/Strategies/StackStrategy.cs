@@ -1,3 +1,7 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
 using VisualizationDSA.Domain.Engine;
 
 namespace VisualizationDSA.Domain.Strategies;
@@ -28,7 +32,7 @@ public class StackStrategy : AlgorithmStrategyBase
         };
     }
 
-    public override List<FrameDTO> Execute(int[] inputData)
+    public override List<FrameDTO> Execute(int[] inputData, CancellationToken cancellationToken = default)
     {
         InitializeRecorder();
         var stack = new List<int>();
@@ -37,6 +41,7 @@ public class StackStrategy : AlgorithmStrategyBase
 
         foreach (int val in inputData)
         {
+            cancellationToken.ThrowIfCancellationRequested();
             stack.Add(val);
             CaptureStackFrame(stack, 2,
                 $"Push({val}): Đẩy phần tử {val} vào đỉnh ngăn xếp.",
@@ -48,6 +53,7 @@ public class StackStrategy : AlgorithmStrategyBase
 
         while (stack.Count > 0)
         {
+            cancellationToken.ThrowIfCancellationRequested();
             int topIdx = stack.Count - 1;
             int topVal = stack[topIdx];
 

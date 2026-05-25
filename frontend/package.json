@@ -15,7 +15,8 @@
     "acorn-walk": "^8.3.5",
     "escodegen": "^2.1.0",
     "pinia": "^3.0.4",
-    "vue": "^3.5.34"
+    "vue": "^3.5.34",
+    "vue-router": "^4.6.4"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4.3.0",

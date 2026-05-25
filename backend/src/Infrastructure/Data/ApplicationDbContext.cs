@@ -8,13 +8,15 @@ namespace VisualizationDSA.Infrastructure.Data
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options) { }
 
-        public DbSet<User> Users { get; set; }
-        public DbSet<Badge> Badges { get; set; }
-        public DbSet<UserBadge> UserBadges { get; set; }
-        public DbSet<Quiz> Quizzes { get; set; }
-        public DbSet<QuizQuestion> QuizQuestions { get; set; }
-        public DbSet<QuizAttempt> QuizAttempts { get; set; }
+        public DbSet<User>           Users           { get; set; }
+        public DbSet<Badge>          Badges          { get; set; }
+        public DbSet<UserBadge>      UserBadges      { get; set; }
+        public DbSet<Quiz>           Quizzes         { get; set; }
+        public DbSet<QuizQuestion>   QuizQuestions   { get; set; }
+        public DbSet<QuizAttempt>    QuizAttempts    { get; set; }
         public DbSet<LearningProgress> LearningProgresses { get; set; }
+        public DbSet<RefreshToken>   RefreshTokens   { get; set; }
+        public DbSet<Order>          Orders          { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -26,12 +28,19 @@ namespace VisualizationDSA.Infrastructure.Data
                 entity.HasKey(e => e.Id);
                 entity.HasIndex(e => e.Email).IsUnique();
                 entity.HasIndex(e => e.Username).IsUnique();
+                entity.HasIndex(e => e.TotalXP);
                 entity.Property(e => e.Email).IsRequired().HasMaxLength(255);
                 entity.Property(e => e.Username).IsRequired().HasMaxLength(100);
                 entity.Property(e => e.PasswordHash).IsRequired();
                 entity.Property(e => e.TotalXP).HasDefaultValue(0);
                 entity.Property(e => e.CurrentLevel).HasDefaultValue(1);
                 entity.Property(e => e.StreakDays).HasDefaultValue(0);
+                // ✅ FIX 3.4: LastActivityDate — nullable, dùng để tính streak chính xác
+                entity.Property(e => e.LastActivityDate).IsRequired(false);
+                entity.Property<uint>("xmin")
+                    .HasColumnType("xid")
+                    .ValueGeneratedOnAddOrUpdate()
+                    .IsRowVersion();
             });
 
             // Badge configuration
@@ -85,6 +94,35 @@ namespace VisualizationDSA.Infrastructure.Data
                 entity.HasKey(e => e.Id);
                 entity.HasIndex(e => new { e.UserId, e.ModuleId }).IsUnique();
                 entity.HasOne(e => e.User).WithMany(u => u.LearningProgresses).HasForeignKey(e => e.UserId);
+            });
+
+            // RefreshToken configuration
+            modelBuilder.Entity<RefreshToken>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+                entity.HasIndex(e => e.Token).IsUnique();
+                entity.Property(e => e.Token).IsRequired().HasMaxLength(128);
+                entity.Property(e => e.IsRevoked).HasDefaultValue(false);
+                entity.HasOne(e => e.User)
+                      .WithMany()
+                      .HasForeignKey(e => e.UserId)
+                      .OnDelete(DeleteBehavior.Cascade);
+            });
+
+            // Order configuration
+            modelBuilder.Entity<Order>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+                entity.HasIndex(e => e.PaymentCode).IsUnique();
+                entity.HasIndex(e => e.TransactionReference).IsUnique();
+                entity.Property(e => e.PaymentCode).IsRequired().HasMaxLength(50);
+                entity.Property(e => e.TransactionReference).HasMaxLength(100);
+                entity.Property(e => e.Status).IsRequired().HasMaxLength(20).HasDefaultValue("Pending");
+                entity.Property(e => e.Amount).HasPrecision(18, 2);
+                entity.HasOne(e => e.User)
+                      .WithMany()
+                      .HasForeignKey(e => e.UserId)
+                      .OnDelete(DeleteBehavior.Cascade);
             });
         }
     }

@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { MonacoLineSyncerCoordinator } from '../MonacoLineSyncerCoordinator';
+import { MonacoLineSyncerCoordinator } from '../engine/MonacoLineSyncerCoordinator';
 
 describe('MonacoLineSyncerCoordinator Unit Tests', () => {
   let mockEditor: any;

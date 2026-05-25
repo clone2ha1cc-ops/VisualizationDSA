@@ -8,6 +8,7 @@ using VisualizationDSA.Application.Services;
 using VisualizationDSA.Domain.Entities;
 using VisualizationDSA.Domain.Interfaces;
 
+
 namespace VisualizationDSA.Infrastructure.Services
 {
     public class QuizService : IQuizService
@@ -29,7 +30,7 @@ namespace VisualizationDSA.Infrastructure.Services
 
         public async Task<QuizDto> GetQuizByIdAsync(Guid id)
         {
-            var quiz = await _unitOfWork.Quizzes.GetByIdAsync(id);
+            var quiz = await _unitOfWork.Quizzes.GetByIdWithQuestionsAsync(id);
             if (quiz == null) throw new Exception("Quiz not found");
             return MapToQuizDto(quiz);
         }
@@ -42,7 +43,7 @@ namespace VisualizationDSA.Infrastructure.Services
 
         public async Task<QuizAttemptResult> SubmitQuizAttemptAsync(Guid userId, QuizAttemptRequest request)
         {
-            var quiz = await _unitOfWork.Quizzes.GetByIdAsync(request.QuizId);
+            var quiz = await _unitOfWork.Quizzes.GetByIdWithQuestionsAsync(request.QuizId);
             if (quiz == null) throw new Exception("Quiz not found");
 
             var questions = quiz.Questions.ToList();
@@ -98,29 +99,24 @@ namespace VisualizationDSA.Infrastructure.Services
             };
         }
 
-        public async Task<IEnumerable<QuizAttempt>> GetUserQuizHistoryAsync(Guid userId)
+        public async Task<IEnumerable<QuizAttemptDto>> GetUserQuizHistoryAsync(Guid userId, int pageNumber, int pageSize)
         {
-            var attempts = await _unitOfWork.QuizAttempts.FindAsync(a => a.UserId == userId);
-            
-            var result = new List<QuizAttempt>();
-            foreach (var attempt in attempts)
-            {
-                var quiz = await _unitOfWork.Quizzes.GetByIdAsync(attempt.QuizId);
-                if (quiz != null)
-                {
-                    result.Add(new QuizAttempt
-                    {
-                        QuizId = attempt.QuizId,
-                        QuizTitle = quiz.Title,
-                        Score = attempt.Score,
-                        MaxScore = attempt.MaxScore,
-                        Passed = attempt.Passed,
-                        AttemptedAt = attempt.AttemptedAt
-                    });
-                }
-            }
+            // Clamp values safely
+            if (pageNumber < 1) pageNumber = 1;
+            if (pageSize < 1) pageSize = 10;
+            if (pageSize > 100) pageSize = 100;
 
-            return result.OrderByDescending(a => a.AttemptedAt);
+            var attempts = await _unitOfWork.Quizzes.GetUserAttemptsWithQuizPaginatedAsync(userId, pageNumber, pageSize);
+
+            return attempts.Select(attempt => new QuizAttemptDto
+            {
+                QuizId      = attempt.QuizId,
+                QuizTitle   = attempt.Quiz?.Title ?? "Unknown Quiz",
+                Score       = attempt.Score,
+                MaxScore    = attempt.MaxScore,
+                Passed      = attempt.Passed,
+                AttemptedAt = attempt.AttemptedAt
+            });
         }
 
         private QuizDto MapToQuizDto(Quiz quiz)
@@ -138,7 +134,7 @@ namespace VisualizationDSA.Infrastructure.Services
                     Id = q.Id,
                     Question = q.Question,
                     Options = q.Options,
-                    Explanation = q.Explanation
+                    Explanation = string.Empty // ✅ Anti-cheat: Hide explanation in initial load
                 }).ToList()
             };
         }

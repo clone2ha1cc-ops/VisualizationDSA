@@ -20,46 +20,51 @@ namespace VisualizationDSA.Infrastructure.Services
         public async Task AwardXPAsync(Guid userId, int amount, string reason)
         {
             var user = await _unitOfWork.Users.GetByIdAsync(userId);
-            if (user == null) throw new Exception("User not found");
+            if (user == null) throw new KeyNotFoundException($"User {userId} not found");
 
             user.AwardXP(amount);
+            user.RecordActivity();  // ✅ FIX 3.4: cập nhật streak khi có hoạt động
             await _unitOfWork.CommitAsync();
         }
 
         public async Task CompleteModuleAsync(Guid userId, string moduleId)
         {
-            var user = await _unitOfWork.Users.GetByIdAsync(userId);
-            if (user == null) throw new Exception("User not found");
+            var user = await _unitOfWork.Users.GetByIdWithDetailsAsync(userId);
+            if (user == null) throw new KeyNotFoundException($"User {userId} not found");
 
-            user.CompleteModule(moduleId);
+            // Tránh thêm module đã tồn tại (idempotent)
+            if (!user.LearningProgresses.Any(lp => lp.ModuleId == moduleId))
+            {
+                user.CompleteModule(moduleId);
+                user.RecordActivity();  // ✅ FIX 3.4: cập nhật streak
+            }
             await _unitOfWork.CommitAsync();
         }
 
         public async Task<IEnumerable<Badge>> CheckAndAwardBadgesAsync(Guid userId)
         {
-            var user = await _unitOfWork.Users.GetByIdAsync(userId);
-            if (user == null) throw new Exception("User not found");
+            var user = await _unitOfWork.Users.GetByIdWithDetailsAsync(userId);
+            if (user == null) throw new KeyNotFoundException("User not found");
 
-            var newBadges = new List<Badge>();
-            var allBadges = await _unitOfWork.Badges.GetAllAsync();
+            var newBadges  = new List<Badge>();
+            var allBadges  = await _unitOfWork.Badges.GetAllAsync();
 
             foreach (var badge in allBadges)
             {
-                // Check if user already has this badge
+                // Bỏ qua nếu user đã có badge này
                 if (user.UserBadges.Any(ub => ub.BadgeId == badge.Id))
                     continue;
 
-                // Check criteria
                 if (ShouldAwardBadge(user, badge))
                 {
+                    // ✅ FIX 2.3: Chỉ thêm UserBadge mới — KHÔNG re-add User đã tồn tại
                     var userBadge = new UserBadge(userId, badge.Id);
-                    await _unitOfWork.Users.AddAsync(user); // Re-attach user
                     user.UserBadges.Add(userBadge);
                     newBadges.Add(badge);
                 }
             }
 
-            if (newBadges.Any())
+            if (newBadges.Count > 0)
             {
                 await _unitOfWork.CommitAsync();
             }
@@ -69,25 +74,45 @@ namespace VisualizationDSA.Infrastructure.Services
 
         public async Task<UserProgressStats> GetUserProgressAsync(Guid userId)
         {
-            var user = await _unitOfWork.Users.GetByIdAsync(userId);
-            if (user == null) throw new Exception("User not found");
+            var progressModel = await _unitOfWork.Users.GetUserProgressDomainModelAsync(userId);
+            if (progressModel == null) throw new KeyNotFoundException($"User {userId} not found");
+            return CalculateUserProgressStats(progressModel);
+        }
 
-            // Calculate level progress
-            var nextLevelXp = CalculateXpForLevel(user.CurrentLevel + 1);
-            var currentLevelXp = CalculateXpForLevel(user.CurrentLevel);
-            var xpInCurrentLevel = user.TotalXP - currentLevelXp;
-            var xpNeeded = nextLevelXp - currentLevelXp;
-            var progressPercent = Math.Min(100, (int)((double)xpInCurrentLevel / xpNeeded * 100));
+        public UserProgressStats CalculateUserProgressStats(UserProgressDomainModel progressModel)
+        {
+            // ✅ A2 FIX: Dùng lookup table đồng bộ với XPEngine.ts
+            var currentLevelXp = XpThresholdForLevel(progressModel.CurrentLevel);
+            var nextLevelXp    = XpThresholdForLevel(progressModel.CurrentLevel + 1);
+
+            // Xử lý edge case level 8 (Legend) — không có next level
+            if (nextLevelXp == int.MaxValue)
+            {
+                return new UserProgressStats
+                {
+                    TotalXP              = progressModel.TotalXP,
+                    CurrentLevel         = progressModel.CurrentLevel,
+                    XpToNextLevel        = 0,
+                    LevelProgressPercent = 100,
+                    BadgesEarned         = progressModel.Badges.Count,
+                    ModulesCompleted     = progressModel.CompletedModuleIds.Count,
+                    CurrentStreak        = progressModel.StreakDays
+                };
+            }
+
+            var xpInCurrentLevel = progressModel.TotalXP - currentLevelXp;
+            var xpNeeded         = nextLevelXp - currentLevelXp;
+            var progressPercent  = Math.Min(100, (int)((double)xpInCurrentLevel / xpNeeded * 100));
 
             return new UserProgressStats
             {
-                TotalXP = user.TotalXP,
-                CurrentLevel = user.CurrentLevel,
-                XpToNextLevel = nextLevelXp - user.TotalXP,
+                TotalXP              = progressModel.TotalXP,
+                CurrentLevel         = progressModel.CurrentLevel,
+                XpToNextLevel        = nextLevelXp - progressModel.TotalXP,
                 LevelProgressPercent = progressPercent,
-                BadgesEarned = user.UserBadges.Count,
-                ModulesCompleted = user.LearningProgresses.Count,
-                CurrentStreak = user.StreakDays
+                BadgesEarned         = progressModel.Badges.Count,
+                ModulesCompleted     = progressModel.CompletedModuleIds.Count,
+                CurrentStreak        = progressModel.StreakDays
             };
         }
 
@@ -108,10 +133,25 @@ namespace VisualizationDSA.Infrastructure.Services
             };
         }
 
-        private int CalculateXpForLevel(int level)
+        /// <summary>
+        /// ✅ A2 FIX: Đồng bộ với XPEngine.ts LEVELS lookup table.
+        /// Trả về tổng XP cần để BẮT ĐẦU level đó.
+        /// Level 1=0, 2=100, 3=300, 4=600, 5=1000, 6=1500, 7=2200, 8=3000, 9+=Infinity
+        /// </summary>
+        private static int XpThresholdForLevel(int level)
         {
-            // Level formula: XP = (level-1)^2 * 100
-            return (level - 1) * (level - 1) * 100;
+            return level switch
+            {
+                1 => 0,
+                2 => 100,
+                3 => 300,
+                4 => 600,
+                5 => 1000,
+                6 => 1500,
+                7 => 2200,
+                8 => 3000,
+                _ => int.MaxValue   // level 9+ không tồn tại → Grandmaster giữ nguyên
+            };
         }
     }
 }

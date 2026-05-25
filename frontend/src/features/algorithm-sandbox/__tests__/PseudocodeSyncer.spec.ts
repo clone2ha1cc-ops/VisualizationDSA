@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach } from 'vitest';
-import { PseudocodeSyncer, type LineMapping } from '../PseudocodeSyncer';
+import { PseudocodeSyncer, type LineMapping } from '../engine/PseudocodeSyncer';
 import { CompilerStepExecutor } from '../../../core/CompilerStepExecutor';
 
 describe('Sprint 3 Pseudocode Synchronization Unit Tests', () => {

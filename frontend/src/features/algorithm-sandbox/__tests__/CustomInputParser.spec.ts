@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from 'vitest';
-import { CustomInputParser, InteractivePlaygroundEngine } from '../CustomInputParser';
+import { CustomInputParser, InteractivePlaygroundEngine } from '../engine/CustomInputParser';
 
 describe('Sprint 5 Custom Input & Playground Unit Tests', () => {
   it('Should successfully parse numbers list string and reject invalid characters', () => {

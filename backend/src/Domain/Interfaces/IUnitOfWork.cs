@@ -5,12 +5,17 @@ namespace VisualizationDSA.Domain.Interfaces
 {
     public interface IUnitOfWork
     {
-        IRepository<User> Users { get; }
-        IRepository<Badge> Badges { get; }
-        IRepository<Quiz> Quizzes { get; }
-        IRepository<QuizAttempt> QuizAttempts { get; }
+        IUserRepository            Users          { get; }
+        IRepository<Badge>         Badges         { get; }
+        IQuizRepository            Quizzes        { get; }
+        IRepository<QuizAttempt>   QuizAttempts   { get; }
         IRepository<LearningProgress> LearningProgresses { get; }
-        
+        IRepository<RefreshToken>  RefreshTokens  { get; }
+        IRepository<Order>         Orders         { get; }
+
         Task<int> CommitAsync();
+        Task BeginTransactionAsync();
+        Task CommitTransactionAsync();
+        Task RollbackTransactionAsync();
     }
 }

@@ -3,7 +3,7 @@ import {
   ForceDirectedLayout,
   type GraphNode,
   type GraphEdge
-} from '../ForceDirectedLayout';
+} from '../engine/ForceDirectedLayout';
 
 describe('Sprint 5 - ForceDirectedLayout Physics Engine', () => {
   it('Should compute Coulomb repulsion pushing nodes apart', () => {
@@ -175,7 +175,7 @@ describe('Sprint 5 - ForceDirectedLayout Physics Engine', () => {
 
 describe('Sprint 5 - CustomInputParser Graph Features', () => {
   it('Should parse adjacency list text format correctly', async () => {
-    const { CustomInputParser } = await import('../CustomInputParser');
+    const { CustomInputParser } = await import('../engine/CustomInputParser');
     
     const input = 'A-B:10, B-C:20, A-C:50';
     const graph = CustomInputParser.parseAdjacencyList(input);
@@ -190,7 +190,7 @@ describe('Sprint 5 - CustomInputParser Graph Features', () => {
   });
 
   it('Should throw error for invalid edge format', async () => {
-    const { CustomInputParser } = await import('../CustomInputParser');
+    const { CustomInputParser } = await import('../engine/CustomInputParser');
     
     expect(() => {
       CustomInputParser.parseAdjacencyList('A-B-10'); // Wrong format
@@ -202,7 +202,7 @@ describe('Sprint 5 - CustomInputParser Graph Features', () => {
   });
 
   it('Should handle empty input gracefully', async () => {
-    const { CustomInputParser } = await import('../CustomInputParser');
+    const { CustomInputParser } = await import('../engine/CustomInputParser');
     
     const graph = CustomInputParser.parseAdjacencyList('');
     

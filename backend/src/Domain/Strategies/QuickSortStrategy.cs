@@ -1,3 +1,7 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
 using VisualizationDSA.Domain.Engine;
 
 namespace VisualizationDSA.Domain.Strategies;
@@ -34,14 +38,14 @@ public class QuickSortStrategy : AlgorithmStrategyBase
         };
     }
 
-    public override List<FrameDTO> Execute(int[] inputData)
+    public override List<FrameDTO> Execute(int[] inputData, CancellationToken cancellationToken = default)
     {
         InitializeRecorder();
         int[] arr = (int[])inputData.Clone();
 
         CaptureQuickFrame(arr, 0, "Khởi tạo mảng đầu vào và chuẩn bị sắp xếp nhanh.");
 
-        RunQuickSort(arr, 0, arr.Length - 1);
+        RunQuickSort(arr, 0, arr.Length - 1, cancellationToken);
 
         var sortedIndices = Enumerable.Range(0, arr.Length).ToList();
         CaptureState(arr, 0,
@@ -51,17 +55,18 @@ public class QuickSortStrategy : AlgorithmStrategyBase
         return _frames;
     }
 
-    private void RunQuickSort(int[] arr, int low, int high)
+    private void RunQuickSort(int[] arr, int low, int high, CancellationToken cancellationToken)
     {
+        cancellationToken.ThrowIfCancellationRequested();
         if (low < high)
         {
-            int pivotIdx = Partition(arr, low, high);
-            RunQuickSort(arr, low, pivotIdx - 1);
-            RunQuickSort(arr, pivotIdx + 1, high);
+            int pivotIdx = Partition(arr, low, high, cancellationToken);
+            RunQuickSort(arr, low, pivotIdx - 1, cancellationToken);
+            RunQuickSort(arr, pivotIdx + 1, high, cancellationToken);
         }
     }
 
-    private int Partition(int[] arr, int low, int high)
+    private int Partition(int[] arr, int low, int high, CancellationToken cancellationToken)
     {
         int pivot = arr[high];
         int i = low - 1;
@@ -72,6 +77,7 @@ public class QuickSortStrategy : AlgorithmStrategyBase
 
         for (int j = low; j < high; j++)
         {
+            cancellationToken.ThrowIfCancellationRequested();
             CaptureQuickFrame(arr, 9,
                 $"So sánh A[{j}] ({arr[j]}) với Pivot ({pivot})",
                 pivotIdx: high,

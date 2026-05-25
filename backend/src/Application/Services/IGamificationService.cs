@@ -11,6 +11,7 @@ namespace VisualizationDSA.Application.Services
         Task CompleteModuleAsync(Guid userId, string moduleId);
         Task<IEnumerable<Badge>> CheckAndAwardBadgesAsync(Guid userId);
         Task<UserProgressStats> GetUserProgressAsync(Guid userId);
+        UserProgressStats CalculateUserProgressStats(UserProgressDomainModel progressModel);
     }
 
     public class UserProgressStats

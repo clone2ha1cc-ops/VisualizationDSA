@@ -1,10 +1,12 @@
 using Microsoft.AspNetCore.Mvc;
+using Asp.Versioning;
 using VisualizationDSA.Domain.Lectures;
 
 namespace VisualizationDSA.WebApi.Controllers;
 
+[ApiVersion("1.0")]
 [ApiController]
-[Route("api/v1/[controller]")]
+[Route("api/v{version:apiVersion}/[controller]")]
 public class LecturesController : ControllerBase
 {
     /// <summary>

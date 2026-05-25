@@ -27,7 +27,19 @@ Tài liệu này đặc tả chi tiết danh mục thư viện công nghệ, cá
 
 ---
 
-## 3. Gói Phụ Thuộc Phát Triển & Kiểm Thử (DevDependencies)
+## 3. Gói Phụ Thuộc Backend (Backend NuGet Dependencies)
+
+| Tên Gói NuGet | Phiên bản | Phân hệ sử dụng | Vai trò cốt lõi |
+| :--- | :--- | :--- | :--- |
+| **Asp.Versioning.Mvc** | `8.1.0` | WebApi / Controllers | Quản lý phiên bản API chính thức theo chuẩn RESTful qua route. |
+| **Asp.Versioning.Mvc.ApiExplorer** | `8.1.0` | WebApi / Swagger | Hỗ trợ Swagger tự động phát hiện và hiển thị tài liệu các phiên bản API. |
+| **FluentValidation.AspNetCore** | `11.3.0` | WebApi / Validation | Tự động hóa kiểm tra tính hợp lệ dữ liệu đầu vào. |
+| **Npgsql.EntityFrameworkCore.PostgreSQL** | `9.0.2` | Infrastructure | Adapter kết nối PostgreSQL, hỗ trợ Connection Resiliency và xmin concurrency. |
+| **Serilog.AspNetCore** | `8.0.0` | WebApi / Logging | Thay thế ILogger mặc định, ghi log có cấu trúc (Structured Logging). |
+
+---
+
+## 4. Gói Phụ Thuộc Phát Triển & Kiểm Thử (DevDependencies)
 
 | Tên Thư Viện | Phiên bản | Phân hệ sử dụng | Vai trò cốt lõi |
 | :--- | :--- | :--- | :--- |

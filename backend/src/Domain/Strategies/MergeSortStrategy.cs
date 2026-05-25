@@ -1,3 +1,7 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
 using VisualizationDSA.Domain.Engine;
 
 namespace VisualizationDSA.Domain.Strategies;
@@ -31,14 +35,14 @@ public class MergeSortStrategy : AlgorithmStrategyBase
         };
     }
 
-    public override List<FrameDTO> Execute(int[] inputData)
+    public override List<FrameDTO> Execute(int[] inputData, CancellationToken cancellationToken = default)
     {
         InitializeRecorder();
         int[] arr = (int[])inputData.Clone();
 
         CaptureState(arr, 0, "Bắt đầu Merge Sort — chia mảng đệ quy.");
 
-        MergeSort(arr, 0, arr.Length - 1);
+        MergeSort(arr, 0, arr.Length - 1, cancellationToken);
 
         CaptureState(arr, 0,
             "Mảng đã được sắp xếp tăng dần hoàn chỉnh!",
@@ -47,8 +51,9 @@ public class MergeSortStrategy : AlgorithmStrategyBase
         return _frames;
     }
 
-    private void MergeSort(int[] arr, int left, int right)
+    private void MergeSort(int[] arr, int left, int right, CancellationToken cancellationToken)
     {
+        cancellationToken.ThrowIfCancellationRequested();
         if (left < right)
         {
             int mid = (left + right) / 2;
@@ -57,13 +62,13 @@ public class MergeSortStrategy : AlgorithmStrategyBase
                 $"Chia mảng tại mid = {mid}: [{left}..{mid}] và [{mid + 1}..{right}]",
                 compares: new List<int> { mid });
 
-            MergeSort(arr, left, mid);
-            MergeSort(arr, mid + 1, right);
-            Merge(arr, left, mid, right);
+            MergeSort(arr, left, mid, cancellationToken);
+            MergeSort(arr, mid + 1, right, cancellationToken);
+            Merge(arr, left, mid, right, cancellationToken);
         }
     }
 
-    private void Merge(int[] arr, int left, int mid, int right)
+    private void Merge(int[] arr, int left, int mid, int right, CancellationToken cancellationToken)
     {
         int n1 = mid - left + 1;
         int n2 = right - mid;
@@ -81,6 +86,7 @@ public class MergeSortStrategy : AlgorithmStrategyBase
 
         while (i < n1 && j < n2)
         {
+            cancellationToken.ThrowIfCancellationRequested();
             CaptureState(arr, 9,
                 $"So sánh L[{i}] ({leftArr[i]}) và R[{j}] ({rightArr[j]})",
                 compares: new List<int> { k });
@@ -104,6 +110,7 @@ public class MergeSortStrategy : AlgorithmStrategyBase
 
         while (i < n1)
         {
+            cancellationToken.ThrowIfCancellationRequested();
             arr[k] = leftArr[i];
             CaptureState(arr, 9,
                 $"Chép phần tử còn lại L[{i}] = {leftArr[i]} vào vị trí {k}.",
@@ -114,6 +121,7 @@ public class MergeSortStrategy : AlgorithmStrategyBase
 
         while (j < n2)
         {
+            cancellationToken.ThrowIfCancellationRequested();
             arr[k] = rightArr[j];
             CaptureState(arr, 9,
                 $"Chép phần tử còn lại R[{j}] = {rightArr[j]} vào vị trí {k}.",

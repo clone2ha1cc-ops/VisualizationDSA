@@ -44,9 +44,9 @@
               {{ algo.difficulty }}
             </span>
           </div>
-          <div class="flex items-center gap-3 text-[11px] text-slate-400">
-            <span>⏱ {{ algo.timeComplexity }}</span>
-            <span>💾 {{ algo.spaceComplexity }}</span>
+          <div class="flex items-center gap-3 text-[11px] text-slate-400 flex-wrap">
+            <span class="flex items-center gap-1"><BaseIcon name="clock" class="w-3 h-3 text-slate-400" /> {{ algo.timeComplexity }}</span>
+            <span class="flex items-center gap-1"><BaseIcon name="database" class="w-3 h-3 text-slate-400" /> {{ algo.spaceComplexity }}</span>
           </div>
         </button>
       </div>

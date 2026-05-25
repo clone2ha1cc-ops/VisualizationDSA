@@ -1,3 +1,7 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
 using VisualizationDSA.Domain.Engine;
 
 namespace VisualizationDSA.Domain.Strategies;
@@ -28,7 +32,7 @@ public class QueueStrategy : AlgorithmStrategyBase
         };
     }
 
-    public override List<FrameDTO> Execute(int[] inputData)
+    public override List<FrameDTO> Execute(int[] inputData, CancellationToken cancellationToken = default)
     {
         InitializeRecorder();
         var queue = new List<int>();
@@ -37,6 +41,7 @@ public class QueueStrategy : AlgorithmStrategyBase
 
         foreach (int val in inputData)
         {
+            cancellationToken.ThrowIfCancellationRequested();
             queue.Add(val);
             CaptureQueueFrame(queue, 2,
                 $"Enqueue({val}): Thêm phần tử {val} vào cuối hàng đợi (Rear).",
@@ -48,6 +53,7 @@ public class QueueStrategy : AlgorithmStrategyBase
 
         while (queue.Count > 0)
         {
+            cancellationToken.ThrowIfCancellationRequested();
             int frontVal = queue[0];
 
             CaptureQueueFrame(queue, 4,

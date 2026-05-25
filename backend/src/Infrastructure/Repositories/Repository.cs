@@ -55,7 +55,7 @@ namespace VisualizationDSA.Infrastructure.Repositories
 
         public virtual async Task<bool> ExistsAsync(Guid id)
         {
-            return await _dbSet.FindAsync(id) != null;
+            return await _dbSet.AnyAsync(e => EF.Property<Guid>(e, "Id") == id);
         }
     }
 }

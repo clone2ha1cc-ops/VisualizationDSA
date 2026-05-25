@@ -57,3 +57,29 @@ Tài liệu này tổng hợp các mã lỗi, kịch bản sự cố và cách t
 *   **Mã Lỗi:** `ERR_AST_FUNCTION_NOT_INVOKED`
 *   **Nguyên nhân gốc:** `compileAndInstrument()` chỉ tiêm tracing vào bên trong hàm mà không thêm lời gọi hàm cuối chương trình. Worker wraps code trong `new Function(...)` nên cần lời gọi tường minh.
 *   **Cách khắc phục:** Thêm hàm `appendAutoInvoke()` vào `ASTInstrumentationEngine.ts`. Hàm này tìm `FunctionDeclaration` đầu tiên ở top-level AST body và append `functionName(arr);` vào cuối chương trình. File sửa: `ASTInstrumentationEngine.ts` dòng 60-78.
+
+### 🚨 Lỗi 107: Lực Hút Lò Xo Hooke Tính Sai Hướng Cho Trọng Số Khác Nhau (Edge Weight Physics)
+*   **Mô tả:** Lực hút của các cạnh có trọng số nặng lại yếu hơn các cạnh có trọng số nhẹ, dẫn đến việc dàn xếp layout đồ thị bị sai logic vật lý (đáng lẽ cạnh nặng phải kéo 2 node sát nhau hơn).
+*   **Mã Lỗi:** `ERR_FD_LAYOUT_WEIGHTED_ATTRACTION`
+*   **Nguyên nhân gốc:** `ForceDirectedLayout.ts` nhân hệ số ideal length (chiều dài lý tưởng) của lò xo với `weightFactor`, làm tăng `idealLength` cho cạnh nặng. Điều này làm giảm `displacement = distance - idealLength`, từ đó làm giảm lực hút Hooke `force = kAttraction * displacement`.
+*   **Cách khắc phục:** Không tăng `idealLength` của cạnh nặng, mà nhân trực tiếp `weightFactor` vào lực hút Hooke: `const force = this.kAttraction * displacement * weightFactor;`. File sửa: `ForceDirectedLayout.ts` dòng 88-94.
+
+
+
+### 🚨 Lỗi 108: Thư Viện Asp.Versioning.Mvc Phiên Bản 10.0.0 Không Tương Thích Với .NET 9
+*   **Mô tả:** Lỗi restore project và lỗi biên dịch do mismatch target framework khi cài đặt gói NuGet `Asp.Versioning.Mvc` và `Asp.Versioning.Mvc.ApiExplorer`.
+*   **Mã Lỗi:** `ERR_NET_VERSION_MISMATCH`
+*   **Nguyên nhân gốc:** NuGet tự động tải phiên bản v10.0.0 mới nhất yêu cầu .NET 10, trong khi dự án hiện tại target .NET 9.0.
+*   **Cách khắc phục:** Hạ cấp và định nghĩa rõ ràng phiên bản `8.1.0` (tương thích hoàn hảo với .NET 9) trong [WebApi.csproj](file:///c:/Users/maiti/OneDrive/Desktop/LearningEnglishApp/VisualizationDSA/backend/src/WebApi/WebApi.csproj).
+
+### 🚨 Lỗi 109: Cảnh Báo Obsolete Của UseXminAsConcurrencyToken() Trong EF Core
+*   **Mô tả:** Cảnh báo biên dịch CS0618 khi sử dụng phương thức cũ `UseXminAsConcurrencyToken()` cho Optimistic Concurrency Control.
+*   **Mã Lỗi:** `ERR_EF_OBSOLETE_CONCURRENCY_TOKEN`
+*   **Nguyên nhân gốc:** EF Core và Npgsql đã thay đổi cách đăng ký concurrency token hệ thống (xmin) và đánh dấu phương thức cũ là lỗi thời.
+*   **Cách khắc phục:** Chuyển đổi cấu hình thủ công qua shadow property `xmin` dạng `.IsConcurrencyToken()` trong [ApplicationDbContext.cs](file:///c:/Users/maiti/OneDrive/Desktop/LearningEnglishApp/VisualizationDSA/backend/src/Infrastructure/Data/ApplicationDbContext.cs).
+
+### 🚨 Lỗi 110: Lỗi Phân Giải Host=localhost Trên Windows (Npgsql Connection Fail)
+*   **Mô tả:** Khi khởi động WebApi backend, EF Core ném ngoại lệ `SocketException: No such host is known` tại hàm `databaseFacade.Migrate()`.
+*   **Mã Lỗi:** `ERR_DB_LOCALHOST_RESOLVE_FAIL`
+*   **Nguyên nhân gốc:** Trình điều khiển cơ sở dữ liệu Npgsql không phân giải được hostname `localhost` sang địa chỉ IP loopback trên một số cấu hình Windows (đặc biệt khi IPv6 được ưu tiên hoặc DNS local bị ngắt).
+*   **Cách khắc phục:** Thay thế `Host=localhost` thành địa chỉ IP tĩnh rõ ràng `Host=127.0.0.1` trong [appsettings.json](file:///c:/Users/maiti/OneDrive/Desktop/LearningEnglishApp/VisualizationDSA/backend/src/WebApi/appsettings.json) và [appsettings.Development.json](file:///c:/Users/maiti/OneDrive/Desktop/LearningEnglishApp/VisualizationDSA/backend/src/WebApi/appsettings.Development.json). Lực chọn này bỏ qua việc phân giải DNS và kết nối trực tiếp đến IPv4 loopback của PostgreSQL local.

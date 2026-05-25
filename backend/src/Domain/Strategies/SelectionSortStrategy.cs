@@ -1,3 +1,4 @@
+using System.Threading;
 using VisualizationDSA.Domain.Engine;
 
 namespace VisualizationDSA.Domain.Strategies;
@@ -27,7 +28,7 @@ public class SelectionSortStrategy : AlgorithmStrategyBase
         };
     }
 
-    public override List<FrameDTO> Execute(int[] inputData)
+    public override List<FrameDTO> Execute(int[] inputData, CancellationToken cancellationToken = default)
     {
         InitializeRecorder();
         int[] arr = (int[])inputData.Clone();
@@ -38,6 +39,7 @@ public class SelectionSortStrategy : AlgorithmStrategyBase
 
         for (int i = 0; i < n - 1; i++)
         {
+            cancellationToken.ThrowIfCancellationRequested();
             int minIdx = i;
             CaptureState(arr, 1,
                 $"Giả định phần tử nhỏ nhất là A[{i}] = {arr[i]}.",
@@ -46,6 +48,7 @@ public class SelectionSortStrategy : AlgorithmStrategyBase
 
             for (int j = i + 1; j < n; j++)
             {
+                cancellationToken.ThrowIfCancellationRequested();
                 CaptureState(arr, 3,
                     $"So sánh A[{j}] ({arr[j]}) với A[{minIdx}] ({arr[minIdx]})",
                     compares: new List<int> { j, minIdx },

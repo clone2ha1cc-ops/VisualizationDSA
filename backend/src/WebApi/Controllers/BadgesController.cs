@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Asp.Versioning;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -9,8 +10,9 @@ using VisualizationDSA.Domain.Interfaces;
 
 namespace VisualizationDSA.WebApi.Controllers
 {
+    [ApiVersion("1.0")]
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("api/v{version:apiVersion}/[controller]")]
     [Authorize]
     public class BadgesController : ControllerBase
     {
