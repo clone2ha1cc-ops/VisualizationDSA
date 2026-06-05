@@ -1,3 +1,14 @@
+export interface MonacoEditorForHighlight {
+  revealLineInCenter(lineNumber: number, scrollType: number): void;
+  deltaDecorations(
+    oldDecorations: string[],
+    newDecorations: Array<{
+      range: { startLineNumber: number; startColumn: number; endLineNumber: number; endColumn: number };
+      options: { isWholeLine: boolean; className: string; marginClassName: string };
+    }>
+  ): string[];
+}
+
 export interface LineMapping {
   stepIndex: number;
   lineNumber: number;
@@ -31,7 +42,7 @@ export class PseudocodeSyncer {
    * Cập nhật lớp CSS bôi sáng dòng đang chạy trên Monaco Editor dưới 10ms
    */
   public static highlightMonacoLine(
-    editorInstance: any,
+    editorInstance: MonacoEditorForHighlight,
     lineNumber: number,
     previousDecorations: string[]
   ): string[] {

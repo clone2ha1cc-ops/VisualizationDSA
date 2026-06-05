@@ -4,6 +4,8 @@ import type { Algorithm, AlgorithmMetadata } from '../types/algorithm.types';
 import { ALGORITHM_CATALOG } from '../services/algorithmCatalog';
 import { LOCAL_METADATA } from './algorithmLocalMetadata';
 
+const API_BASE = import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:5050';
+
 export const useAlgorithmStore = defineStore('algorithm', () => {
   const algorithms = ref<Algorithm[]>([]);
   const currentAlgorithm = ref<Algorithm | null>(null);
@@ -29,7 +31,7 @@ export const useAlgorithmStore = defineStore('algorithm', () => {
     isLoading.value = true;
     error.value = '';
     try {
-      const response = await fetch('/api/v1/algorithms');
+      const response = await fetch(`${API_BASE}/api/v1/algorithms`);
       if (!response.ok) throw new Error('Không thể tải danh sách thuật toán từ máy chủ.');
       algorithms.value = await response.json();
     } catch {
@@ -45,7 +47,7 @@ export const useAlgorithmStore = defineStore('algorithm', () => {
     const matched = algorithms.value.find((a) => a.id === algoId);
     if (matched) currentAlgorithm.value = matched;
     try {
-      const response = await fetch(`/api/v1/algorithms/${algoId}/metadata`);
+      const response = await fetch(`${API_BASE}/api/v1/algorithms/${algoId}/metadata`);
       if (!response.ok) throw new Error('Không thể tải siêu dữ liệu chi tiết của giải thuật.');
       metadata.value = await response.json();
     } catch {

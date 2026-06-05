@@ -1,15 +1,26 @@
 import { watch, type WatchStopHandle } from 'vue';
 import { MonacoGutterClickInterceptor } from './MonacoGutterClickInterceptor';
-import { PseudocodeSyncer } from './PseudocodeSyncer';
+import { PseudocodeSyncer, type MonacoEditorForHighlight } from './PseudocodeSyncer';
+import type { VcrBaseFrame } from '../../vcr-player';
+
+interface MonacoEditorFull extends MonacoEditorForHighlight {
+  onMouseDown(cb: (e: { target: { type: number; position?: { lineNumber: number } } }) => void): { dispose(): void };
+}
+
+interface VcrStoreForSync {
+  playbackFrames: VcrBaseFrame[];
+  currentLineNumber: number;
+  jumpToFrame(index: number): void;
+}
 
 export class MonacoLineSyncerCoordinator {
-  private editorInstance: any = null;
-  private vcrStore: any = null;
+  private editorInstance: MonacoEditorFull | null = null;
+  private vcrStore: VcrStoreForSync | null = null;
   private clickInterceptor: MonacoGutterClickInterceptor | null = null;
   private previousDecorations: string[] = [];
   private stopWatch: WatchStopHandle | null = null;
 
-  constructor(editor: any, vcrStore: any) {
+  constructor(editor: MonacoEditorFull, vcrStore: VcrStoreForSync) {
     this.editorInstance = editor;
     this.vcrStore = vcrStore;
     this.setupSyncing();
@@ -22,12 +33,11 @@ export class MonacoLineSyncerCoordinator {
     this.clickInterceptor = new MonacoGutterClickInterceptor(
       this.editorInstance,
       (lineNum) => {
-        // Tìm frame đầu tiên tương ứng với dòng code này
-        const targetFrameIndex = this.vcrStore.playbackFrames.findIndex(
-          (f: any) => f.lineNumber === lineNum
+        const targetFrameIndex = this.vcrStore!.playbackFrames.findIndex(
+          (f: VcrBaseFrame) => f.lineNumber === lineNum
         );
         if (targetFrameIndex !== -1) {
-          this.vcrStore.jumpToFrame(targetFrameIndex);
+          this.vcrStore!.jumpToFrame(targetFrameIndex);
         }
       }
     );

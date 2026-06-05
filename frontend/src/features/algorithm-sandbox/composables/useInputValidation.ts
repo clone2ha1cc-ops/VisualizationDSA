@@ -19,8 +19,8 @@ export function useInputValidation() {
       parsedArray.value = CustomInputParser.parseNumberArray(
         arrayInputText.value
       );
-    } catch (err: any) {
-      arrayError.value = err.message;
+    } catch (err: unknown) {
+      arrayError.value = err instanceof Error ? err.message : String(err);
       parsedArray.value = [];
     }
   };
@@ -31,8 +31,8 @@ export function useInputValidation() {
       const graph = CustomInputParser.parseAdjacencyList(graphInputText.value);
       parsedGraphNodes.value = graph.nodes;
       parsedGraphEdges.value = graph.edges;
-    } catch (err: any) {
-      graphError.value = err.message;
+    } catch (err: unknown) {
+      graphError.value = err instanceof Error ? err.message : String(err);
       parsedGraphNodes.value = [];
       parsedGraphEdges.value = [];
     }

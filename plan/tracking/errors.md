@@ -312,3 +312,37 @@ Tài liệu này tổng hợp các mã lỗi, kịch bản sự cố và cách t
     - `OOPConceptsVisualizerWorkspace.vue`: thêm action name badge, API loading/error indicators
     - Tests: mock oopApi, async loadScenario/setPillar
 *   **Files sửa:** `useOOPVisualizerStore.ts`, `OOPConceptsVisualizerWorkspace.vue`, `oop-visualization.types.ts`, `oopApi.ts` (mới), `useOOPVisualizerStore.spec.ts`
+
+### 141. P1 — 7 Backend Sorting Strategies (IAlgorithmStrategy)
+*   **ID:** FEAT-SORTING-STRATEGIES
+*   **Mô tả:** Tạo 7 backend sorting strategy classes kế thừa `AlgorithmStrategyBase` và implement `IAlgorithmStrategy`. Refactor legacy `BubbleSortExecutor` thành `BubbleSortStrategy`. Tất cả tự động đăng ký qua DI reflection.
+*   **Strategies:** BubbleSortStrategy, QuickSortStrategy, MergeSortStrategy, HeapSortStrategy, RadixSortStrategy, CountingSortStrategy, BucketSortStrategy
+*   **Files tạo:** `BubbleSortStrategy.cs`, `QuickSortStrategy.cs`, `MergeSortStrategy.cs`, `HeapSortStrategy.cs`, `RadixSortStrategy.cs`, `CountingSortStrategy.cs`, `BucketSortStrategy.cs`
+
+### 142. P2 — Frontend Type Safety: Eliminate 13+ non-test `any` usages
+*   **ID:** FIX-TYPE-SAFETY
+*   **Mô tả:** Loại bỏ tất cả `any` type trong non-test frontend code. Thay thế bằng strict TypeScript interfaces, type guards, discriminated unions.
+*   **Thay đổi:**
+    - `MonacoGutterClickInterceptor.ts`: `any` → `MonacoMouseEvent` + `MonacoEditorInstance`
+    - `PseudocodeSyncer.ts`: `any` → `MonacoEditorForHighlight` interface
+    - `MonacoLineSyncerCoordinator.ts`: `any` → `VcrBaseFrame` + `VcrStoreForSync`
+    - `useGraphInteraction.ts`: `any` → `InteractivePlaygroundEngine | null`
+    - `useInputValidation.ts`: `catch (err: any)` → `catch (err: unknown)` + type guard
+    - `useSortingAnimation.ts`: `as any` cast removed — `VcrBaseFrame` base type
+    - `SortingDetailPanel.vue`: `as any` → `isSortFrame()` type guard
+    - `useVcrStore.ts`: `err: any` → `err: unknown`, `PlaybackFrame[]` → `VcrBaseFrame[]`
+    - `CompilerStepExecutor.ts`: `err: any` → `err: unknown`
+*   **Files sửa:** 9 files across features/vcr-player, features/algorithm-sandbox, core/
+
+### 143. P3 — Standardize VITE_API_BASE_URL + Algorithm Dashboard Integration
+*   **ID:** FIX-API-URL
+*   **Mô tả:** Chuẩn hóa `VITE_API_BASE_URL` across all DSA module files. Default port 5050 (matching backend).
+*   **Thay đổi:**
+    - `useAlgorithmStore.ts`: Thêm `API_BASE` constant, sửa `fetchAlgorithms()` và `loadAlgorithmDetails()` dùng absolute URL
+    - `dsaApi.ts`: Sửa default port từ 5000 → 5050
+    - `algorithmCatalog.ts`: Thêm 7 sorting algorithms vào catalog (17 total)
+    - `algorithmLocalMetadata.ts`: Thêm metadata cho 7 sorting algorithms
+    - `sortingGenerators.ts`: Thêm 4 dummy generators (HeapSort, RadixSort, CountingSort, BucketSort)
+    - `dummyGenerators.ts`: Đăng ký 4 generators mới
+    - Tests: Cập nhật catalog (10→17) và store specs
+*   **Files sửa:** `useAlgorithmStore.ts`, `dsaApi.ts`, `algorithmCatalog.ts`, `algorithmLocalMetadata.ts`, `sortingGenerators.ts`, `dummyGenerators.ts`, `algorithmCatalog.spec.ts`, `useAlgorithmStore.spec.ts`

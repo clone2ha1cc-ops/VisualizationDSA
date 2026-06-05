@@ -235,14 +235,20 @@
 
 <script setup lang="ts">
 import { ref, computed } from 'vue';
-import { useVcrStore } from '../../vcr-player';
+import { useVcrStore, type VcrBaseFrame } from '../../vcr-player';
 import type { SortFrame } from '../types/sorting.types';
+
+function isSortFrame(frame: VcrBaseFrame): frame is SortFrame {
+  return 'arrayState' in frame && 'algorithm' in frame;
+}
 
 const vcrStore = useVcrStore();
 const activeTab = ref<'info' | 'trace'>('info');
 
 const currentFrame = computed<SortFrame | null>(() => {
-  return (vcrStore.currentFrame as any) as SortFrame | null;
+  const frame = vcrStore.currentFrame;
+  if (!frame || !isSortFrame(frame)) return null;
+  return frame;
 });
 
 // Hardcoded properties for the algorithms

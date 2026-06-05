@@ -1,5 +1,5 @@
 import { ref, type Ref } from "vue";
-import type { Vertex } from "../engine/InteractivePlaygroundEngine";
+import type { Vertex, InteractivePlaygroundEngine } from "../engine/InteractivePlaygroundEngine";
 export function useGraphInteraction(
   canvas: Ref<HTMLCanvasElement | null>,
   vertices: Ref<Vertex[]>,
@@ -9,7 +9,7 @@ export function useGraphInteraction(
   startLayoutLoop: () => void,
   stopLayoutLoop: () => void,
   syncPlaygroundToText: () => void,
-  getPlaygroundEngine: () => any
+  getPlaygroundEngine: () => InteractivePlaygroundEngine | null
 ) {
   const draggingEdge = ref<{ x1: number; y1: number; x2: number; y2: number } | null>(null);
   const isDraggingVertex = ref(false);

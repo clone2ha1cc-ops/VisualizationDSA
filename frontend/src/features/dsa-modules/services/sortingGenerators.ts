@@ -269,3 +269,91 @@ export function generateBinarySearch(inputData: number[]): AlgorithmResult {
 
   return { algorithmId: 'binary-search', pseudoCode, frames };
 }
+
+export function generateHeapSort(inputData: number[]): AlgorithmResult {
+  const arr = [...inputData], n = arr.length, frames: FrameDTO[] = [], sortedIndices: number[] = [];
+  let stepId = 0;
+  const pseudoCode = ['buildMaxHeap(A)', 'for i from N-1 downto 1:', '  swap(A[0], A[i])', '  heapify(A, 0, i)'];
+
+  function heapify(heapSize: number, i: number) {
+    let largest = i, left = 2*i+1, right = 2*i+2;
+    if (left < heapSize) {
+      frames.push({ stepId: ++stepId, activeLine: 3, explanation: `So sánh node[${largest}]=${arr[largest]} với left[${left}]=${arr[left]}`, dataState: [...arr], highlights: defaultHighlights({ compare: [largest, left], sorted: [...sortedIndices] }) });
+      if (arr[left] > arr[largest]) largest = left;
+    }
+    if (right < heapSize) {
+      frames.push({ stepId: ++stepId, activeLine: 3, explanation: `So sánh node[${largest}]=${arr[largest]} với right[${right}]=${arr[right]}`, dataState: [...arr], highlights: defaultHighlights({ compare: [largest, right], sorted: [...sortedIndices] }) });
+      if (arr[right] > arr[largest]) largest = right;
+    }
+    if (largest !== i) {
+      [arr[i], arr[largest]] = [arr[largest], arr[i]];
+      frames.push({ stepId: ++stepId, activeLine: 3, explanation: `Hoán vị node[${i}] ↔ node[${largest}]`, dataState: [...arr], highlights: defaultHighlights({ swap: [i, largest], sorted: [...sortedIndices] }) });
+      heapify(heapSize, largest);
+    }
+  }
+
+  frames.push({ stepId: ++stepId, activeLine: 0, explanation: 'Xây dựng Max-Heap.', dataState: [...arr], highlights: defaultHighlights() });
+  for (let i = Math.floor(n/2)-1; i >= 0; i--) heapify(n, i);
+  frames.push({ stepId: ++stepId, activeLine: 0, explanation: `Max-Heap hoàn thành! Root = ${arr[0]}.`, dataState: [...arr], highlights: defaultHighlights() });
+  for (let i = n-1; i > 0; i--) {
+    [arr[0], arr[i]] = [arr[i], arr[0]];
+    sortedIndices.push(i);
+    frames.push({ stepId: ++stepId, activeLine: 2, explanation: `Đưa phần tử lớn nhất ${arr[i]} về vị trí [${i}].`, dataState: [...arr], highlights: defaultHighlights({ swap: [0, i], sorted: [...sortedIndices] }) });
+    heapify(i, 0);
+  }
+  sortedIndices.push(0);
+  frames.push({ stepId: ++stepId, activeLine: 0, explanation: 'Mảng đã sắp xếp hoàn chỉnh!', dataState: [...arr], highlights: defaultHighlights({ sorted: [...sortedIndices] }) });
+  return { algorithmId: 'heap-sort', pseudoCode, frames };
+}
+
+export function generateRadixSort(inputData: number[]): AlgorithmResult {
+  const arr = [...inputData], frames: FrameDTO[] = [];
+  let stepId = 0;
+  const pseudoCode = ['radixSort(A):', '  for exp = 1; max/exp > 0; exp *= 10:', '    countingSortByDigit(A, exp)'];
+  const maxVal = Math.max(...arr, 1);
+
+  frames.push({ stepId: ++stepId, activeLine: 0, explanation: 'Khởi tạo Radix Sort.', dataState: [...arr], highlights: defaultHighlights() });
+  for (let exp = 1; Math.floor(maxVal/exp) > 0; exp *= 10) {
+    frames.push({ stepId: ++stepId, activeLine: 1, explanation: `Sắp xếp theo chữ số hàng ${exp}.`, dataState: [...arr], highlights: defaultHighlights() });
+    const output = new Array(arr.length), count = new Array(10).fill(0);
+    for (let i = 0; i < arr.length; i++) { count[(Math.floor(arr[i]/exp))%10]++; }
+    for (let i = 1; i < 10; i++) count[i] += count[i-1];
+    for (let i = arr.length-1; i >= 0; i--) { const d = (Math.floor(arr[i]/exp))%10; count[d]--; output[count[d]] = arr[i]; }
+    for (let i = 0; i < arr.length; i++) arr[i] = output[i];
+    frames.push({ stepId: ++stepId, activeLine: 2, explanation: `Hàng ${exp} hoàn tất: [${arr.join(', ')}].`, dataState: [...arr], highlights: defaultHighlights() });
+  }
+  frames.push({ stepId: ++stepId, activeLine: 0, explanation: 'Mảng đã sắp xếp hoàn chỉnh!', dataState: [...arr], highlights: defaultHighlights({ sorted: Array.from({ length: arr.length }, (_, i) => i) }) });
+  return { algorithmId: 'radix-sort', pseudoCode, frames };
+}
+
+export function generateCountingSort(inputData: number[]): AlgorithmResult {
+  const arr = [...inputData], n = arr.length, frames: FrameDTO[] = [];
+  let stepId = 0;
+  const pseudoCode = ['count[0..9] = 0', 'count[A[i]%10]++', 'prefix sum', 'build output (right-to-left)'];
+  const count = new Array(10).fill(0);
+
+  frames.push({ stepId: ++stepId, activeLine: 0, explanation: 'Khởi tạo Counting Sort.', dataState: [...arr], highlights: defaultHighlights() });
+  for (let i = 0; i < n; i++) { const d = Math.max(0, Math.min(arr[i]%10, 9)); count[d]++; frames.push({ stepId: ++stepId, activeLine: 1, explanation: `Count A[${i}]=${arr[i]}, digit=${d}. Count[${d}]=${count[d]}.`, dataState: [...arr], highlights: defaultHighlights({ compare: [i] }) }); }
+  for (let i = 1; i < 10; i++) count[i] += count[i-1];
+  frames.push({ stepId: ++stepId, activeLine: 2, explanation: 'Prefix sum hoàn tất.', dataState: [...arr], highlights: defaultHighlights() });
+  const output = new Array(n);
+  for (let i = n-1; i >= 0; i--) { const d = Math.max(0, Math.min(arr[i]%10, 9)); count[d]--; output[count[d]] = arr[i]; }
+  frames.push({ stepId: ++stepId, activeLine: 3, explanation: `Kết quả: [${output.join(', ')}].`, dataState: [...output], highlights: defaultHighlights({ sorted: Array.from({ length: n }, (_, i) => i) }) });
+  return { algorithmId: 'counting-sort', pseudoCode, frames };
+}
+
+export function generateBucketSort(inputData: number[]): AlgorithmResult {
+  const arr = [...inputData], frames: FrameDTO[] = [];
+  let stepId = 0;
+  const pseudoCode = ['buckets[0..3] = []', 'distribute elements', 'sort each bucket', 'collect'];
+  const buckets: number[][] = [[], [], [], []];
+  const getBucket = (v: number) => v < 25 ? 0 : v < 50 ? 1 : v < 75 ? 2 : 3;
+
+  frames.push({ stepId: ++stepId, activeLine: 0, explanation: 'Khởi tạo Bucket Sort. 4 xô: [0-25), [25-50), [50-75), [75-100].', dataState: [...arr], highlights: defaultHighlights() });
+  for (let i = 0; i < arr.length; i++) { const b = getBucket(arr[i]); buckets[b].push(arr[i]); frames.push({ stepId: ++stepId, activeLine: 1, explanation: `A[${i}]=${arr[i]} → Bucket ${b}.`, dataState: [...arr], highlights: defaultHighlights({ compare: [i] }) }); }
+  for (const b of buckets) b.sort((a, c) => a - c);
+  frames.push({ stepId: ++stepId, activeLine: 2, explanation: 'Các bucket đã sắp xếp.', dataState: [...arr], highlights: defaultHighlights() });
+  const result = buckets.flat();
+  frames.push({ stepId: ++stepId, activeLine: 3, explanation: `Kết quả: [${result.join(', ')}].`, dataState: result, highlights: defaultHighlights({ sorted: Array.from({ length: result.length }, (_, i) => i) }) });
+  return { algorithmId: 'bucket-sort', pseudoCode, frames };
+}

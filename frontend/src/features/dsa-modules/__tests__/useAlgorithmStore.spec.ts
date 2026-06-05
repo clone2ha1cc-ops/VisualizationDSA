@@ -25,7 +25,7 @@ describe('useAlgorithmStore', () => {
     await store.fetchAlgorithms();
 
     expect(store.algorithms.length).toBe(ALGORITHM_CATALOG.length);
-    expect(store.algorithms[0].id).toBe('linear-search');
+    expect(store.algorithms[0].id).toBe('bubble-sort');
     expect(store.isLoading).toBe(false);
   });
 
@@ -48,7 +48,7 @@ describe('useAlgorithmStore', () => {
   it('selectAlgorithm sets currentAlgorithm and loads local metadata', () => {
     const store = useAlgorithmStore();
     store.algorithms = [...ALGORITHM_CATALOG];
-    const algo = ALGORITHM_CATALOG[0]; // linear-search
+    const algo = ALGORITHM_CATALOG[0]; // bubble-sort
 
     store.selectAlgorithm(algo);
 
@@ -93,7 +93,7 @@ describe('useAlgorithmStore', () => {
     const store = useAlgorithmStore();
     store.algorithms = [...ALGORITHM_CATALOG];
 
-    expect(store.categories).not.toContain('Sorting');
+    expect(store.categories).toContain('Sorting');
     expect(store.categories).toContain('Searching');
     expect(store.categories).toContain('Stack-Queue');
     expect(store.categories).toContain('Tree');
@@ -111,7 +111,7 @@ describe('useAlgorithmStore', () => {
     expect(store.metadata?.timeComplexity).toBe('O(N)');
   });
 
-  it('has local metadata for all 10 algorithms', () => {
+  it('has local metadata for all 17 algorithms', () => {
     const store = useAlgorithmStore();
     store.algorithms = [...ALGORITHM_CATALOG];
 

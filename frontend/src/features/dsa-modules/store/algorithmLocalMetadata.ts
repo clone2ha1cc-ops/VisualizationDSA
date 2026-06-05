@@ -1,6 +1,48 @@
 import type { AlgorithmMetadata } from '../types/algorithm.types';
 
 export const LOCAL_METADATA: Record<string, AlgorithmMetadata> = {
+  'bubble-sort': {
+    timeComplexity: 'O(N²)',
+    spaceComplexity: 'O(1)',
+    description: 'Bubble Sort so sánh các cặp phần tử liền kề và hoán đổi chúng nếu sai thứ tự. Sau mỗi vòng lặp, phần tử lớn nhất "nổi" lên cuối mảng.',
+    pseudoCode: ['for i from 0 to N-1', '  for j from 0 to N-i-2', '    if A[j] > A[j+1]', '      swap(A[j], A[j+1])'],
+  },
+  'quick-sort': {
+    timeComplexity: 'O(N log N)',
+    spaceComplexity: 'O(log N)',
+    description: 'Quick Sort chọn phần tử chốt (pivot), phân hoạch mảng thành hai nửa: nhỏ hơn và lớn hơn pivot, rồi đệ quy sắp xếp từng nửa.',
+    pseudoCode: ['quickSort(A, low, high):', '  if low < high:', '    pi = partition(A, low, high)', '    quickSort(A, low, pi-1)', '    quickSort(A, pi+1, high)'],
+  },
+  'merge-sort': {
+    timeComplexity: 'O(N log N)',
+    spaceComplexity: 'O(N)',
+    description: 'Merge Sort chia đôi mảng đệ quy cho đến khi chỉ còn 1 phần tử, rồi gộp (merge) các mảng con đã sắp xếp lại.',
+    pseudoCode: ['mergeSort(A, left, right):', '  if left >= right: return', '  mid = (left+right)/2', '  mergeSort(A, left, mid)', '  mergeSort(A, mid+1, right)', '  merge(A, left, mid, right)'],
+  },
+  'heap-sort': {
+    timeComplexity: 'O(N log N)',
+    spaceComplexity: 'O(1)',
+    description: 'Heap Sort xây dựng Max-Heap từ mảng, sau đó lần lượt lấy phần tử lớn nhất (root) đặt vào cuối mảng và tái cấu trúc heap.',
+    pseudoCode: ['buildMaxHeap(A)', 'for i from N-1 downto 1:', '  swap(A[0], A[i])', '  heapify(A, 0, i)'],
+  },
+  'radix-sort': {
+    timeComplexity: 'O(d × N)',
+    spaceComplexity: 'O(N + k)',
+    description: 'Radix Sort sắp xếp các phần tử bằng cách xử lý từng chữ số (digit) từ hàng đơn vị đến hàng cao nhất.',
+    pseudoCode: ['radixSort(A):', '  for exp = 1; max/exp > 0; exp *= 10:', '    countingSortByDigit(A, exp)'],
+  },
+  'counting-sort': {
+    timeComplexity: 'O(N + K)',
+    spaceComplexity: 'O(K)',
+    description: 'Counting Sort đếm tần suất xuất hiện của mỗi giá trị, tính tổng cộng dồn (prefix sum), rồi đặt phần tử vào đúng vị trí.',
+    pseudoCode: ['count[0..9] = 0', 'for each elem: count[elem%10]++', 'prefix sum', 'build output (right-to-left)'],
+  },
+  'bucket-sort': {
+    timeComplexity: 'O(N + K)',
+    spaceComplexity: 'O(N + K)',
+    description: 'Bucket Sort phân phối các phần tử vào các xô (bucket) theo phạm vi giá trị, sắp xếp từng xô rồi nối lại.',
+    pseudoCode: ['buckets[0..3] = []', 'distribute elements', 'sort each bucket', 'collect'],
+  },
   'linear-search': {
     timeComplexity: 'O(N)',
     spaceComplexity: 'O(1)',

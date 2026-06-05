@@ -1,9 +1,20 @@
+interface MonacoMouseEvent {
+  target: {
+    type: number;
+    position?: { lineNumber: number };
+  };
+}
+
+interface MonacoEditorInstance {
+  onMouseDown(cb: (e: MonacoMouseEvent) => void): { dispose(): void };
+}
+
 export class MonacoGutterClickInterceptor {
-  private editorInstance: any = null;
+  private editorInstance: MonacoEditorInstance | null = null;
   private onLineClickCallback: (lineNumber: number) => void;
   private mouseDownListener: { dispose(): void } | null = null;
 
-  constructor(editor: any, onLineClick: (lineNumber: number) => void) {
+  constructor(editor: MonacoEditorInstance, onLineClick: (lineNumber: number) => void) {
     this.editorInstance = editor;
     this.onLineClickCallback = onLineClick;
     this.setupListeners();
@@ -12,8 +23,7 @@ export class MonacoGutterClickInterceptor {
   private setupListeners(): void {
     if (!this.editorInstance) return;
 
-    // Lắng nghe sự kiện click chuột trên Monaco Editor
-    this.mouseDownListener = this.editorInstance.onMouseDown((e: any) => {
+    this.mouseDownListener = this.editorInstance.onMouseDown((e: MonacoMouseEvent) => {
       // e.target.type: 3 = Gutter (Lề trái số dòng), 4 = Gutter Margin
       if (e.target.type === 3 || e.target.type === 4) {
         const lineNumber = e.target.position?.lineNumber;

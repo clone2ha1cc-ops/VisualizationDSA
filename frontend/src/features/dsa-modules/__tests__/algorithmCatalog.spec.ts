@@ -2,8 +2,8 @@ import { describe, it, expect } from 'vitest';
 import { ALGORITHM_CATALOG } from '../services/algorithmCatalog';
 
 describe('algorithmCatalog', () => {
-  it('contains exactly 10 algorithms', () => {
-    expect(ALGORITHM_CATALOG.length).toBe(10);
+  it('contains exactly 17 algorithms', () => {
+    expect(ALGORITHM_CATALOG.length).toBe(17);
   });
 
   it('all algorithms have required fields', () => {
@@ -22,9 +22,9 @@ describe('algorithmCatalog', () => {
     expect(new Set(ids).size).toBe(ids.length);
   });
 
-  it('covers all 3 categories (Sorting has been removed)', () => {
+  it('covers all 4 categories', () => {
     const categories = new Set(ALGORITHM_CATALOG.map((a) => a.category));
-    expect(categories.has('Sorting')).toBe(false);
+    expect(categories.has('Sorting')).toBe(true);
     expect(categories.has('Searching')).toBe(true);
     expect(categories.has('Stack-Queue')).toBe(true);
     expect(categories.has('Tree')).toBe(true);

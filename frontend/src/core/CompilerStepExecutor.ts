@@ -25,12 +25,12 @@ export class CompilerStepExecutor {
   public static compileAlgorithm(sourceCode: string, initialArray: number[] = [45, 12, 85, 32, 9, 60]): PlaybackFrame[] {
     try {
       return CompilerStepExecutor.compileJavaScript(sourceCode, initialArray);
-    } catch (err: any) {
-      if (err.message && err.message.includes("Vượt quá giới hạn thực thi")) {
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : String(err);
+      if (message.includes("Vượt quá giới hạn thực thi")) {
         throw err;
       }
-      // Hàng phòng ngự thứ hai: Tự động fallback sang Regex tĩnh nếu mã nguồn là mã giả không chạy được trực tiếp
-      console.warn("Chuyển sang cơ chế biên dịch Regex tĩnh:", err.message);
+      console.warn("Chuyển sang cơ chế biên dịch Regex tĩnh:", message);
       return CompilerStepExecutor.compilePseudocodeRegex(sourceCode, initialArray);
     }
   }

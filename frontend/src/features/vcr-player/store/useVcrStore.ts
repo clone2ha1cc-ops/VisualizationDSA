@@ -3,6 +3,13 @@ import { ref, computed, watch } from 'vue';
 import { CompilerStepExecutor, type PlaybackFrame } from '../../../core/CompilerStepExecutor';
 import { DEFAULT_BUBBLE_SORT_CODE } from './vcrDefaults';
 
+/** Minimal base type for any frame stored in the VCR playback buffer. */
+export interface VcrBaseFrame {
+  stepIndex: number;
+  lineNumber?: number;
+  description?: string;
+}
+
 /**
  * VCR Player Store
  * Quản lý toàn bộ trạng thái phát lại (playback) thuật toán:
@@ -24,14 +31,14 @@ export const useVcrStore = defineStore('vcr-player', () => {
   );
 
   // ─── PLAYBACK STATE ──────────────────────────────────────────────────────────
-  const playbackFrames     = ref<PlaybackFrame[]>([]);
+  const playbackFrames     = ref<VcrBaseFrame[]>([]);
   const currentFrameIndex  = ref<number>(0);
   const isPlaying          = ref<boolean>(false);
   const playbackSpeed      = ref<number>(1); // 0.5x | 1x | 2x | 4x
   const isLooping          = ref<boolean>(false);
 
   // ─── DERIVED STATE ───────────────────────────────────────────────────────────
-  const currentFrame = computed<PlaybackFrame | null>(() => {
+  const currentFrame = computed<VcrBaseFrame | null>(() => {
     if (playbackFrames.value.length === 0) return null;
     const idx = currentFrameIndex.value;
     if (idx < 0 || idx >= playbackFrames.value.length) return null;
@@ -59,9 +66,10 @@ export const useVcrStore = defineStore('vcr-player', () => {
       currentFrameIndex.value  = 0;
       isPlaying.value          = false;
       return { success: true, frameCount: frames.length };
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('[VcrStore] Lỗi biên dịch mã giả:', err);
-      return { success: false, error: err.message as string };
+      const message = err instanceof Error ? err.message : String(err);
+      return { success: false, error: message };
     }
   };
 

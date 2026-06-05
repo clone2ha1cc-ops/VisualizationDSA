@@ -49,7 +49,7 @@ export function useSortingAnimation() {
 
     sortFrames.value = generators[algo](arr);
     enrichFramesWithIds(sortFrames.value);
-    vcrStore.playbackFrames = sortFrames.value as any;
+    vcrStore.playbackFrames = sortFrames.value;
     vcrStore.reset();
   }
 

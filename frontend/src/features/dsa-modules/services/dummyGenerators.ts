@@ -6,7 +6,11 @@ import {
   generateSelectionSort,
   generateInsertionSort,
   generateQuickSort,
-  generateMergeSort
+  generateMergeSort,
+  generateHeapSort,
+  generateRadixSort,
+  generateCountingSort,
+  generateBucketSort,
 } from './sortingGenerators';
 import { generateStack, generateQueue, generateBST } from './dataStructureGenerators';
 import { generateBFS, generateDFS, generateDijkstra, generateSlidingWindow, generateMonotonicStack } from './premiumGenerators';
@@ -23,6 +27,10 @@ const GENERATORS: Record<string, (input: number[]) => AlgorithmResult> = {
   'insertion-sort':  generateInsertionSort,
   'quick-sort':      generateQuickSort,
   'merge-sort':      generateMergeSort,
+  'heap-sort':       generateHeapSort,
+  'radix-sort':      generateRadixSort,
+  'counting-sort':   generateCountingSort,
+  'bucket-sort':     generateBucketSort,
   'sliding-window':  generateSlidingWindow,
   stack:             generateStack,
   queue:             generateQueue,
