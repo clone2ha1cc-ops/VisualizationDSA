@@ -259,3 +259,21 @@ Tài liệu này tổng hợp các mã lỗi, kịch bản sự cố và cách t
 *   **Mã Lỗi:** `ERR_SYSDESIGN_SMOKE_NOT_WIRED`
 *   **Nguyên nhân gốc:** Thiếu component Vue overlay kết nối engine particle với canvas rendering. Ngoài ra, engine không có giới hạn số lượng particle → nguy cơ tràn bộ nhớ (MEM-SD-1).
 *   **Cách khắc phục:** Tạo component `FailureSmokeOverlay.vue` với canvas overlay `pointer-events: none` trên `.architecture-canvas`. Component lắng nghe `SERVER_FAILED_SMOKE_BURST`, tạo instance `FailureSmokeEmitterEngine` cho mỗi node bị lỗi, render particle lên canvas chung. Áp dụng `MAX_PARTICLES = 200` cap để tránh tràn bộ nhớ. Mount vào `SystemDesignWorkspace.vue`. File tạo mới: `FailureSmokeOverlay.vue`. File sửa: `SystemDesignWorkspace.vue`.
+
+### 🚨 Lỗi 135: Kiểu `any` Trong actionPayload Scenario OOP — OOP Viz (BUG-OOP-1)
+*   **Mô tả:** `ScenarioStep.actionPayload` được khai báo là `any`, vi phạm quy tắc sắt "nói không với `any`". Trình biên dịch TypeScript không thể kiểm tra tính đúng đắn của các thuộc tính payload (`className`, `memberName`, `methodName`, v.v.) tại thời điểm biên dịch.
+*   **Mã Lỗi:** `ERR_OOP_SCENARIO_ANY_TYPE`
+*   **Nguyên nhân gốc:** `ScenarioStep` là interface đơn với `actionPayload?: any` thay vì discriminated union dựa trên `actionName`.
+*   **Cách khắc phục:** Thay thế hoàn toàn bằng discriminated union type `ScenarioStep` với 7 variant (`ResetStep`, `InstantiateStep`, `CallMethodStep`, `ViolateAccessStep`, `ValidateSetterStep`, `CloneMembersStep`, `ShowAbstractErrorStep`). Mỗi variant có `actionPayload` được định kiểu chặt chẽ. Export thêm `ScenarioActionPayload` union type. File sửa: `oopScenarios.ts`.
+
+### 🚨 Lỗi 136: requestCount Chỉ Tăng Không Giảm — System Design Viz (BUG-SD-3)
+*   **Mô tả:** `requestCount` trên node đích được tăng (`++`) khi packet được gửi từ Load Balancer, nhưng không bao giờ giảm khi packet đến đích (`ARRIVED`) hoặc bị drop (`DROPPED`). Kết quả: counter tăng vô hạn, không phản ánh số request đang hoạt động thực tế.
+*   **Mã Lỗi:** `ERR_SYSDESIGN_REQUESTCOUNT_NO_DECREMENT`
+*   **Nguyên nhân gốc:** Thiếu logic decrement trong `updatePacketsProgress()` tại cả hai nhánh xử lý ARRIVED và DROPPED.
+*   **Cách khắc phục:** Thêm `target.requestCount = Math.max(0, target.requestCount - 1)` tại cả hai nhánh: khi packet status chuyển sang `DROPPED` (server FAILED) và khi `progress >= 1.0` (ARRIVED). Dùng `Math.max(0, ...)` để tránh giá trị âm. File sửa: `SystemDesignEngine.ts`.
+
+### 🚨 Lỗi 137: SVG stroke-dasharray Sai Cú Pháp — OOP Viz (BUG-SVG-1)
+*   **Mô tả:** Thuộc tính `stroke-dasharray="4_4"` trong SVG connector giữa Shape và Circle sử dụng dấu gạch dưới (`_`) thay vì dấu cách (` `) — cú pháp không hợp lệ theo SVG spec. Trình duyệt bỏ qua giá trị này, đường kẻ hiển thị liền thay vì đứt đoạn.
+*   **Mã Lỗi:** `ERR_OOP_SVG_DASHARRAY_SYNTAX`
+*   **Nguyên nhân gốc:** Lỗi đánh máy trong template Vue.
+*   **Cách khắc phục:** Đổi `stroke-dasharray="4_4"` thành `stroke-dasharray="4 4"`. File sửa: `OOPConceptsVisualizerWorkspace.vue` dòng 63.

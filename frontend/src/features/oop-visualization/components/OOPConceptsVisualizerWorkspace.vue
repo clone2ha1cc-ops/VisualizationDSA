@@ -60,7 +60,7 @@
           fill="none" 
           stroke="var(--color-accent-purple)" 
           stroke-width="2" 
-          stroke-dasharray="4_4"
+          stroke-dasharray="4 4"
           class="transition-all duration-300"
         />
         <!-- UML generalization triangle arrowhead pointing up -->

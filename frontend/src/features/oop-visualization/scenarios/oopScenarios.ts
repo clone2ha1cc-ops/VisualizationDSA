@@ -1,9 +1,90 @@
-export interface ScenarioStep {
+// --- Discriminated union payload types for each action ---
+
+export interface InstantiatePayload {
+  className: string;
+}
+
+export interface CallMethodPayload {
+  methodName: string;
+  state: 'seeking' | 'resolved';
+  targetClass?: string;
+}
+
+export interface ViolateAccessPayload {
+  className: string;
+  memberName: string;
+}
+
+export interface ValidateSetterPayload {
+  memberName: string;
+  value: number;
+}
+
+export interface CloneMembersPayload {
+  className: string;
+}
+
+export interface ShowAbstractErrorPayload {
+  className: string;
+}
+
+// --- Discriminated union: ScenarioStep ---
+
+interface ScenarioStepBase {
   codeLineIndex: number;
   explanation: string;
-  actionName: 'RESET' | 'INSTANTIATE' | 'CALL_METHOD' | 'VIOLATE_ACCESS' | 'VALIDATE_SETTER' | 'CLONE_MEMBERS' | 'SHOW_ABSTRACT_ERROR';
-  actionPayload?: any;
 }
+
+export interface ResetStep extends ScenarioStepBase {
+  actionName: 'RESET';
+}
+
+export interface InstantiateStep extends ScenarioStepBase {
+  actionName: 'INSTANTIATE';
+  actionPayload: InstantiatePayload;
+}
+
+export interface CallMethodStep extends ScenarioStepBase {
+  actionName: 'CALL_METHOD';
+  actionPayload: CallMethodPayload;
+}
+
+export interface ViolateAccessStep extends ScenarioStepBase {
+  actionName: 'VIOLATE_ACCESS';
+  actionPayload: ViolateAccessPayload;
+}
+
+export interface ValidateSetterStep extends ScenarioStepBase {
+  actionName: 'VALIDATE_SETTER';
+  actionPayload: ValidateSetterPayload;
+}
+
+export interface CloneMembersStep extends ScenarioStepBase {
+  actionName: 'CLONE_MEMBERS';
+  actionPayload: CloneMembersPayload;
+}
+
+export interface ShowAbstractErrorStep extends ScenarioStepBase {
+  actionName: 'SHOW_ABSTRACT_ERROR';
+  actionPayload: ShowAbstractErrorPayload;
+}
+
+export type ScenarioStep =
+  | ResetStep
+  | InstantiateStep
+  | CallMethodStep
+  | ViolateAccessStep
+  | ValidateSetterStep
+  | CloneMembersStep
+  | ShowAbstractErrorStep;
+
+export type ScenarioActionPayload =
+  | InstantiatePayload
+  | CallMethodPayload
+  | ViolateAccessPayload
+  | ValidateSetterPayload
+  | CloneMembersPayload
+  | ShowAbstractErrorPayload;
 
 export interface OOPScenario {
   id: string;
