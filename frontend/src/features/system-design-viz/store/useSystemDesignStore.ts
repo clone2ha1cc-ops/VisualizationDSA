@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia';
-import { ref, computed } from 'vue';
+import { ref, computed, triggerRef } from 'vue';
 import { SystemDesignEngine } from '../engine/SystemDesignEngine';
 import { ReplicationLagScheduler } from '../engine/ReplicationLagScheduler';
 import type {
@@ -99,6 +99,7 @@ export const useSystemDesignStore = defineStore('systemDesign', () => {
     const packet = engine.routeRequestFromLB('lb-1', PACKET_COLORS.HTTP_REQUEST);
     if (packet) {
       syncPackets();
+      syncNodes();
     }
   }
 
@@ -108,6 +109,7 @@ export const useSystemDesignStore = defineStore('systemDesign', () => {
       engine.routeRequestFromLB('lb-1', PACKET_COLORS.HTTP_REQUEST);
     }
     syncPackets();
+    syncNodes();
   }
 
   function triggerDbWrite(): void {
@@ -137,6 +139,7 @@ export const useSystemDesignStore = defineStore('systemDesign', () => {
   function tickEngine(deltaTime: number): void {
     engine.updatePacketsProgress(deltaTime);
     syncPackets();
+    syncNodes();
   }
 
   function setReplicationLag(ms: number): void {
@@ -163,6 +166,10 @@ export const useSystemDesignStore = defineStore('systemDesign', () => {
 
   function syncPackets(): void {
     activePackets.value = engine.getPackets();
+  }
+
+  function syncNodes(): void {
+    triggerRef(nodes);
   }
 
   function dispatchSmokeEvent(nodeId: string): void {

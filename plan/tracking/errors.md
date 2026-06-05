@@ -277,3 +277,9 @@ Tài liệu này tổng hợp các mã lỗi, kịch bản sự cố và cách t
 *   **Mã Lỗi:** `ERR_OOP_SVG_DASHARRAY_SYNTAX`
 *   **Nguyên nhân gốc:** Lỗi đánh máy trong template Vue.
 *   **Cách khắc phục:** Đổi `stroke-dasharray="4_4"` thành `stroke-dasharray="4 4"`. File sửa: `OOPConceptsVisualizerWorkspace.vue` dòng 63.
+
+### 🚨 Lỗi 138: requestCount Không Cập Nhật UI — System Design Viz (BUG-SD-REACTIVITY)
+*   **Mô tả:** Trường `requestCount` trên thẻ `SystemNodeCard` (`"X req"`) không cập nhật trong giao diện Vue khi engine thay đổi giá trị. Engine mutate trực tiếp các raw JavaScript objects, bypass hoàn toàn hệ thống Proxy reactivity của Vue 3. Hàm `syncPackets()` chỉ đồng bộ mảng packets, không đồng bộ trạng thái nodes.
+*   **Mã Lỗi:** `ERR_SYSDESIGN_NODE_REACTIVITY_GAP`
+*   **Nguyên nhân gốc:** Engine lưu trữ raw object references qua `registerNode()`. Khi engine gọi `targetServer.requestCount++` hoặc `requestCount--`, nó mutate object gốc trực tiếp — Vue 3 Proxy chỉ phát hiện thay đổi khi setter được gọi qua Proxy, không phải qua raw object.
+*   **Cách khắc phục:** Thêm hàm `syncNodes()` sử dụng `triggerRef(nodes)` từ Vue 3 để ép Vue re-render khi node data thay đổi. Gọi `syncNodes()` song song với `syncPackets()` tại tất cả các điểm mutation: `injectHttpRequest()`, `injectTrafficBurst()`, và `tickEngine()`. File sửa: `useSystemDesignStore.ts`.
