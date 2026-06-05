@@ -1,6 +1,6 @@
 ---
 name: testing-visualization-dsa
-description: Test the VisualizationDSA app end-to-end — OOP, System Design, and Algorithm Dashboard modules. Use when verifying animation, heap memory, packet routing, scenario playback, or sorting/searching algorithm changes.
+description: Test the VisualizationDSA app end-to-end — OOP, System Design, Algorithm Dashboard, SOLID, Design Patterns, and DI/IoC modules. Use when verifying animation, heap memory, packet routing, scenario playback, sorting/searching algorithms, or architecture concept changes.
 ---
 
 # Testing VisualizationDSA Modules
@@ -19,9 +19,10 @@ None — no authentication required for any module.
 
 ### Frontend
 ```bash
-cd frontend && npx vite --host 0.0.0.0 --port 5173
+cd frontend && VITE_API_BASE_URL=http://localhost:5050 npx vite --host 0.0.0.0 --port 5173
 ```
 Note: If port 5173 is in use, Vite will auto-increment. Check terminal output.
+CRITICAL: `VITE_API_BASE_URL` must be set BEFORE starting vite (it's baked at build time). If frontend is already running without the env var, kill it and restart.
 
 ### Backend (.NET 9.0)
 ```bash
@@ -40,6 +41,10 @@ If port 5050 is busy: `fuser -k 5050/tcp` then restart.
 | Graph | `/graph` | "Graph" under ALGORITHMS |
 | OOP Visualization | `/oop` | "OOP Viz" under CONCEPTS |
 | System Design | `/system` | "System Design" under CONCEPTS |
+| SOLID Principles | `/solid` | "SOLID" under CONCEPTS |
+| Design Patterns | `/patterns` | "Patterns" under CONCEPTS |
+| DI/IoC Container | `/di` | "DI Container" under CONCEPTS |
+| Code Debugger | `/code-ide` | "Code IDE" under TOOLS |
 
 The app uses hash routing: `localhost:5173/#/sorting`, `localhost:5173/#/oop`, etc.
 
@@ -110,6 +115,64 @@ curl -s http://localhost:5050/api/v1/concepts/system-design/topology
 curl -s -X POST http://localhost:5050/api/v1/concepts/system-design/execute -H "Content-Type: application/json" -d '{"scenarioId":"server-failover"}'
 ```
 
+### SOLID Principles API
+```bash
+# List scenarios
+curl -s http://localhost:5050/api/v1/concepts/solid/scenarios
+# Execute SRP scenario (4 frames)
+curl -s -X POST http://localhost:5050/api/v1/concepts/solid/execute -H "Content-Type: application/json" -d '{"scenarioId":"srp"}'
+# Execute OCP scenario (4 frames)
+curl -s -X POST http://localhost:5050/api/v1/concepts/solid/execute -H "Content-Type: application/json" -d '{"scenarioId":"ocp"}'
+# Execute LSP scenario (4 frames)
+curl -s -X POST http://localhost:5050/api/v1/concepts/solid/execute -H "Content-Type: application/json" -d '{"scenarioId":"lsp"}'
+```
+Supported scenario IDs: `srp`, `ocp`, `lsp`
+
+### Design Patterns API
+```bash
+# List scenarios
+curl -s http://localhost:5050/api/v1/concepts/design-patterns/scenarios
+# Execute Strategy Pattern (4 frames)
+curl -s -X POST http://localhost:5050/api/v1/concepts/design-patterns/execute -H "Content-Type: application/json" -d '{"scenarioId":"strategy-pattern"}'
+# Execute Observer Pattern (4 frames)
+curl -s -X POST http://localhost:5050/api/v1/concepts/design-patterns/execute -H "Content-Type: application/json" -d '{"scenarioId":"observer-pattern"}'
+# Execute Singleton Pattern (4 frames)
+curl -s -X POST http://localhost:5050/api/v1/concepts/design-patterns/execute -H "Content-Type: application/json" -d '{"scenarioId":"singleton-pattern"}'
+```
+Supported scenario IDs: `strategy-pattern`, `observer-pattern`, `singleton-pattern`
+
+### DI Container API
+```bash
+# List scenarios
+curl -s http://localhost:5050/api/v1/concepts/di-container/scenarios
+# Execute Lifetime Demo (5 frames)
+curl -s -X POST http://localhost:5050/api/v1/concepts/di-container/execute -H "Content-Type: application/json" -d '{"scenarioId":"lifetime-demo"}'
+# Execute Cycle Detection (4 frames)
+curl -s -X POST http://localhost:5050/api/v1/concepts/di-container/execute -H "Content-Type: application/json" -d '{"scenarioId":"cycle-detection"}'
+```
+Supported scenario IDs: `lifetime-demo`, `cycle-detection`
+
+## Architecture Module DTO Key Names
+
+When parsing JSON responses, use these actual property names (not what the C# class names suggest):
+
+### Design Pattern Nodes
+- `id` (not `nodeId`), `name`, `nodeType`, `attributes`, `methods`, `x`, `y`
+- Links: `id` (not `linkId`), `sourceId`, `targetId`, `linkType`, `isActive`
+
+### DI Container Registrations
+- `interfaceName`, `implementationName`, `lifetime`, `dependencies`, `isRegistered`
+- Instances: `serviceName`, `instanceId`, `lifetime`, `resolveCount`, `isNew`
+- Graph: `dependencyGraph.nodes[]`, `dependencyGraph.edges[].from`, `dependencyGraph.edges[].to`
+
+### Key Verification Points
+- **Vietnamese text**: All concept endpoints generate Vietnamese explanation text in the `explanation` field. This text exists ONLY in backend C# — if API fails, frontend fallback won't have it.
+- **SOLID**: `isViolation` flag toggles (true in violation frames, false in fix frames). `classNodes[].isViolating` marks individual nodes.
+- **Strategy Pattern**: `couplingIndex` should decrease frame-by-frame (85→40→20→15).
+- **Observer**: All `links[].isActive = true` during NOTIFY_ALL frame.
+- **DI Lifetime**: Singleton instance has `isNew=false` on second resolve. Transient always has `isNew=true`.
+- **Cycle Detection**: `hasCycle` toggles false→true→false across frames.
+
 ## System Design Module Testing
 
 ### Key UI Elements
@@ -144,6 +207,16 @@ Click a scenario button (e.g., "Server Failover") → enters VCR mode with backe
 3. Vietnamese explanation text confirms API connection
 4. Step through frames and verify actionName changes
 
+## SOLID/Patterns/DI Module Testing
+
+Note: These modules have VCR integration in the Pinia stores but the workspace components may not yet render VCR scenario-selection buttons in the UI. Test primarily via backend curl commands (see Backend API Testing section above).
+
+If VCR buttons are added to the workspace components, the testing pattern is the same as OOP/System Design:
+1. Click scenario button → VCR mode activates
+2. Look for Vietnamese explanation text (proves API connection)
+3. Step through frames, verify actionType progression
+4. Exit VCR mode restores sandbox controls
+
 ## Running Unit Tests
 
 ```bash
@@ -159,3 +232,5 @@ Expected: All tests pass (1528+ tests).
 - Port conflicts: Kill existing processes with `fuser -k <port>/tcp` before restarting.
 - CountingSortStrategy: Watch for sorting-by-ones-digit bugs. The correct implementation uses `(value - minVal)` offset indexing, not `% 10`.
 - The ⏭ (next step) button in scenario mode can be hard to click precisely — it's a small button in the VCR control bar.
+- Error handling: Invalid scenarioId returns HTTP 404 with `{"errorType":"SCENARIO_NOT_FOUND", "supportedScenarios":[...]}` body.
+- Design Pattern nodes use `id`/`name` (not `nodeId`/`className`) and links use `id`/`sourceId`/`targetId` (not `linkId`/`source`/`target`).
