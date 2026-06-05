@@ -12,6 +12,7 @@ import type { UMLNode, UMLLink, PatternScenarioId } from '../types/design-patter
 import { DesignPatternVisualizerEngine } from '../engine/DesignPatternVisualizerEngine';
 import { getScenario } from '../scenarios/scenarioData';
 import { applyDIPEnabled, applyDIPDisabled, rebuildEngine } from './dipHelpers';
+import { executeDesignPatternScenario, type DesignPatternFrameResponse } from '../services/designPatternsApi';
 
 export const useDesignPatternsStore = defineStore('designPatterns', () => {
   // STATE
@@ -103,11 +104,70 @@ export const useDesignPatternsStore = defineStore('designPatterns', () => {
     isDIPEnabled.value = false;
   }
 
+  // ==========================================
+  // VCR STATE (Backend API frames)
+  // ==========================================
+  const vcrFrames = ref<DesignPatternFrameResponse[]>([]);
+  const vcrCurrentIndex = ref(0);
+  const isVcrMode = ref(false);
+  const isVcrLoading = ref(false);
+  const vcrError = ref<string | null>(null);
+
+  const vcrCurrentFrame = computed(() =>
+    vcrFrames.value[vcrCurrentIndex.value] ?? null
+  );
+  const vcrTotalFrames = computed(() => vcrFrames.value.length);
+
+  async function loadVcrScenario(scenarioId: string): Promise<void> {
+    isVcrLoading.value = true;
+    vcrError.value = null;
+    try {
+      const frames = await executeDesignPatternScenario(scenarioId);
+      vcrFrames.value = frames;
+      vcrCurrentIndex.value = 0;
+      isVcrMode.value = true;
+    } catch (err: unknown) {
+      vcrError.value = err instanceof Error ? err.message : 'API call failed';
+      isVcrMode.value = false;
+    } finally {
+      isVcrLoading.value = false;
+    }
+  }
+
+  function vcrNext(): void {
+    if (vcrCurrentIndex.value < vcrFrames.value.length - 1) {
+      vcrCurrentIndex.value++;
+    }
+  }
+
+  function vcrPrev(): void {
+    if (vcrCurrentIndex.value > 0) {
+      vcrCurrentIndex.value--;
+    }
+  }
+
+  function vcrReset(): void {
+    vcrCurrentIndex.value = 0;
+  }
+
+  function exitVcrMode(): void {
+    isVcrMode.value = false;
+    vcrFrames.value = [];
+    vcrCurrentIndex.value = 0;
+    vcrError.value = null;
+  }
+
   return {
     nodes, links, activePatternId, activeScenarioTitle, isDIPEnabled, isObserverNotifying,
     activeStrategyTargetId, pathCache,
     couplingIndexMetric, couplingLabel, nodeCount, linkCount,
+    // VCR State
+    vcrFrames, vcrCurrentIndex, isVcrMode, isVcrLoading, vcrError,
+    vcrCurrentFrame, vcrTotalFrames,
+    // Actions
     initializeScenario, handleNodeDrag, switchStrategy, triggerObserverNotify, toggleDIP,
     recalculatePaths, cleanup,
+    // VCR Actions
+    loadVcrScenario, vcrNext, vcrPrev, vcrReset, exitVcrMode,
   };
 });

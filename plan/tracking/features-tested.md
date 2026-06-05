@@ -1911,3 +1911,18 @@ Tài liệu này ghi nhận trạng thái kiểm thử đơn vị tự động (
 | :--- | :--- | :--- | :--- | :--- |
 | 1554 | **Interactive Playground** | Manages hovered states for nodes and edges | Kiểm tra hoveredNodeId và hoveredEdgeId được set đúng và reset khi node/edge bị xóa | 🟢 PASSED |
 
+
+
+### Phase 4 VCR UI Integration — End-to-End Browser Tests
+
+| STT | Phân hệ kiểm thử | Tính năng kiểm thử | Phương thức | Trạng thái |
+| :--- | :--- | :--- | :--- | :--- |
+| 1555 | **SOLID VCR** | SRP Scenario VCR Playback | Click SRP → SHOW_VIOLATION badge + Vietnamese "VI PHẠM SRP", Frame 1/4, Prev disabled | 🟢 PASSED |
+| 1556 | **SOLID VCR** | Frame Navigation (Next/Prev/Reset) | Next×2 → Frame 3/4 SPLIT_CLASS, Reset → Frame 1/4 SHOW_VIOLATION | 🟢 PASSED |
+| 1557 | **SOLID VCR** | Exit VCR Sandbox Restore | Exit → lesson tabs (SRP/OCP/LSP/ISP/DIP) + God Class card reappear | 🟢 PASSED |
+| 1558 | **Patterns VCR** | Observer Scenario VCR Playback | Click Observer → SETUP badge + Vietnamese "IObserver/notify()", Frame 1/4, canvas hidden | 🟢 PASSED |
+| 1559 | **Patterns VCR** | Frame End Boundary | Navigate to Frame 4/4 CONCLUSION, Next button disabled | 🟢 PASSED |
+| 1560 | **Patterns VCR** | Exit VCR Sandbox Restore | Exit → canvas + UML nodes + scenario tabs restored | 🟢 PASSED |
+| 1561 | **DI VCR** | Lifetime Scenario VCR Playback | Click Lifetime Demo → REGISTER_SERVICES + Vietnamese "DI Container", Frame 1/5 (5 frames) | 🟢 PASSED |
+| 1562 | **DI VCR** | Frame Badge Change | Next → Frame 2/5 RESOLVE_SINGLETON_NEW, badge changed from REGISTER_SERVICES | 🟢 PASSED |
+| 1563 | **DI VCR** | Exit VCR Sandbox Restore | Exit → IoC concept box + service panels + dependency graph + Resolution Demo restored | 🟢 PASSED |

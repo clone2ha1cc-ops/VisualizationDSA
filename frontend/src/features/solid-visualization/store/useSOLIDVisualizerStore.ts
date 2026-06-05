@@ -18,6 +18,7 @@ import {
   COOL_DOWN_CONFETTI_EVENT,
   GLASS_BREAK_SOUND_EVENT,
 } from '../types/solid-visualization.types';
+import { executeSOLIDScenario, type SOLIDFrameResponse } from '../services/solidApi';
 
 // ==========================================
 // DEMO DATA: UserManager God Class (SRP)
@@ -90,6 +91,15 @@ export const useSOLIDVisualizerStore = defineStore('solidVisualizer', () => {
 
   const lastDiagnosticResult = ref<string | null>(null);
   const lspTimerId = ref<ReturnType<typeof setTimeout> | null>(null);
+
+  // ==========================================
+  // VCR STATE (Backend API frames)
+  // ==========================================
+  const vcrFrames = ref<SOLIDFrameResponse[]>([]);
+  const vcrCurrentIndex = ref(0);
+  const isVcrMode = ref(false);
+  const isVcrLoading = ref(false);
+  const vcrError = ref<string | null>(null);
 
   // ==========================================
   // COMPUTED
@@ -250,6 +260,53 @@ export const useSOLIDVisualizerStore = defineStore('solidVisualizer', () => {
     resetState();
   }
 
+  // ==========================================
+  // VCR ACTIONS (Backend API)
+  // ==========================================
+  const vcrCurrentFrame = computed(() =>
+    vcrFrames.value[vcrCurrentIndex.value] ?? null
+  );
+  const vcrTotalFrames = computed(() => vcrFrames.value.length);
+
+  async function loadVcrScenario(principle: string): Promise<void> {
+    isVcrLoading.value = true;
+    vcrError.value = null;
+    try {
+      const frames = await executeSOLIDScenario(principle.toLowerCase());
+      vcrFrames.value = frames;
+      vcrCurrentIndex.value = 0;
+      isVcrMode.value = true;
+    } catch (err: unknown) {
+      vcrError.value = err instanceof Error ? err.message : 'API call failed';
+      isVcrMode.value = false;
+    } finally {
+      isVcrLoading.value = false;
+    }
+  }
+
+  function vcrNext(): void {
+    if (vcrCurrentIndex.value < vcrFrames.value.length - 1) {
+      vcrCurrentIndex.value++;
+    }
+  }
+
+  function vcrPrev(): void {
+    if (vcrCurrentIndex.value > 0) {
+      vcrCurrentIndex.value--;
+    }
+  }
+
+  function vcrReset(): void {
+    vcrCurrentIndex.value = 0;
+  }
+
+  function exitVcrMode(): void {
+    isVcrMode.value = false;
+    vcrFrames.value = [];
+    vcrCurrentIndex.value = 0;
+    vcrError.value = null;
+  }
+
   function triggerCoolDownConfetti(): void {
     if (typeof window !== 'undefined') {
       window.dispatchEvent(new CustomEvent(COOL_DOWN_CONFETTI_EVENT));
@@ -271,6 +328,12 @@ export const useSOLIDVisualizerStore = defineStore('solidVisualizer', () => {
     isLspShattered,
     dipState,
     lastDiagnosticResult,
+    // VCR State
+    vcrFrames,
+    vcrCurrentIndex,
+    isVcrMode,
+    isVcrLoading,
+    vcrError,
     // Computed
     hasOverheatedNodes,
     overheatedNodeIds,
@@ -279,6 +342,8 @@ export const useSOLIDVisualizerStore = defineStore('solidVisualizer', () => {
     isLSPTransmitting,
     isDIPCorrect,
     activeLessonLabel,
+    vcrCurrentFrame,
+    vcrTotalFrames,
     // Actions
     setLesson,
     initializeDemoData,
@@ -291,5 +356,11 @@ export const useSOLIDVisualizerStore = defineStore('solidVisualizer', () => {
     resetState,
     resetAll,
     destroyStore,
+    // VCR Actions
+    loadVcrScenario,
+    vcrNext,
+    vcrPrev,
+    vcrReset,
+    exitVcrMode,
   };
 });

@@ -25,9 +25,12 @@ public static class AlgorithmDIConfiguration
             services.AddTransient(typeof(IAlgorithmStrategy), type);
         }
 
-        // ── Đăng ký Concept Strategies (OOP, System Design) ──
+        // ── Đăng ký Concept Strategies (OOP, System Design, SOLID, Design Patterns, DI) ──
         services.AddSingleton<OOPConceptsStrategy>();
         services.AddSingleton<SystemDesignStrategy>();
+        services.AddSingleton<SOLIDPrinciplesStrategy>();
+        services.AddSingleton<DesignPatternsStrategy>();
+        services.AddSingleton<DIContainerStrategy>();
 
         return services;
     }

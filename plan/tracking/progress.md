@@ -736,3 +736,17 @@ Tất cả các mục tiêu Sprint 5 đã đạt:
 | **Router Clean** | Vô hiệu hóa các route phụ, cập nhật Sandbox | ✅ CODE DONE | `routes.ts` — Vô hiệu hóa 12 routes đã gộp/hoãn, cập nhật title 'Sandbox' cho playground |
 | **Code Debugger** | Gộp Workspace, Live Debugger, và State Inspector vào một view | ✅ CODE DONE | `CodeIDEView.vue` — Tab bar switcher với KeepAlive giữ trạng thái editor |
 | **DSA Integration** | Tích hợp các thuật toán DSA Modules vào Sorting & Graph | ✅ CODE DONE | `DSAPlayer.vue`, `AlgorithmDashboard.vue`, `SortingView.vue`, `GraphView.vue` — Lọc thuật toán phù hợp qua `allowedCategories`, ẩn mục đề xuất (featured/recommend) khi xem sub-tabs |
+
+## 16. Phase 4 — Software Architecture Modules Full-Stack Integration (SOLID, Design Patterns, DI/IoC)
+
+| Hạng mục / Task | Nội dung | Trạng thái CODE | Chi tiết |
+| :--- | :--- | :--- | :--- |
+| **Backend Strategies** | 3 IConceptStrategy implementations (SOLID, Design Patterns, DI/IoC) | ✅ CODE DONE | `SOLIDPrinciplesStrategy.cs` (SRP/OCP/LSP — 4 frames each), `DesignPatternsStrategy.cs` (Strategy/Observer/Singleton — 4 frames each), `DIContainerStrategy.cs` (Lifetime 5 frames, Cycle 4 frames) |
+| **Backend DTOs** | Frame DTOs for all 3 modules | ✅ CODE DONE | `SOLIDFrameDto.cs`, `DesignPatternFrameDto.cs`, `DIContainerFrameDto.cs` — Vietnamese explanation text in C# |
+| **Backend Controllers** | REST API endpoints for 3 modules | ✅ CODE DONE | `SOLIDController.cs` (`/api/v1/concepts/solid/`), `DesignPatternsController.cs` (`/api/v1/concepts/design-patterns/`), `DIContainerController.cs` (`/api/v1/concepts/di-container/`) |
+| **Frontend API Layers** | Service layers calling backend | ✅ CODE DONE | `solidApi.ts`, `designPatternsApi.ts`, `diContainerApi.ts` — async fetch with error handling |
+| **Frontend Store VCR** | Pinia stores with VCR integration | ✅ CODE DONE | `useSOLIDVisualizerStore.ts`, `useDesignPatternStore.ts`, `useDIContainerStore.ts` — loadVcrScenario(), vcrNext/Prev/Reset/exitVcrMode |
+| **VCR UI — SOLID** | Scenario Picker + VCR Panel + Explanation Banner | ✅ CODE DONE | `SOLIDVisualizerWorkspace.vue` — 3 scenario buttons (SRP/OCP/LSP), frame navigation, Vietnamese banner, v-if sandbox toggle |
+| **VCR UI — Design Patterns** | Scenario Picker + VCR Panel + Explanation Banner | ✅ CODE DONE | `DesignPatternsWorkspace.vue` — 3 scenario buttons (Strategy/Observer/Singleton), frame navigation, Vietnamese banner, v-if sandbox toggle |
+| **VCR UI — DI/IoC** | Scenario Picker + VCR Panel + Explanation Banner | ✅ CODE DONE | `DISandbox.vue` — 2 scenario buttons (Lifetime Demo/Cycle Detection), frame navigation, Vietnamese banner, v-if sandbox toggle |
+| **E2E Testing** | Browser verification all 3 modules | ✅ CODE DONE | 9/9 API tests passed (curl), 3/3 VCR UI tests passed (browser recording) — Vietnamese text confirms API connectivity |

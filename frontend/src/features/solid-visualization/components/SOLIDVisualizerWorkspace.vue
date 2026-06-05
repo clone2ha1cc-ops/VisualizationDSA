@@ -19,8 +19,51 @@
       </div>
     </div>
 
-    <!-- Lesson Selector Tabs -->
-    <div class="flex gap-2">
+    <!-- Backend Scenario Picker -->
+    <div class="scenario-picker">
+      <h4 class="control-title">Backend Scenarios (VCR)</h4>
+      <div class="btn-group">
+        <button
+          v-for="scenario in solidScenarios"
+          :key="scenario.id"
+          class="ctrl-btn btn-scenario"
+          :disabled="store.isVcrLoading"
+          @click="store.loadVcrScenario(scenario.id)"
+        >
+          {{ scenario.label }}
+        </button>
+      </div>
+    </div>
+
+    <!-- VCR Explanation Banner -->
+    <div
+      v-if="store.isVcrMode && store.vcrCurrentFrame"
+      class="scenario-banner"
+    >
+      <span class="banner-action">{{ store.vcrCurrentFrame.actionType }}</span>
+      <span class="banner-text">{{ store.vcrCurrentFrame.explanation }}</span>
+    </div>
+
+    <!-- VCR Loading / Error -->
+    <div v-if="store.isVcrLoading" class="api-status loading">Loading from backend...</div>
+    <div v-if="store.vcrError" class="api-status error">{{ store.vcrError }}</div>
+
+    <!-- VCR Playback Controls -->
+    <div v-if="store.isVcrMode" class="vcr-controls">
+      <h4 class="control-title">VCR Playback</h4>
+      <div class="vcr-row">
+        <div class="btn-group">
+          <button class="ctrl-btn btn-vcr" :disabled="vcrCurrentIndex <= 0" @click="store.vcrPrev()">◀ Prev</button>
+          <button class="ctrl-btn btn-vcr" :disabled="vcrCurrentIndex >= store.vcrTotalFrames - 1" @click="store.vcrNext()">Next ▶</button>
+          <button class="ctrl-btn btn-vcr" @click="store.vcrReset()">⏮ Reset</button>
+        </div>
+        <div class="frame-indicator">Frame {{ vcrCurrentIndex + 1 }} / {{ store.vcrTotalFrames }}</div>
+        <button class="ctrl-btn btn-exit-vcr" @click="store.exitVcrMode()">Exit VCR → Sandbox</button>
+      </div>
+    </div>
+
+    <!-- Lesson Selector Tabs (hidden in VCR mode) -->
+    <div v-if="!store.isVcrMode" class="flex gap-2">
       <button
         v-for="lesson in lessons"
         :key="lesson.id"
@@ -32,8 +75,8 @@
       </button>
     </div>
 
-    <!-- Active Lesson Panel -->
-    <div class="flex-1">
+    <!-- Active Lesson Panel (hidden in VCR mode) -->
+    <div v-if="!store.isVcrMode" class="flex-1">
       <!-- SRP Lesson -->
       <SRPLessonPanel
         v-if="store.activeLesson === 'SRP'"
@@ -97,7 +140,7 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, onUnmounted } from 'vue';
+import { onMounted, onUnmounted, computed } from 'vue';
 import { useSOLIDVisualizerStore } from '../store/useSOLIDVisualizerStore';
 import type { SOLIDPrinciple } from '../types/solid-visualization.types';
 import SRPLessonPanel from './SRPLessonPanel.vue';
@@ -105,6 +148,14 @@ import LSPLessonPanel from './LSPLessonPanel.vue';
 import DIPLessonPanel from './DIPLessonPanel.vue';
 
 const store = useSOLIDVisualizerStore();
+const vcrCurrentIndex = computed(() => store.vcrCurrentIndex);
+
+interface ScenarioEntry { id: string; label: string; }
+const solidScenarios: ScenarioEntry[] = [
+  { id: 'srp', label: 'SRP — God Class' },
+  { id: 'ocp', label: 'OCP — Open/Closed' },
+  { id: 'lsp', label: 'LSP — Substitution' },
+];
 
 interface LessonTab {
   id: SOLIDPrinciple;
@@ -254,4 +305,31 @@ function onSRPSplit(nodeId: string): void {
   background-color: color-mix(in srgb, var(--color-bg-active) 60%, transparent);
   color: var(--color-text-primary);
 }
+
+/* === VCR Scenario Picker === */
+.scenario-picker { background: rgba(15, 23, 42, 0.5); border: 1px solid rgba(139, 92, 246, 0.2); border-radius: 12px; padding: 16px; backdrop-filter: blur(8px); }
+.scenario-picker .control-title { color: #a78bfa; font-size: 13px; font-weight: 600; margin: 0 0 12px 0; text-transform: uppercase; letter-spacing: 0.5px; }
+.btn-group { display: flex; gap: 8px; flex-wrap: wrap; }
+.ctrl-btn { padding: 8px 14px; border-radius: 8px; font-size: 12px; font-weight: 600; cursor: pointer; transition: all 0.2s ease; border: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.05); color: #94a3b8; }
+.ctrl-btn:hover:not(:disabled) { background: rgba(255,255,255,0.1); }
+.ctrl-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+.btn-scenario { color: #a78bfa; border-color: rgba(167, 139, 250, 0.3); }
+
+/* === VCR Playback Controls === */
+.vcr-controls { background: rgba(15, 23, 42, 0.5); border: 1px solid rgba(167, 139, 250, 0.3); border-radius: 12px; padding: 16px; backdrop-filter: blur(8px); }
+.vcr-controls .control-title { color: #a78bfa; font-size: 13px; font-weight: 600; margin: 0 0 8px 0; text-transform: uppercase; letter-spacing: 0.5px; }
+.vcr-row { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+.btn-vcr { color: #c4b5fd; border-color: rgba(196, 181, 253, 0.3); }
+.frame-indicator { font-size: 12px; color: #a78bfa; font-weight: 600; padding: 4px 10px; background: rgba(139, 92, 246, 0.1); border-radius: 6px; }
+.btn-exit-vcr { color: #f97316; border-color: rgba(249, 115, 22, 0.3); margin-left: auto; }
+
+/* === Explanation Banner === */
+.scenario-banner { background: rgba(139, 92, 246, 0.1); border: 1px solid rgba(139, 92, 246, 0.3); border-radius: 10px; padding: 12px 16px; display: flex; align-items: center; gap: 12px; }
+.banner-action { font-size: 11px; font-weight: 700; color: #a78bfa; background: rgba(139, 92, 246, 0.2); padding: 3px 8px; border-radius: 4px; text-transform: uppercase; letter-spacing: 0.5px; white-space: nowrap; }
+.banner-text { font-size: 13px; color: #cbd5e1; }
+
+/* === API Status === */
+.api-status { text-align: center; padding: 8px; border-radius: 8px; font-size: 12px; font-weight: 600; }
+.api-status.loading { color: #06b6d4; background: rgba(6, 182, 212, 0.1); border: 1px solid rgba(6, 182, 212, 0.2); }
+.api-status.error { color: #ef4444; background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.2); }
 </style>

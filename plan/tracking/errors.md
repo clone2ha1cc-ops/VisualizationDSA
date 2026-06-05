@@ -346,3 +346,23 @@ Tài liệu này tổng hợp các mã lỗi, kịch bản sự cố và cách t
     - `dummyGenerators.ts`: Đăng ký 4 generators mới
     - Tests: Cập nhật catalog (10→17) và store specs
 *   **Files sửa:** `useAlgorithmStore.ts`, `dsaApi.ts`, `algorithmCatalog.ts`, `algorithmLocalMetadata.ts`, `sortingGenerators.ts`, `dummyGenerators.ts`, `algorithmCatalog.spec.ts`, `useAlgorithmStore.spec.ts`
+
+### 144. Phase 4 — Backend Architecture Modules (SOLID, Design Patterns, DI/IoC)
+*   **ID:** FEAT-PHASE4-ARCH
+*   **Mô tả:** Implemented full-stack integration for 3 architecture modules: SOLID Principles, Design Patterns, DI/IoC Container.
+*   **Backend thay đổi:**
+    - `SOLIDPrinciplesStrategy.cs`: 3 scenarios (SRP, OCP, LSP) with 4 frames each
+    - `DesignPatternsStrategy.cs`: 3 scenarios (Strategy, Observer, Singleton) with 4 frames each
+    - `DIContainerStrategy.cs`: 2 scenarios (lifetime-demo: 5 frames, cycle-detection: 4 frames)
+    - DTOs: `SOLIDFrameDto.cs`, `DesignPatternFrameDto.cs`, `DIContainerFrameDto.cs`
+    - Controllers: `SOLIDController.cs`, `DesignPatternsController.cs`, `DIContainerController.cs`
+    - DI: Registered 3 new strategies in `AlgorithmDIConfiguration.cs`
+*   **Frontend thay đổi:**
+    - `solidApi.ts`: Service layer for SOLID API
+    - `designPatternsApi.ts`: Service layer for Design Patterns API
+    - `diContainerApi.ts`: Service layer for DI Container API
+    - `useSOLIDVisualizerStore.ts`: Added VCR state + actions (loadVcrScenario, vcrNext, vcrPrev, vcrReset, exitVcrMode)
+    - `useDesignPatternsStore.ts`: Added VCR state + actions
+    - `useDIContainerStore.ts`: New Pinia store with VCR integration
+*   **Build:** `dotnet build` 0 errors, `vue-tsc --noEmit` 0 errors
+*   **Files:** 16 new/modified files across backend/src/ and frontend/src/features/
