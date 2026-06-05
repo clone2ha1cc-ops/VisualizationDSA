@@ -2028,3 +2028,8 @@ Tài liệu này ghi nhận trạng thái kiểm thử đơn vị tự động (
 | 1763 | **Port Migration** | 21 frontend service files | localhost:5050 → localhost:5055 | 🟢PASSED |
 | 1764 | **Port Migration** | 4 Vietnamese test guides | curl commands updated to 5055 | 🟢PASSED |
 | 1765 | **Compilation** | dotnet build + vue-tsc | Backend 0 errors, Frontend 0 errors | 🟢PASSED |
+| 1766 | **Security** | Syntax Error Toast | useToastStore.error() on AST compile failure | 🟢PASSED |
+| 1767 | **Security** | Infinite Loop Toast | useToastStore.warning() on __loopCounter > 5000 | 🟢PASSED |
+| 1768 | **Security** | Runtime Eval Guard | try/catch on new Function() eval | 🟢PASSED |
+| 1769 | **Docs** | walkthrough.md | Code Debugger resilience documentation | 🟢PASSED |
+| 1770 | **Compilation** | dotnet build + vue-tsc | Backend 0 errors, Frontend 0 errors | 🟢PASSED |

@@ -862,3 +862,14 @@ Tất cả các mục tiêu Sprint 5 đã đạt:
 | **Port Migration 5050→5055** | 21 frontend service files updated | ✅ CODE DONE | All `localhost:5050` fallbacks changed to `localhost:5055` across API services, stores, and apiClient.ts |
 | **Test Guides Updated** | 4 Vietnamese test guides | ✅ CODE DONE | `huong-dan-kiem-thu-giai-doan-{3,4,5}.md` + `huong-dan-nghiem-thu-chuyen-nghiep.md` — all curl commands updated to port 5055 |
 | **Compilation** | dotnet build 0 errors + vue-tsc 0 errors | ✅ CODE DONE | Backend Build succeeded, Frontend vue-tsc --noEmit clean |
+
+## 25. Code Debugger — Resilience & Security Hardening
+
+| Hạng mục / Task | Nội dung | Trạng thái CODE | Chi tiết |
+| :--- | :--- | :--- | :--- |
+| **Syntax Error Toast** | useToastStore.error() on AST compile failure | ✅ CODE DONE | `useLiveDebuggerStore.ts`: fires Vietnamese toast "Mã nguồn có lỗi cú pháp..." on compileResult.success=false and runtime eval errors |
+| **Infinite Loop Toast** | useToastStore.warning() on loop guard trigger | ✅ CODE DONE | Pattern-matches loop guard errors (`/gioi han an toan.*buoc lap/`) across stepForward, continueToNextBreakpoint, stepOut — fires "Phát hiện vòng lặp vô hạn..." |
+| **Loop Guard (pre-existing)** | __loopCounter > 5000 AST injection | ✅ CODE DONE | `DebuggerYieldEngine.ts`: LOOP_LIMIT=5000 injected into for/while/do-while at compile time |
+| **Recursion Guard (pre-existing)** | __recursionDepth > 500 | ✅ CODE DONE | MAX_RECURSION_DEPTH=500 injected into generator functions |
+| **walkthrough.md** | Security hardening documentation | ✅ CODE DONE | Formal documentation of all 5 protection layers with thresholds and notification types |
+| **Compilation** | dotnet build 0 errors + vue-tsc 0 errors | ✅ CODE DONE | Backend Build succeeded, Frontend vue-tsc --noEmit clean |

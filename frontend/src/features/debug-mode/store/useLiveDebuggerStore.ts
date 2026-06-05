@@ -10,6 +10,7 @@ import { defineStore } from 'pinia';
 import { ref, computed } from 'vue';
 import { compileToDebugGenerator } from '../engine/DebuggerYieldEngine';
 import { LiveCompilerDebugger } from '../engine/LiveCompilerDebugger';
+import { useToastStore } from '../../../composables/useToast';
 import type {
   DebugStepPayload,
   DebuggerStatus,
@@ -50,6 +51,9 @@ export const useLiveDebuggerStore = defineStore('liveDebugger', () => {
   const previousVariables = ref<Record<string, string | number | undefined>>({}); // 🆕 snapshot bước trước cho delta display
 
   let debuggerInstance: LiveCompilerDebugger | null = null;
+  const LOOP_GUARD_PATTERN = /gioi han an toan.*buoc lap/;
+  const SYNTAX_TOAST_MSG = 'Mã nguồn có lỗi cú pháp hoặc không hợp lệ, vui lòng kiểm tra lại!';
+  const LOOP_TOAST_MSG = 'Phát hiện vòng lặp vô hạn! Hệ thống đã tự động dừng để bảo vệ bộ nhớ.';
 
   // ==========================================
   // COMPUTED
@@ -108,7 +112,8 @@ export const useLiveDebuggerStore = defineStore('liveDebugger', () => {
     if (!compileResult.success || !compileResult.generatorCode) {
       status.value = 'ERROR';
       errorMessage.value = compileResult.error ?? 'Loi bien dich AST khong xac dinh.';
-      errorLine.value = compileResult.errorLine ?? null; // 🆕 expose dòng lỗi để Monaco highlight
+      errorLine.value = compileResult.errorLine ?? null;
+      useToastStore().error(SYNTAX_TOAST_MSG);
       return;
     }
 
@@ -132,7 +137,9 @@ export const useLiveDebuggerStore = defineStore('liveDebugger', () => {
       stepForward();
     } catch (err: unknown) {
       status.value = 'ERROR';
-      errorMessage.value = err instanceof Error ? err.message : 'Loi khoi tao debugger.';
+      const msg = err instanceof Error ? err.message : 'Loi khoi tao debugger.';
+      errorMessage.value = msg;
+      useToastStore().error(SYNTAX_TOAST_MSG);
     }
   }
 
@@ -153,7 +160,13 @@ export const useLiveDebuggerStore = defineStore('liveDebugger', () => {
       }
     } catch (err: unknown) {
       status.value = 'ERROR';
-      errorMessage.value = err instanceof Error ? err.message : 'Loi step forward.';
+      const msg = err instanceof Error ? err.message : 'Loi step forward.';
+      errorMessage.value = msg;
+      if (LOOP_GUARD_PATTERN.test(msg)) {
+        useToastStore().warning(LOOP_TOAST_MSG);
+      } else {
+        useToastStore().error(SYNTAX_TOAST_MSG);
+      }
     }
   }
 
@@ -187,7 +200,13 @@ export const useLiveDebuggerStore = defineStore('liveDebugger', () => {
       }
     } catch (err: unknown) {
       status.value = 'ERROR';
-      errorMessage.value = err instanceof Error ? err.message : 'Loi continue.';
+      const msg = err instanceof Error ? err.message : 'Loi continue.';
+      errorMessage.value = msg;
+      if (LOOP_GUARD_PATTERN.test(msg)) {
+        useToastStore().warning(LOOP_TOAST_MSG);
+      } else {
+        useToastStore().error(SYNTAX_TOAST_MSG);
+      }
     }
   }
 
@@ -208,7 +227,13 @@ export const useLiveDebuggerStore = defineStore('liveDebugger', () => {
       }
     } catch (err: unknown) {
       status.value = 'ERROR';
-      errorMessage.value = err instanceof Error ? err.message : 'Loi step out.';
+      const msg = err instanceof Error ? err.message : 'Loi step out.';
+      errorMessage.value = msg;
+      if (LOOP_GUARD_PATTERN.test(msg)) {
+        useToastStore().warning(LOOP_TOAST_MSG);
+      } else {
+        useToastStore().error(SYNTAX_TOAST_MSG);
+      }
     }
   }
 
