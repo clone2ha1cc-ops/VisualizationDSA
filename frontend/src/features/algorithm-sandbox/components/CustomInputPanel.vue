@@ -1,5 +1,5 @@
 <template>
-  <div class="custom-input-panel backdrop-blur-md rounded-2xl p-4 shadow-xl flex flex-col gap-3.5 border border-white/5 bg-bg-secondary/65 max-h-full">
+  <div class="custom-input-panel backdrop-blur-md rounded-2xl p-4 shadow-xl flex flex-col gap-3.5 border border-white/5 bg-bg-secondary/65 max-h-full overflow-hidden">
     <!-- Header: Graph Summary & Title -->
     <div class="flex items-center justify-between border-b border-white/5 pb-2.5 select-none">
       <div class="flex items-center gap-2">
@@ -55,7 +55,7 @@
 
     <!-- Content Tabs Area -->
     <!-- Tab 1: Structured Build -->
-    <div v-if="activeTab === 'build'" class="flex flex-col gap-3 min-h-0">
+    <div v-if="activeTab === 'build'" class="flex flex-col gap-3 min-h-0 flex-1 overflow-y-auto">
       <!-- Quick Node Creator -->
       <button
         @click="onAddNode"
@@ -104,7 +104,7 @@
     </div>
 
     <!-- Bottom Section: Graph Generator & Clear -->
-    <div class="border-t border-white/5 pt-3 flex flex-col gap-2 bg-white/[0.01] -mx-4 px-4 pb-1">
+    <div class="border-t border-white/5 pt-3 flex flex-col gap-2 bg-white/[0.01] pb-1 shrink-0">
       <div class="text-[10px] font-bold text-text-secondary uppercase tracking-wider select-none">
         Trình sinh đồ thị (Generator)
       </div>
@@ -387,6 +387,11 @@ function generateCustomGraph() {
 .builder-select:focus,
 .builder-input:focus {
   border-color: var(--color-accent-cyan);
+}
+
+.builder-select option {
+  background-color: var(--color-bg-secondary, #1e293b);
+  color: var(--color-text-primary, #e2e8f0);
 }
 
 .scroll-x-container::-webkit-scrollbar {

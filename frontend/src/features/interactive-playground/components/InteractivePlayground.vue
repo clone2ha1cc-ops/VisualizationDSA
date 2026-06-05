@@ -132,7 +132,7 @@
     </div>
 
     <!-- Center Canvas Area -->
-    <div class="relative flex-1 min-h-0 overflow-hidden" ref="canvasAreaRef">
+    <div class="relative flex-1 min-h-[200px] overflow-hidden" ref="canvasAreaRef">
       <!-- Onboarding guide overlay -->
       <div v-if="store.nodes.length === 0 && !store.isAlgorithmMode" class="absolute inset-0 flex flex-col items-center justify-center pointer-events-none z-10 p-6 text-center">
         <div class="max-w-md bg-bg-secondary/75 backdrop-blur-lg border border-white/10 p-6 rounded-2xl shadow-2xl transition-all select-none">

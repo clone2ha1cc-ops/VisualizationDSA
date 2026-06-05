@@ -11,7 +11,7 @@
         <select 
           :value="serviceToResolve"
           @change="$emit('update:serviceToResolve', ($event.target as HTMLSelectElement).value)"
-          class="px-3 py-1.5 bg-bg-secondary border border-border-default rounded-lg text-xs text-text-secondary outline-none"
+          class="di-select px-3 py-1.5 border border-border-default rounded-lg text-xs text-text-secondary outline-none"
         >
           <option value="">Chọn service...</option>
           <option v-for="reg in registrations" :key="reg.interfaceName" :value="reg.interfaceName">
@@ -97,6 +97,16 @@ defineEmits<{
 <style scoped>
 .resolution-demo-panel {
   background-color: color-mix(in srgb, var(--color-bg-primary) 60%, transparent);
+}
+
+.di-select {
+  background-color: var(--color-bg-secondary, #1e293b);
+  color: var(--color-text-secondary, #94a3b8);
+}
+
+.di-select option {
+  background-color: var(--color-bg-secondary, #1e293b);
+  color: var(--color-text-primary, #e2e8f0);
 }
 </style>
 

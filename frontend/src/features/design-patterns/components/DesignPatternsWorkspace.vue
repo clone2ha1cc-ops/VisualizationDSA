@@ -98,7 +98,7 @@ onUnmounted(() => store.cleanup());
 </script>
 
 <style scoped>
-.design-patterns-workspace { display: flex; flex-direction: column; gap: 12px; padding: 16px; background: var(--glass-bg); backdrop-filter: var(--glass-blur-light); border: 1px solid rgba(100,116,139,0.2); border-radius: 16px; box-shadow: var(--shadow-elevated); height: 100%; overflow: hidden; }
+.design-patterns-workspace { display: flex; flex-direction: column; gap: 12px; padding: 16px; background: var(--glass-bg); backdrop-filter: var(--glass-blur-light); border: 1px solid rgba(100,116,139,0.2); border-radius: 16px; box-shadow: var(--shadow-elevated); width: 100%; height: 100%; overflow: hidden; }
 .workspace-header { display: flex; align-items: center; justify-content: space-between; padding-bottom: 10px; border-bottom: 1px solid var(--glass-border); }
 .header-badge { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .5px; padding: 3px 8px; border-radius: 6px; }
 .badge-nodes { background: rgba(6,182,212,0.1); color: #06b6d4; border: 1px solid rgba(6,182,212,0.2); }

@@ -841,3 +841,14 @@ Tất cả các mục tiêu Sprint 5 đã đạt:
 | **Backend OCP** | Reflection-based DI registration | ✅ CODE DONE | AlgorithmDIConfiguration: generic RegisterByInterface<T>() method scans assembly. IConceptStrategy now auto-registered via reflection like IAlgorithmStrategy. Adding new concept = 0 edits to DI config |
 | **Domain Isolation** | Zero outward dependencies | ✅ CODE DONE | Domain.csproj: 0 project references. 0 imports from Application/Infrastructure/WebApi. Perfect Clean Architecture onion |
 | **Compilation** | dotnet build 0 errors + vue-tsc 0 errors | ✅ CODE DONE | Backend 0 errors, Frontend vue-tsc --noEmit clean, 0 any usages |
+
+## 23. Bug-Squashing & UI/UX Edge-Case Polish
+
+| Hạng mục / Task | Nội dung | Trạng thái CODE | Chi tiết |
+| :--- | :--- | :--- | :--- |
+| **BUG-1: Graph Sidebar Overflow** | Fix layout collapse in CustomInputPanel | ✅ CODE DONE | Added `overflow-hidden` to root, `flex-1 overflow-y-auto` to build tab, `shrink-0` to bottom section, removed `-mx-4` negative margin hack |
+| **BUG-2: Graph VCR Canvas** | Fix canvas disappearance on mode switch | ✅ CODE DONE | `PlaygroundCanvas.vue`: guard `resizeCanvas()` against zero dimensions (prevent NaN coordinate scaling). `InteractivePlayground.vue`: `min-h-[200px]` on canvas container to prevent flex collapse |
+| **BUG-3: DI Select Dropdown** | Fix white-on-white option text in dark mode | ✅ CODE DONE | Added scoped CSS `option { background-color: var(--color-bg-secondary); color: var(--color-text-primary); }` to DIResolutionDemo, EdgeBuilderForm, CustomInputPanel |
+| **BUG-4: Patterns Layout** | Fix narrow canvas strip with empty black sides | ✅ CODE DONE | `PatternsView.vue`: removed `items-center justify-center`, added `w-full p-4`. `DesignPatternsWorkspace.vue`: added `width: 100%`. `DesignPatternsCanvas.vue`: `height: 100%; min-height: 400px` + ResizeObserver for responsive width |
+| **BUG-5: Port Standardization** | Lock Vite dev server to port 5173 | ✅ CODE DONE | `vite.config.ts`: added `server: { port: 5173, strictPort: true }` |
+| **Compilation** | dotnet build 0 errors + vue-tsc 0 errors | ✅ CODE DONE | Backend 0 errors (42 warnings, pre-existing), Frontend vue-tsc --noEmit clean |

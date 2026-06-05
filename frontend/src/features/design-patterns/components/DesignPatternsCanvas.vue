@@ -22,15 +22,24 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, onUnmounted } from 'vue';
 import { useDesignPatternsStore } from '../store/useDesignPatternsStore';
 import ClassNodeCard from './ClassNodeCard.vue';
 import DesignPatternsConnectionsLayer from './DesignPatternsConnectionsLayer.vue';
 
 const store = useDesignPatternsStore();
 const canvasContainer = ref<HTMLDivElement | null>(null);
-const canvasWidth  = 600;
-const canvasHeight = 500;
+const canvasWidth  = ref(600);
+const canvasHeight = ref(500);
+let resizeObserver: ResizeObserver | null = null;
+
+function updateSize() {
+  if (!canvasContainer.value) return;
+  const w = canvasContainer.value.clientWidth;
+  const h = canvasContainer.value.clientHeight;
+  if (w > 0) canvasWidth.value = w;
+  if (h > 0) canvasHeight.value = h;
+}
 
 function isNodeActiveStrategy(nodeId: string): boolean {
   return store.activePatternId === 'strategy-pattern' && nodeId === store.activeStrategyTargetId;
@@ -44,12 +53,23 @@ function isNodeObserverPulse(nodeId: string): boolean {
 function onNodeDrag(nodeId: string, x: number, y: number): void {
   if (!canvasContainer.value) return;
   const rect = canvasContainer.value.getBoundingClientRect();
-  store.handleNodeDrag(nodeId, x - rect.left, y - rect.top, canvasWidth, canvasHeight);
+  store.handleNodeDrag(nodeId, x - rect.left, y - rect.top, canvasWidth.value, canvasHeight.value);
 }
 
-onMounted(() => store.recalculatePaths());
+onMounted(() => {
+  updateSize();
+  if (canvasContainer.value) {
+    resizeObserver = new ResizeObserver(() => updateSize());
+    resizeObserver.observe(canvasContainer.value);
+  }
+  store.recalculatePaths();
+});
+
+onUnmounted(() => {
+  resizeObserver?.disconnect();
+});
 </script>
 
 <style scoped>
-.design-patterns-canvas { position: relative; width: 100%; height: 500px; background: rgba(7, 11, 19, 0.6); border: 1px solid rgba(255, 255, 255, 0.04); border-radius: 16px; overflow: hidden; }
+.design-patterns-canvas { position: relative; width: 100%; height: 100%; min-height: 400px; background: rgba(7, 11, 19, 0.6); border: 1px solid rgba(255, 255, 255, 0.04); border-radius: 16px; overflow: hidden; }
 </style>

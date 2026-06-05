@@ -234,4 +234,9 @@ function onDeleteEdge(id: string) {
 .edges-scroll::-webkit-scrollbar-thumb:hover {
   background: rgba(255, 255, 255, 0.15);
 }
+
+.builder-select option {
+  background-color: var(--color-bg-secondary, #1e293b);
+  color: var(--color-text-primary, #e2e8f0);
+}
 </style>

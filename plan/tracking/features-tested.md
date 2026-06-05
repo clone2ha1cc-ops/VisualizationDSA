@@ -2012,3 +2012,14 @@ Tài liệu này ghi nhận trạng thái kiểm thử đơn vị tự động (
 | 1747 | **Backend OCP** | AlgorithmDIConfiguration | RegisterByInterface<T> reflection | 🟢PASSED |
 | 1748 | **Architecture** | Domain.csproj | 0 outward dependencies verified | 🟢PASSED |
 | 1749 | **Compilation** | dotnet build + vue-tsc | Backend 0 errors, Frontend 0 errors | 🟢PASSED |
+| 1750 | **BugFix** | CustomInputPanel sidebar | overflow-hidden + scrollable build tab | 🟢PASSED |
+| 1751 | **BugFix** | PlaygroundCanvas resize | Zero-dimension guard prevents NaN scaling | 🟢PASSED |
+| 1752 | **BugFix** | InteractivePlayground | min-h-[200px] prevents canvas collapse | 🟢PASSED |
+| 1753 | **BugFix** | DI select dropdown | option dark mode bg/text styling | 🟢PASSED |
+| 1754 | **BugFix** | EdgeBuilderForm select | option dark mode bg/text styling | 🟢PASSED |
+| 1755 | **BugFix** | CustomInputPanel select | option dark mode bg/text styling | 🟢PASSED |
+| 1756 | **BugFix** | PatternsView layout | w-full p-4 removes centering constraint | 🟢PASSED |
+| 1757 | **BugFix** | DesignPatternsCanvas | Responsive height + ResizeObserver | 🟢PASSED |
+| 1758 | **BugFix** | DesignPatternsWorkspace | width: 100% fills parent | 🟢PASSED |
+| 1759 | **Config** | vite.config.ts | port: 5173 + strictPort: true | 🟢PASSED |
+| 1760 | **Compilation** | dotnet build + vue-tsc | Backend 0 errors, Frontend 0 errors | 🟢PASSED |

@@ -117,9 +117,10 @@ const resizeCanvas = () => {
   if (canvas?.parentElement) {
     const newWidth = canvas.parentElement.clientWidth;
     const newHeight = canvas.parentElement.clientHeight;
+
+    if (newWidth <= 0 || newHeight <= 0) return;
     
-    // Scale nodes coordinates proportionally on canvas size change
-    if (canvasWidth.value && canvasHeight.value && (canvasWidth.value !== newWidth || canvasHeight.value !== newHeight)) {
+    if (canvasWidth.value > 0 && canvasHeight.value > 0 && (canvasWidth.value !== newWidth || canvasHeight.value !== newHeight)) {
       const scaleX = newWidth / canvasWidth.value;
       const scaleY = newHeight / canvasHeight.value;
       store.nodes.forEach(node => {
