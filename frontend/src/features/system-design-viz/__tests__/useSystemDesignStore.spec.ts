@@ -2,6 +2,13 @@ import { describe, it, expect, beforeEach, vi, afterEach } from 'vitest';
 import { setActivePinia, createPinia } from 'pinia';
 import { useSystemDesignStore } from '../store/useSystemDesignStore';
 
+// Mock the API service — tests should use fallback (hardcoded) topology
+vi.mock('../services/systemDesignApi', () => ({
+  fetchTopology: vi.fn().mockRejectedValue(new Error('No backend in test')),
+  executeScenario: vi.fn().mockRejectedValue(new Error('No backend in test')),
+  fetchScenarios: vi.fn().mockRejectedValue(new Error('No backend in test')),
+}));
+
 const dispatchedEvents: Array<{ type: string; detail: Record<string, unknown> }> = [];
 
 vi.stubGlobal('CustomEvent', class MockCustomEvent {
@@ -36,8 +43,8 @@ describe('useSystemDesignStore', () => {
   });
 
   describe('Demo Topology Initialization', () => {
-    it('should initialize demo topology with 6 nodes', () => {
-      store.initializeDemoTopology();
+    it('should initialize demo topology with 6 nodes', async () => {
+      await store.initializeDemoTopology();
 
       expect(store.nodes).toHaveLength(6);
       expect(store.nodes.map((n) => n.nodeType)).toEqual(
@@ -52,32 +59,32 @@ describe('useSystemDesignStore', () => {
       );
     });
 
-    it('should initialize demo topology with 6 links', () => {
-      store.initializeDemoTopology();
+    it('should initialize demo topology with 6 links', async () => {
+      await store.initializeDemoTopology();
       expect(store.links).toHaveLength(6);
     });
 
-    it('should start with zero active packets', () => {
-      store.initializeDemoTopology();
+    it('should start with zero active packets', async () => {
+      await store.initializeDemoTopology();
       expect(store.activePackets).toHaveLength(0);
       expect(store.totalPacketsInFlight).toBe(0);
     });
 
-    it('should start with default replication lag 1000ms', () => {
-      store.initializeDemoTopology();
+    it('should start with default replication lag 1000ms', async () => {
+      await store.initializeDemoTopology();
       expect(store.replicationLagMs).toBe(1000);
     });
 
-    it('should report 6 healthy nodes initially', () => {
-      store.initializeDemoTopology();
+    it('should report 6 healthy nodes initially', async () => {
+      await store.initializeDemoTopology();
       expect(store.healthyNodeCount).toBe(6);
       expect(store.failedNodeCount).toBe(0);
     });
   });
 
   describe('HTTP Request Injection (Round-Robin)', () => {
-    beforeEach(() => {
-      store.initializeDemoTopology();
+    beforeEach(async () => {
+      await store.initializeDemoTopology();
     });
 
     it('should create a packet on injectHttpRequest', () => {
@@ -104,8 +111,8 @@ describe('useSystemDesignStore', () => {
   });
 
   describe('Server Failover Toggle', () => {
-    beforeEach(() => {
-      store.initializeDemoTopology();
+    beforeEach(async () => {
+      await store.initializeDemoTopology();
     });
 
     it('should toggle server status HEALTHY → FAILED', () => {
@@ -159,8 +166,8 @@ describe('useSystemDesignStore', () => {
   });
 
   describe('Database Replication', () => {
-    beforeEach(() => {
-      store.initializeDemoTopology();
+    beforeEach(async () => {
+      await store.initializeDemoTopology();
     });
 
     it('should add pending replication job on triggerDbWrite', () => {
@@ -207,8 +214,8 @@ describe('useSystemDesignStore', () => {
   });
 
   describe('Engine Tick & Packet GC', () => {
-    beforeEach(() => {
-      store.initializeDemoTopology();
+    beforeEach(async () => {
+      await store.initializeDemoTopology();
     });
 
     it('should advance packets on tickEngine', () => {
@@ -227,8 +234,8 @@ describe('useSystemDesignStore', () => {
   });
 
   describe('Clear Topology', () => {
-    it('should reset all state on clearTopology', () => {
-      store.initializeDemoTopology();
+    it('should reset all state on clearTopology', async () => {
+      await store.initializeDemoTopology();
       store.injectTrafficBurst(5);
       store.toggleServerStatus('server-a');
 

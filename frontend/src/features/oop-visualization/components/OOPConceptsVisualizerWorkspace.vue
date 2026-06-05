@@ -60,7 +60,7 @@
           fill="none" 
           stroke="var(--color-accent-purple)" 
           stroke-width="2" 
-          stroke-dasharray="4_4"
+          stroke-dasharray="4 4"
           class="transition-all duration-300"
         />
         <!-- UML generalization triangle arrowhead pointing up -->
@@ -143,14 +143,14 @@
               </button>
               <button 
                 class="vcr-btn" 
-                :disabled="store.scenarioStepIndex >= (currentScenario?.steps.length ?? 0) - 1"
+                :disabled="store.scenarioStepIndex >= store.totalSteps - 1"
                 @click="store.nextScenarioStep()"
                 title="Bước tiếp theo"
               >
                 ⏭
               </button>
               <span class="text-[10px] font-mono text-text-muted px-2">
-                {{ store.scenarioStepIndex + 1 }} / {{ currentScenario?.steps.length }}
+                {{ store.scenarioStepIndex + 1 }} / {{ store.totalSteps }}
               </span>
             </div>
 
@@ -186,10 +186,24 @@
               </div>
             </div>
 
+            <!-- Action Name Badge (API mode) -->
+            <div v-if="store.isApiMode && store.currentActionName" class="api-action-badge flex items-center gap-2 px-3 py-1.5 rounded-lg bg-accent-purple/10 border border-accent-purple/30">
+              <span class="text-[10px] font-bold uppercase text-accent-purple bg-accent-purple/20 px-2 py-0.5 rounded">{{ store.currentActionName }}</span>
+              <span v-if="store.isApiMode" class="text-[9px] text-accent-purple/60">Backend Frame</span>
+            </div>
+
             <!-- Explanation Panel -->
             <div class="explanation-box p-3 rounded-lg bg-bg-secondary/50 border border-border-subtle text-xs text-text-secondary leading-relaxed">
               <p class="font-bold text-[10px] uppercase text-accent-yellow mb-1">Giải thích:</p>
               {{ currentStepExplanation }}
+            </div>
+
+            <!-- API Loading/Error -->
+            <div v-if="store.isLoadingApi" class="text-[10px] text-accent-cyan text-center py-1">
+              Đang tải dữ liệu từ backend...
+            </div>
+            <div v-if="store.apiError" class="text-[10px] text-red-400 text-center py-1">
+              {{ store.apiError }}
             </div>
           </div>
         </div>
@@ -338,12 +352,7 @@ const currentScenario = computed(() => {
   return scenarios.find((s) => s.id === store.selectedScenarioId) ?? null;
 });
 
-const currentStepExplanation = computed(() => {
-  const sc = currentScenario.value;
-  if (!sc) return '';
-  const step = sc.steps[store.scenarioStepIndex];
-  return step ? step.explanation : '';
-});
+const currentStepExplanation = computed(() => store.currentExplanation);
 
 onMounted(() => {
   store.initializeDemoClasses();

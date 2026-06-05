@@ -71,6 +71,7 @@ export class SystemDesignEngine {
         const target = this.nodes.get(p.targetId);
         if (target && target.status === 'FAILED') {
           p.status = 'DROPPED';
+          target.requestCount = Math.max(0, target.requestCount - 1);
           this.packets.splice(i, 1);
           continue;
         }
@@ -79,6 +80,10 @@ export class SystemDesignEngine {
         if (p.progress >= 1.0) {
           p.progress = 1.0;
           p.status = 'ARRIVED';
+          const arrivalTarget = this.nodes.get(p.targetId);
+          if (arrivalTarget) {
+            arrivalTarget.requestCount = Math.max(0, arrivalTarget.requestCount - 1);
+          }
           this.packets.splice(i, 1);
         }
       }

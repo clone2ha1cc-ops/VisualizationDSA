@@ -13,6 +13,8 @@ import type {
   HeapObjectInstance,
   ExecutionPointer,
   EncapsulationViolation,
+  OOPFrame,
+  HeapObjectSnapshot,
 } from '../types/oop-visualization.types';
 import {
   MAX_HEAP_OBJECTS,
@@ -20,6 +22,9 @@ import {
   VIOLATION_SHAKE_DURATION_MS,
 } from '../types/oop-visualization.types';
 import { OOP_SCENARIOS } from '../scenarios/oopScenarios';
+import {
+  executeOOPScenario as apiExecuteScenario,
+} from '../services/oopApi';
 
 export const useOOPVisualizerStore = defineStore('oopVisualizer', () => {
   // ==========================================
@@ -61,6 +66,12 @@ export const useOOPVisualizerStore = defineStore('oopVisualizer', () => {
   const playbackSpeed = ref<number>(1); // Preset multipliers: 0.5, 1, 2
   const autoplayTimerId = ref<ReturnType<typeof setTimeout> | null>(null);
 
+  // ── API / Backend-driven VCR Mode State ──
+  const isApiMode = ref<boolean>(false);
+  const apiFrames = ref<OOPFrame[]>([]);
+  const isLoadingApi = ref<boolean>(false);
+  const apiError = ref<string | null>(null);
+
   // ==========================================
   // COMPUTED
   // ==========================================
@@ -81,6 +92,36 @@ export const useOOPVisualizerStore = defineStore('oopVisualizer', () => {
   const availableClassNames = computed(() =>
     registeredClasses.value.map((c) => c.className)
   );
+
+  const totalSteps = computed<number>(() => {
+    if (isApiMode.value) {
+      return apiFrames.value.length;
+    }
+    const scenario = OOP_SCENARIOS.find((s) => s.id === selectedScenarioId.value);
+    return scenario?.steps.length ?? 0;
+  });
+
+  const currentExplanation = computed<string>(() => {
+    if (isApiMode.value) {
+      const frame = apiFrames.value[scenarioStepIndex.value];
+      return frame?.explanation ?? '';
+    }
+    const scenario = OOP_SCENARIOS.find((s) => s.id === selectedScenarioId.value);
+    if (!scenario) return '';
+    const step = scenario.steps[scenarioStepIndex.value];
+    return step?.explanation ?? '';
+  });
+
+  const currentActionName = computed<string>(() => {
+    if (isApiMode.value) {
+      const frame = apiFrames.value[scenarioStepIndex.value];
+      return frame?.actionName ?? '';
+    }
+    const scenario = OOP_SCENARIOS.find((s) => s.id === selectedScenarioId.value);
+    if (!scenario) return '';
+    const step = scenario.steps[scenarioStepIndex.value];
+    return step?.actionName ?? '';
+  });
 
   const vTableForSelectedClass = computed(() => {
     let instance = heapObjects.value.find((o) => o.address === selectedObjectAddress.value);
@@ -326,21 +367,37 @@ export const useOOPVisualizerStore = defineStore('oopVisualizer', () => {
     }
   }
 
-  function setPillar(pillar: 'encapsulation' | 'inheritance' | 'polymorphism' | 'abstraction'): void {
+  async function setPillar(pillar: 'encapsulation' | 'inheritance' | 'polymorphism' | 'abstraction'): Promise<void> {
     activePillar.value = pillar;
-    loadScenario(pillar);
+    await loadScenario(pillar);
   }
 
   // ==========================================
   // SCENARIO MODE ACTIONS
   // ==========================================
-  function loadScenario(scenarioId: string): void {
+  async function loadScenario(scenarioId: string): Promise<void> {
     resetAll();
     selectedScenarioId.value = scenarioId;
     initializeDemoClasses();
     scenarioStepIndex.value = 0;
     isPlayingScenario.value = true;
-    applyScenarioStep();
+    apiError.value = null;
+
+    // Try fetching frames from backend API
+    try {
+      isLoadingApi.value = true;
+      const frames = await apiExecuteScenario(scenarioId);
+      apiFrames.value = frames;
+      isApiMode.value = true;
+      applyApiFrame();
+    } catch {
+      // Fallback to local scenario steps
+      isApiMode.value = false;
+      apiFrames.value = [];
+      applyScenarioStep();
+    } finally {
+      isLoadingApi.value = false;
+    }
   }
 
   function applyScenarioStep(): void {
@@ -372,8 +429,6 @@ export const useOOPVisualizerStore = defineStore('oopVisualizer', () => {
       callStack.value = ['Main()'];
       selectedMethodCall.value = null;
     } else if (step.actionName === 'INSTANTIATE') {
-      // Clean heap, then create object
-      heapObjects.value = [];
       const addr = instantiateNewObject(step.actionPayload.className);
       selectedObjectAddress.value = addr;
       callStack.value = ['Main()'];
@@ -460,24 +515,36 @@ export const useOOPVisualizerStore = defineStore('oopVisualizer', () => {
 
   function nextScenarioStep(): void {
     if (!selectedScenarioId.value) return;
-    const scenario = OOP_SCENARIOS.find((s) => s.id === selectedScenarioId.value);
-    if (!scenario || scenarioStepIndex.value >= scenario.steps.length - 1) return;
+    if (scenarioStepIndex.value >= totalSteps.value - 1) return;
 
     scenarioStepIndex.value++;
-    applyScenarioStep();
+    if (isApiMode.value) {
+      applyApiFrame();
+    } else {
+      applyScenarioStep();
+    }
   }
 
   function prevScenarioStep(): void {
     if (!selectedScenarioId.value || scenarioStepIndex.value <= 0) return;
 
     scenarioStepIndex.value--;
-    applyScenarioStep();
+    if (isApiMode.value) {
+      applyApiFrame();
+    } else {
+      applyScenarioStep();
+    }
   }
 
   function resetScenario(): void {
     if (!selectedScenarioId.value) return;
+    pauseAutoplay();
     scenarioStepIndex.value = 0;
-    applyScenarioStep();
+    if (isApiMode.value) {
+      applyApiFrame();
+    } else {
+      applyScenarioStep();
+    }
   }
 
   function exitScenario(): void {
@@ -486,8 +553,94 @@ export const useOOPVisualizerStore = defineStore('oopVisualizer', () => {
     selectedScenarioId.value = null;
     scenarioStepIndex.value = 0;
     activeCodeLine.value = null;
+    isApiMode.value = false;
+    apiFrames.value = [];
+    apiError.value = null;
     resetAll();
     initializeDemoClasses();
+  }
+
+  // ============================================================
+  // API FRAME APPLICATION — maps backend OOPFrame to reactive state
+  // ============================================================
+
+  /** Convert backend HeapObjectSnapshot (plain objects) to frontend HeapObjectInstance (Maps) */
+  function snapshotToInstance(snapshot: HeapObjectSnapshot): HeapObjectInstance {
+    return {
+      address: snapshot.address,
+      className: snapshot.className,
+      fieldsData: new Map(Object.entries(snapshot.fieldsData)),
+      vTable: new Map(Object.entries(snapshot.vTable)),
+    };
+  }
+
+  /** Apply the current API frame's state snapshot to all reactive refs */
+  function applyApiFrame(): void {
+    const frame = apiFrames.value[scenarioStepIndex.value];
+    if (!frame) return;
+
+    // Update code line highlight
+    activeCodeLine.value = frame.codeLineIndex;
+
+    // Apply class definitions from frame
+    registeredClasses.value = frame.classDefinitions.map((c) => ({ ...c }));
+
+    // Apply heap objects — convert plain objects to Maps
+    heapObjects.value = frame.heapObjects.map(snapshotToInstance);
+
+    // Track selected object address from heap
+    if (frame.heapObjects.length > 0) {
+      selectedObjectAddress.value = frame.heapObjects[frame.heapObjects.length - 1].address;
+      selectedClassName.value = frame.heapObjects[frame.heapObjects.length - 1].className;
+    }
+
+    // Apply execution pointer
+    if (frame.executionPointer) {
+      activeExecutionPointer.value = {
+        callerClass: frame.executionPointer.callerClass,
+        activeObjectAddress: frame.executionPointer.activeObjectAddress,
+        activeMethod: frame.executionPointer.activeMethod,
+        dispatchStatus: frame.executionPointer.dispatchStatus,
+        resolvedClass: frame.executionPointer.resolvedClass ?? undefined,
+      };
+      if (frame.executionPointer.resolvedClass && frame.executionPointer.activeMethod) {
+        selectedMethodCall.value = `${frame.executionPointer.resolvedClass}.${frame.executionPointer.activeMethod}`;
+        callStack.value = [
+          `${frame.executionPointer.callerClass}()`,
+          `${frame.executionPointer.resolvedClass}.${frame.executionPointer.activeMethod}()`,
+        ];
+      } else if (frame.executionPointer.activeMethod) {
+        selectedMethodCall.value = frame.executionPointer.activeMethod;
+        callStack.value = [`${frame.executionPointer.callerClass}()`];
+      }
+    } else {
+      activeExecutionPointer.value = {
+        callerClass: 'Main',
+        activeObjectAddress: '',
+        activeMethod: '',
+        dispatchStatus: 'IDLE',
+        resolvedClass: undefined,
+      };
+      selectedMethodCall.value = null;
+      callStack.value = ['Main()'];
+    }
+
+    // Apply encapsulation violation
+    if (frame.violation) {
+      lastEncapsulationViolation.value = {
+        targetClass: frame.violation.targetClass,
+        memberName: frame.violation.memberName,
+        callerClass: frame.violation.callerClass,
+        errorMessage: frame.violation.errorMessage,
+        timestamp: Date.now(),
+      };
+      activeExecutionPointer.value = {
+        ...activeExecutionPointer.value,
+        dispatchStatus: 'ACCESS_VIOLATED',
+      };
+    } else if (!frame.executionPointer || frame.executionPointer.dispatchStatus !== 'ACCESS_VIOLATED') {
+      lastEncapsulationViolation.value = null;
+    }
   }
 
   // ==========================================
@@ -511,13 +664,7 @@ export const useOOPVisualizerStore = defineStore('oopVisualizer', () => {
   function runAutoplayStep(): void {
     if (!isAutoplayRunning.value) return;
 
-    const scenario = OOP_SCENARIOS.find((s) => s.id === selectedScenarioId.value);
-    if (!scenario) {
-      pauseAutoplay();
-      return;
-    }
-
-    if (scenarioStepIndex.value < scenario.steps.length - 1) {
+    if (scenarioStepIndex.value < totalSteps.value - 1) {
       nextScenarioStep();
       const delay = 2500 / playbackSpeed.value;
       autoplayTimerId.value = setTimeout(runAutoplayStep, delay);
@@ -615,6 +762,14 @@ export const useOOPVisualizerStore = defineStore('oopVisualizer', () => {
     isViolated,
     availableClassNames,
     vTableForSelectedClass,
+    totalSteps,
+    currentExplanation,
+    currentActionName,
+    // API State
+    isApiMode,
+    apiFrames,
+    isLoadingApi,
+    apiError,
     // Actions
     initializeDemoClasses,
     registerClass,

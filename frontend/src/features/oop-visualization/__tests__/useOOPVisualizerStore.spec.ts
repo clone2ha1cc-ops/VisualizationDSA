@@ -2,6 +2,12 @@ import { describe, it, expect, beforeEach, vi, afterEach } from 'vitest';
 import { setActivePinia, createPinia } from 'pinia';
 import { useOOPVisualizerStore } from '../store/useOOPVisualizerStore';
 
+// Mock OOP API service — reject all calls so store falls back to local scenarios
+vi.mock('../services/oopApi', () => ({
+  executeOOPScenario: vi.fn().mockRejectedValue(new Error('No backend in test')),
+  fetchOOPScenarios: vi.fn().mockRejectedValue(new Error('No backend in test')),
+}));
+
 describe('useOOPVisualizerStore', () => {
   beforeEach(() => {
     setActivePinia(createPinia());
@@ -242,17 +248,17 @@ describe('useOOPVisualizerStore', () => {
   });
 
   describe('Scenario Mode & Runtime Upgrades', () => {
-    it('should set activePillar and load corresponding scenario', () => {
+    it('should set activePillar and load corresponding scenario', async () => {
       const store = useOOPVisualizerStore();
       expect(store.activePillar).toBe('encapsulation');
-      store.setPillar('inheritance');
+      await store.setPillar('inheritance');
       expect(store.activePillar).toBe('inheritance');
       expect(store.selectedScenarioId).toBe('inheritance');
     });
 
-    it('should load scenario polymorphism and apply step 0', () => {
+    it('should load scenario polymorphism and apply step 0', async () => {
       const store = useOOPVisualizerStore();
-      store.loadScenario('polymorphism');
+      await store.loadScenario('polymorphism');
 
       expect(store.isPlayingScenario).toBe(true);
       expect(store.selectedScenarioId).toBe('polymorphism');
@@ -262,9 +268,9 @@ describe('useOOPVisualizerStore', () => {
       expect(store.callStack).toEqual(['Main()']);
     });
 
-    it('should advance scenario polymorphism to seeking and resolve steps', () => {
+    it('should advance scenario polymorphism to seeking and resolve steps', async () => {
       const store = useOOPVisualizerStore();
-      store.loadScenario('polymorphism');
+      await store.loadScenario('polymorphism');
       
       store.nextScenarioStep(); // Step 1: CALL_METHOD seeking
       expect(store.scenarioStepIndex).toBe(1);
@@ -278,9 +284,9 @@ describe('useOOPVisualizerStore', () => {
       expect(store.callStack).toEqual(['Main()', 'Circle.draw()']);
     });
 
-    it('should allow exiting scenario mode', () => {
+    it('should allow exiting scenario mode', async () => {
       const store = useOOPVisualizerStore();
-      store.loadScenario('polymorphism');
+      await store.loadScenario('polymorphism');
       expect(store.isPlayingScenario).toBe(true);
 
       store.exitScenario();
@@ -289,9 +295,9 @@ describe('useOOPVisualizerStore', () => {
       expect(store.heapObjectCount).toBe(0); // zero-state loading
     });
 
-    it('should start autoplay and advance steps automatically', () => {
+    it('should start autoplay and advance steps automatically', async () => {
       const store = useOOPVisualizerStore();
-      store.loadScenario('polymorphism');
+      await store.loadScenario('polymorphism');
       expect(store.scenarioStepIndex).toBe(0);
       expect(store.isAutoplayRunning).toBe(false);
 

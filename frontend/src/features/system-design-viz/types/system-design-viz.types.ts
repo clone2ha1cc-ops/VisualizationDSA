@@ -63,6 +63,40 @@ export interface ReplicationJob {
   packetColor: string;
 }
 
+// ── Backend Frame DTO (maps 1:1 to SystemDesignFrameDto in C#) ──
+
+export type SystemDesignActionType =
+  | 'INITIALIZE'
+  | 'INJECT_REQUEST'
+  | 'PACKET_ARRIVED'
+  | 'PACKET_DROPPED'
+  | 'SERVER_FAILED'
+  | 'SERVER_RECOVERED'
+  | 'DB_REPLICATE';
+
+/** Replication job snapshot from backend (no startedAt — that's frontend-only) */
+export interface ReplicationJobSnapshot {
+  jobId: string;
+  primaryId: string;
+  replicaId: string;
+  lagDurationMs: number;
+  packetColor: string;
+}
+
+/**
+ * A single frame from the backend's SystemDesignStrategy.
+ * Each frame is a full state snapshot at one simulation step.
+ */
+export interface SystemDesignFrame {
+  stepId: number;
+  actionType: SystemDesignActionType;
+  explanation: string;
+  nodes: SystemNode[];
+  links: NetworkLink[];
+  activePackets: NetworkPacket[];
+  pendingReplications: ReplicationJobSnapshot[];
+}
+
 // ── Constants ──
 export const PACKET_SPEED = 0.05;
 export const MAX_ACTIVE_PACKETS = 200;

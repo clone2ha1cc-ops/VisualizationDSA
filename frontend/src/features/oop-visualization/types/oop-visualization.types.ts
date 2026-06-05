@@ -72,3 +72,29 @@ export const DISPATCH_LASER_DELAY_MS = 800;
 export const VIOLATION_SHAKE_DURATION_MS = 2000;
 export const HEAP_BASE_ADDRESS = 0x310000;
 export const HEAP_ADDRESS_STEP = 16;
+
+// ============================================================
+// Backend OOP Frame Types — maps to C# OOPFrameDto
+// Used for full-stack VCR playback with backend-generated frames
+// ============================================================
+
+/** Snapshot of a heap object from the backend (uses plain objects, not Maps) */
+export interface HeapObjectSnapshot {
+  address: string;
+  className: string;
+  fieldsData: Record<string, unknown>;
+  vTable: Record<string, string>;
+}
+
+/** Full state snapshot for one step in an OOP scenario */
+export interface OOPFrame {
+  stepId: number;
+  codeLineIndex: number;
+  actionName: string;
+  explanation: string;
+  classDefinitions: ClassDefinition[];
+  heapObjects: HeapObjectSnapshot[];
+  executionPointer: ExecutionPointer | null;
+  violation: EncapsulationViolation | null;
+  actionPayload?: Record<string, unknown>;
+}
