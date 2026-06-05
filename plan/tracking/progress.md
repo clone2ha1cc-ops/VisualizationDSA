@@ -804,3 +804,15 @@ Tất cả các mục tiêu Sprint 5 đã đạt:
 | **DI Registration** | Singleton strategy in DI container | ✅ CODE DONE | `AlgorithmDIConfiguration.cs` — `StatelessPaymentStrategy` registered |
 | **Vietnamese Test Guide** | Manual testing documentation | ✅ CODE DONE | `huong-dan-kiem-thu-giai-doan-5.md` — 15 test cases covering API + UI |
 | **Compilation** | dotnet build 0 errors + vue-tsc 0 errors | ✅ CODE DONE | Backend 0 errors, Frontend vue-tsc --noEmit clean |
+
+## 20. Project Polish — Global Error Handling, Toast & Skeleton Loaders
+
+| Hạng mục / Task | Nội dung | Trạng thái CODE | Chi tiết |
+| :--- | :--- | :--- | :--- |
+| **Error Handling Middleware** | Enhanced structured JSON response format | ✅ CODE DONE | `ErrorHandlingMiddleware.cs` — `{ success, message, errorType, statusCode, traceId, path, timestamp }` + Development-only debug fields (detail, exception, stackTrace). Maps 7 exception types to HTTP codes + Vietnamese messages |
+| **Diagnostics Controller** | Test error simulation endpoints | ✅ CODE DONE | `DiagnosticsController.cs` — GET health + GET simulate-error?type=500/400/404/401/409/501 |
+| **Toast Notification System** | Pinia store + Teleport component | ✅ CODE DONE | `useToast.ts` — `success()`, `error()`, `warning()`, `info()`, `handleApiError()`, auto-dismiss, max 5 toasts. `ToastContainer.vue` — slide-in/out animation, progress bar, Vietnamese labels |
+| **Skeleton Loaders** | Shimmer loading components | ✅ CODE DONE | `SkeletonLoader.vue` — 4 variants (text/card/circle/rect) with shimmer wave animation. `SkeletonCard.vue` — compound card skeleton. Integrated into `AlgorithmDashboard.vue` (6 cards) + `BackendQuizWorkspace.vue` (6 cards) |
+| **Page Transitions** | Enhanced slide-up + fade transitions | ✅ CODE DONE | `App.vue` — enter: translateY(8px)→0 + opacity 0→1 (0.2s), leave: translateY(0)→-4px + opacity 1→0 (0.12s) |
+| **Vietnamese Test Guide** | Manual testing documentation | ✅ CODE DONE | `huong-dan-nghiem-thu-chuyen-nghiep.md` — 20 test cases covering API error simulation + UI toast/skeleton/transitions |
+| **Compilation** | dotnet build 0 errors + vue-tsc 0 errors | ✅ CODE DONE | Backend 0 errors, Frontend vue-tsc --noEmit clean |

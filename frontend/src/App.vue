@@ -145,6 +145,9 @@
   <!-- Login Modal -->
   <LoginModal :visible="showLoginModal" @close="showLoginModal = false" />
 
+  <!-- Global Toast Notifications -->
+  <ToastContainer />
+
 </template>
 
 <script setup lang="ts">
@@ -154,6 +157,7 @@ import { useAuthStore } from './features/auth/store/useAuthStore';
 import { APP_TABS } from './appTabs';
 import BaseIcon from './shared/components/BaseIcon.vue';
 import LoginModal from './features/auth/components/LoginModal.vue';
+import ToastContainer from './components/ToastContainer.vue';
 
 const authStore      = useAuthStore();
 const showLoginModal = ref(false);
@@ -551,14 +555,20 @@ onMounted(() => {
 }
 
 /* ── PAGE TRANSITION ─────────────────────────────────────── */
-.page-fade-enter-active,
+.page-fade-enter-active {
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
 .page-fade-leave-active {
-  transition: opacity 0.15s ease;
+  transition: opacity 0.12s ease, transform 0.12s ease;
 }
 
-.page-fade-enter-from,
+.page-fade-enter-from {
+  opacity: 0;
+  transform: translateY(8px);
+}
 .page-fade-leave-to {
   opacity: 0;
+  transform: translateY(-4px);
 }
 
 /* ── PREMIUM STYLES ──────────────────────────────────────── */

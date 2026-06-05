@@ -1973,3 +1973,18 @@ Tài liệu này ghi nhận trạng thái kiểm thử đơn vị tự động (
 | 1612 | **Payment Frontend** | PremiumGate component | Blur + overlay for free users | 🟢PASSED |
 | 1613 | **Payment Frontend** | Sidebar Premium tab | Account group with Premium nav | 🟢PASSED |
 | 1614 | **Compilation** | dotnet build + vue-tsc | Backend 0 errors, Frontend 0 errors | 🟢PASSED |
+| 1700 | **Error Middleware** | GET /diagnostics/health | Returns success:true + timestamp | 🟢PASSED |
+| 1701 | **Error Middleware** | simulate-error?type=500 | INTERNAL_SERVER_ERROR + JSON | 🟢PASSED |
+| 1702 | **Error Middleware** | simulate-error?type=400 | VALIDATION_ERROR | 🟢PASSED |
+| 1703 | **Error Middleware** | simulate-error?type=401 | AUTHENTICATION_REQUIRED | 🟢PASSED |
+| 1704 | **Error Middleware** | simulate-error?type=404 | RESOURCE_NOT_FOUND | 🟢PASSED |
+| 1705 | **Error Middleware** | simulate-error?type=409 | OPERATION_CONFLICT | 🟢PASSED |
+| 1706 | **Error Middleware** | simulate-error?type=501 | NOT_IMPLEMENTED | 🟢PASSED |
+| 1707 | **Error Middleware** | JSON format consistency | 7 common fields + 3 debug | 🟢PASSED |
+| 1708 | **Toast System** | useToastStore Pinia store | success/error/warning/info methods | 🟢PASSED |
+| 1709 | **Toast System** | ToastContainer.vue | Teleport + slide animation | 🟢PASSED |
+| 1710 | **Skeleton Loaders** | SkeletonLoader.vue | 4 variants + shimmer wave | 🟢PASSED |
+| 1711 | **Skeleton Loaders** | AlgorithmDashboard skeleton | 6 shimmer cards on loading | 🟢PASSED |
+| 1712 | **Skeleton Loaders** | BackendQuizWorkspace skeleton | 6 shimmer cards on loading | 🟢PASSED |
+| 1713 | **Page Transitions** | slide-up + fade enhanced | translateY 8px enter, -4px leave | 🟢PASSED |
+| 1714 | **Compilation** | dotnet build + vue-tsc | Backend 0 errors, Frontend 0 errors | 🟢PASSED |

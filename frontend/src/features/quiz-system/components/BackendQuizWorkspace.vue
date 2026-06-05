@@ -22,9 +22,11 @@
       </div>
     </div>
 
-    <!-- Loading -->
-    <div v-if="store.isBackendQuizLoading" class="flex-1 flex items-center justify-center">
-      <span class="text-sm text-text-secondary">Đang tải...</span>
+    <!-- Loading Skeleton -->
+    <div v-if="store.isBackendQuizLoading" class="flex-1">
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <SkeletonCard v-for="i in 6" :key="i" />
+      </div>
     </div>
 
     <!-- Error -->
@@ -159,6 +161,7 @@
 <script setup lang="ts">
 import { onMounted } from 'vue';
 import { useQuizStore } from '../store/useQuizStore';
+import SkeletonCard from '../../../components/SkeletonCard.vue';
 
 const store = useQuizStore();
 

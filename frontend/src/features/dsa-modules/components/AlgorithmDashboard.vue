@@ -60,6 +60,16 @@
       </div>
     </div>
 
+    <!-- 0. Skeleton Loading State -->
+    <div v-if="algoStore.isLoading" class="space-y-4 mt-2">
+      <div class="flex items-center gap-2 px-1">
+        <SkeletonLoader variant="rect" width="120px" height="12px" />
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <SkeletonCard v-for="i in 6" :key="i" />
+      </div>
+    </div>
+
     <!-- 1. Featured Algorithms Section -->
     <div v-if="featuredAlgorithms.length && !searchQuery.trim() && selectedDifficulty === 'All' && (!allowedCategories || allowedCategories.length === 0)" class="space-y-3 mt-2">
       <div class="flex items-center gap-1.5 px-1">
@@ -235,6 +245,8 @@ import { ref, computed, onMounted, onBeforeUnmount, h } from 'vue';
 import { useAlgorithmStore } from '../store/useAlgorithmStore';
 import type { Algorithm } from '../types/algorithm.types';
 import { ALGORITHM_CATALOG } from '../services/algorithmCatalog';
+import SkeletonLoader from '../../../components/SkeletonLoader.vue';
+import SkeletonCard from '../../../components/SkeletonCard.vue';
 
 const props = defineProps<{
   allowedCategories?: string[];
