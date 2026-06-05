@@ -1,15 +1,20 @@
 using Asp.Versioning;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Security.Cryptography;
+using System.Text;
 using VisualizationDSA.Domain.Engine;
+using VisualizationDSA.Domain.Entities;
 using VisualizationDSA.Domain.Strategies;
+using VisualizationDSA.Infrastructure.Data;
 
 namespace VisualizationDSA.WebApi.Controllers
 {
     /// <summary>
-    /// Stateless Auth Controller — xử lý đăng ký, đăng nhập, profile mà KHÔNG cần PostgreSQL.
-    /// Dùng in-memory user store cho demo và development.
+    /// Auth Controller — xử lý đăng ký, đăng nhập, profile.
+    /// Kết hợp in-memory cache (StatelessAuthStrategy) + PostgreSQL persistence (ApplicationDbContext).
     /// Route: api/v{version:apiVersion}/concepts/auth
     /// </summary>
     [ApiVersion("1.0")]
@@ -18,22 +23,42 @@ namespace VisualizationDSA.WebApi.Controllers
     public class StatelessAuthController : ControllerBase
     {
         private readonly StatelessAuthStrategy _authStrategy;
+        private readonly ApplicationDbContext _dbContext;
 
-        public StatelessAuthController(StatelessAuthStrategy authStrategy)
+        public StatelessAuthController(StatelessAuthStrategy authStrategy, ApplicationDbContext dbContext)
         {
             _authStrategy = authStrategy;
+            _dbContext = dbContext;
+        }
+
+        private static string HashPasswordSHA256(string password)
+        {
+            var bytes = SHA256.HashData(Encoding.UTF8.GetBytes(password + "algolens-salt"));
+            return Convert.ToHexString(bytes).ToLowerInvariant();
         }
 
         /// <summary>
-        /// Đăng ký tài khoản mới (in-memory).
+        /// Đăng ký tài khoản mới — lưu vào cả in-memory cache và PostgreSQL.
         /// POST /api/v1/concepts/auth/register
         /// </summary>
         [HttpPost("register")]
-        public ActionResult<StatelessAuthResponse> Register([FromBody] StatelessRegisterRequest request)
+        public async Task<ActionResult<StatelessAuthResponse>> Register([FromBody] StatelessRegisterRequest request)
         {
             try
             {
                 var response = _authStrategy.Register(request);
+
+                // Persist to PostgreSQL
+                var existingUser = await _dbContext.Users
+                    .FirstOrDefaultAsync(u => u.Email == request.Email);
+                if (existingUser == null)
+                {
+                    var passwordHash = HashPasswordSHA256(request.Password);
+                    var dbUser = new User(request.Email, request.Username, passwordHash);
+                    _dbContext.Users.Add(dbUser);
+                    await _dbContext.SaveChangesAsync();
+                }
+
                 return Ok(response);
             }
             catch (ArgumentException ex)
@@ -43,15 +68,25 @@ namespace VisualizationDSA.WebApi.Controllers
         }
 
         /// <summary>
-        /// Đăng nhập và nhận mock Access Token + Refresh Token.
+        /// Đăng nhập — xác thực in-memory + cập nhật LastLoginAt trong PostgreSQL.
         /// POST /api/v1/concepts/auth/login
         /// </summary>
         [HttpPost("login")]
-        public ActionResult<StatelessAuthResponse> Login([FromBody] StatelessLoginRequest request)
+        public async Task<ActionResult<StatelessAuthResponse>> Login([FromBody] StatelessLoginRequest request)
         {
             try
             {
                 var response = _authStrategy.Login(request);
+
+                // Update LastLoginAt in PostgreSQL
+                var dbUser = await _dbContext.Users
+                    .FirstOrDefaultAsync(u => u.Email == request.Email);
+                if (dbUser != null)
+                {
+                    dbUser.RecordLogin();
+                    await _dbContext.SaveChangesAsync();
+                }
+
                 return Ok(response);
             }
             catch (UnauthorizedAccessException ex)
@@ -155,16 +190,27 @@ namespace VisualizationDSA.WebApi.Controllers
         }
 
         /// <summary>
-        /// Cộng XP cho user.
+        /// Cộng XP cho user — in-memory + PostgreSQL persistence.
         /// POST /api/v1/concepts/auth/award-xp
         /// </summary>
         [HttpPost("award-xp")]
-        public ActionResult<StatelessUserDto> AwardXP([FromBody] StatelessXpAwardRequest request)
+        public async Task<ActionResult<StatelessUserDto>> AwardXP([FromBody] StatelessXpAwardRequest request)
         {
             try
             {
                 var id = request.UserId ?? "demo-user-001";
                 var user = _authStrategy.AwardXP(id, request.Amount, request.Reason);
+
+                // Persist XP to PostgreSQL — find by email (in-memory ID is string, DB ID is Guid)
+                var dbUser = await _dbContext.Users
+                    .FirstOrDefaultAsync(u => u.Email == user.Email);
+                if (dbUser != null)
+                {
+                    dbUser.AwardXP(request.Amount);
+                    dbUser.RecordActivity();
+                    await _dbContext.SaveChangesAsync();
+                }
+
                 return Ok(user);
             }
             catch (KeyNotFoundException ex)
@@ -189,7 +235,7 @@ namespace VisualizationDSA.WebApi.Controllers
                 message = "Tài khoản demo để kiểm thử",
                 email = "demo@algolens.dev",
                 password = "Demo@2024",
-                note = "Đây là tài khoản in-memory, dữ liệu sẽ reset khi khởi động lại server."
+                note = "Dữ liệu đăng ký được lưu vĩnh viễn vào PostgreSQL. In-memory cache tự khởi tạo lại khi restart."
             });
         }
     }

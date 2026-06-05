@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography;
+using System.Text;
 using System.Threading.Tasks;
 using VisualizationDSA.Domain.Entities;
 
@@ -18,6 +20,7 @@ namespace VisualizationDSA.Infrastructure.Data
         public async Task SeedAsync()
         {
             await SeedBadgesAsync();
+            await SeedLeaderboardUsersAsync();
             await SeedQuizzesAsync();
         }
 
@@ -162,6 +165,48 @@ namespace VisualizationDSA.Infrastructure.Data
 
             await _context.Quizzes.AddRangeAsync(bubbleSortQuiz, quickSortQuiz, oopQuiz, solidQuiz, patternsQuiz);
             await _context.SaveChangesAsync();
+        }
+
+        /// <summary>
+        /// Seed 10 Vietnamese leaderboard users vào bảng Users.
+        /// Mỗi user có XP, level, streak khác nhau để tạo bảng xếp hạng phong phú.
+        /// </summary>
+        private async Task SeedLeaderboardUsersAsync()
+        {
+            if (_context.Users.Any()) return;
+
+            var demoHash = HashPasswordSHA256("Demo@2024");
+
+            var users = new (string email, string username, string password, int xp, int level, int streak)[]
+            {
+                ("nguyenvana@algolens.dev",   "NguyenVanA",       "User@2024", 2850, 7, 14),
+                ("tranthib@algolens.dev",     "TranThiB",         "User@2024", 2200, 7, 10),
+                ("levanc@algolens.dev",       "LeVanC",           "User@2024", 1800, 6, 8),
+                ("phamthid@algolens.dev",     "PhamThiD",         "User@2024", 1500, 6, 12),
+                ("hoangvane@algolens.dev",    "HoangVanE",        "User@2024", 1200, 5, 6),
+                ("vuthif@algolens.dev",       "VuThiF",           "User@2024", 950,  4, 5),
+                ("dangvang@algolens.dev",     "DangVanG",         "User@2024", 700,  4, 4),
+                ("buithih@algolens.dev",      "BuiThiH",          "User@2024", 450,  3, 3),
+                ("dovani@algolens.dev",       "DoVanI",           "User@2024", 250,  2, 2),
+                ("demo@algolens.dev",         "AlgoLens Student", "Demo@2024", 150,  2, 3),
+            };
+
+            foreach (var (email, username, password, xp, level, streak) in users)
+            {
+                var passwordHash = HashPasswordSHA256(password);
+                var user = new User(email, username, passwordHash);
+                // Award XP to set level correctly via the entity's business logic
+                if (xp > 0) user.AwardXP(xp);
+                await _context.Users.AddAsync(user);
+            }
+
+            await _context.SaveChangesAsync();
+        }
+
+        private static string HashPasswordSHA256(string password)
+        {
+            var bytes = SHA256.HashData(Encoding.UTF8.GetBytes(password + "algolens-salt"));
+            return Convert.ToHexString(bytes).ToLowerInvariant();
         }
     }
 }

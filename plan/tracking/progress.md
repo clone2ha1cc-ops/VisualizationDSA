@@ -873,3 +873,16 @@ Tất cả các mục tiêu Sprint 5 đã đạt:
 | **Recursion Guard (pre-existing)** | __recursionDepth > 500 | ✅ CODE DONE | MAX_RECURSION_DEPTH=500 injected into generator functions |
 | **walkthrough.md** | Security hardening documentation | ✅ CODE DONE | Formal documentation of all 5 protection layers with thresholds and notification types |
 | **Compilation** | dotnet build 0 errors + vue-tsc 0 errors | ✅ CODE DONE | Backend Build succeeded, Frontend vue-tsc --noEmit clean |
+
+## 26. EF Core PostgreSQL Persistence — Auth & Gamification
+
+| Hạng mục / Task | Nội dung | Trạng thái CODE | Chi tiết |
+| :--- | :--- | :--- | :--- |
+| **Auth Registration → DB** | POST /register saves User to PostgreSQL | ✅ CODE DONE | `StatelessAuthController.Register()`: creates `User` entity with SHA256 hash, `SaveChangesAsync()` to Users table |
+| **Auth Login → DB** | POST /login updates LastLoginAt in DB | ✅ CODE DONE | `StatelessAuthController.Login()`: calls `dbUser.RecordLogin()` + `SaveChangesAsync()` |
+| **Auth AwardXP → DB** | POST /award-xp persists XP to DB | ✅ CODE DONE | `StatelessAuthController.AwardXP()`: calls `dbUser.AwardXP()` + `RecordActivity()` |
+| **Gamification Leaderboard → DB** | GET /leaderboard reads from Users table | ✅ CODE DONE | `StatelessGamificationController.GetLeaderboard()`: queries Users ordered by TotalXP desc, maps to StatelessLeaderboardEntry |
+| **Gamification AwardXp → DB** | POST /award-xp persists demo user XP | ✅ CODE DONE | Updates demo@algolens.dev user in PostgreSQL |
+| **Seed 10 Vietnamese Users** | DbSeeder.SeedLeaderboardUsersAsync() | ✅ CODE DONE | 10 users with varying XP/levels: NguyenVanA (2850), TranThiB (2200), ..., AlgoLens Student (150) |
+| **EF Migrations Applied** | 5 existing migrations applied to fresh PostgreSQL | ✅ CODE DONE | Users, Badges, UserBadges, RefreshTokens, Orders, Quizzes, QuizQuestions, QuizAttempts, LearningProgresses |
+| **Compilation** | dotnet build 0 errors + vue-tsc 0 errors | ✅ CODE DONE | Backend Build succeeded, Frontend vue-tsc clean |

@@ -1,11 +1,15 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Asp.Versioning;
+using VisualizationDSA.Domain.Engine;
 using VisualizationDSA.Domain.Strategies;
+using VisualizationDSA.Infrastructure.Data;
 
 namespace VisualizationDSA.WebApi.Controllers
 {
     /// <summary>
-    /// Stateless Gamification API — XP, badges, leaderboard without database.
+    /// Gamification API — XP, badges, leaderboard.
+    /// Kết hợp in-memory cache (GamificationStrategy) + PostgreSQL persistence (ApplicationDbContext).
     /// Route: /api/v1/concepts/gamification
     /// </summary>
     [ApiVersion("1.0")]
@@ -14,10 +18,31 @@ namespace VisualizationDSA.WebApi.Controllers
     public class StatelessGamificationController : ControllerBase
     {
         private readonly GamificationStrategy _gamification;
+        private readonly ApplicationDbContext _dbContext;
 
-        public StatelessGamificationController(GamificationStrategy gamification)
+        private static readonly (int level, string name, int xpRequired)[] LevelTable =
+        {
+            (1, "Novice",       0),
+            (2, "Explorer",     100),
+            (3, "Learner",      300),
+            (4, "Practitioner", 600),
+            (5, "Expert",       1000),
+            (6, "Master",       1500),
+            (7, "Grandmaster",  2200),
+            (8, "Legend",       3000),
+        };
+
+        public StatelessGamificationController(GamificationStrategy gamification, ApplicationDbContext dbContext)
         {
             _gamification = gamification;
+            _dbContext = dbContext;
+        }
+
+        private static string GetLevelName(int level)
+        {
+            foreach (var entry in LevelTable)
+                if (entry.level == level) return entry.name;
+            return "Novice";
         }
 
         /// <summary>
@@ -31,17 +56,28 @@ namespace VisualizationDSA.WebApi.Controllers
         }
 
         /// <summary>
-        /// Cộng XP cho người dùng demo.
+        /// Cộng XP cho người dùng — in-memory + PostgreSQL persistence.
         /// POST /api/v1/concepts/gamification/award-xp
         /// Body: { "amount": 50, "reason": "Hoàn thành quiz" }
         /// </summary>
         [HttpPost("award-xp")]
-        public IActionResult AwardXp([FromBody] AwardXpRequest request)
+        public async Task<IActionResult> AwardXp([FromBody] AwardXpRequest request)
         {
             if (request.Amount <= 0 || request.Amount > 500)
                 return BadRequest(new { error = "INVALID_AMOUNT", message = "XP phải trong khoảng 1-500." });
 
             var profile = _gamification.AwardXp(request.Amount, request.Reason);
+
+            // Persist XP to PostgreSQL — update demo user
+            var dbUser = await _dbContext.Users
+                .FirstOrDefaultAsync(u => u.Email == "demo@algolens.dev");
+            if (dbUser != null)
+            {
+                dbUser.AwardXP(request.Amount);
+                dbUser.RecordActivity();
+                await _dbContext.SaveChangesAsync();
+            }
+
             return Ok(profile);
         }
 
@@ -56,13 +92,43 @@ namespace VisualizationDSA.WebApi.Controllers
         }
 
         /// <summary>
-        /// Lấy bảng xếp hạng mock.
+        /// Lấy bảng xếp hạng từ PostgreSQL (live database records).
         /// GET /api/v1/concepts/gamification/leaderboard?limit=10
         /// </summary>
         [HttpGet("leaderboard")]
-        public IActionResult GetLeaderboard([FromQuery] int limit = 10)
+        public async Task<IActionResult> GetLeaderboard([FromQuery] int limit = 10)
         {
-            return Ok(_gamification.GetLeaderboard(limit));
+            var dbUsers = await _dbContext.Users
+                .OrderByDescending(u => u.TotalXP)
+                .Take(Math.Min(limit, 50))
+                .Select(u => new
+                {
+                    u.Username,
+                    u.TotalXP,
+                    u.CurrentLevel,
+                    u.StreakDays,
+                    BadgeCount = u.UserBadges.Count
+                })
+                .ToListAsync();
+
+            if (dbUsers.Count == 0)
+            {
+                // Fallback to in-memory mock if DB is empty
+                return Ok(_gamification.GetLeaderboard(limit));
+            }
+
+            var leaderboard = dbUsers.Select((u, index) => new StatelessLeaderboardEntry
+            {
+                Rank = index + 1,
+                Username = u.Username,
+                TotalXp = u.TotalXP,
+                Level = u.CurrentLevel,
+                LevelName = GetLevelName(u.CurrentLevel),
+                BadgeCount = u.BadgeCount,
+                StreakDays = u.StreakDays
+            }).ToList();
+
+            return Ok(leaderboard);
         }
 
         /// <summary>

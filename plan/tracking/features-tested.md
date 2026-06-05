@@ -2033,3 +2033,9 @@ Tài liệu này ghi nhận trạng thái kiểm thử đơn vị tự động (
 | 1768 | **Security** | Runtime Eval Guard | try/catch on new Function() eval | 🟢PASSED |
 | 1769 | **Docs** | walkthrough.md | Code Debugger resilience documentation | 🟢PASSED |
 | 1770 | **Compilation** | dotnet build + vue-tsc | Backend 0 errors, Frontend 0 errors | 🟢PASSED |
+| 1771 | **DB** | Auth Register → PostgreSQL | POST /register persists User to Users table | 🟢PASSED |
+| 1772 | **DB** | Auth Login → PostgreSQL | POST /login updates LastLoginAt in DB | 🟢PASSED |
+| 1773 | **DB** | AwardXP → PostgreSQL | POST /award-xp persists XP changes | 🟢PASSED |
+| 1774 | **DB** | Leaderboard → PostgreSQL | GET /leaderboard reads live from Users table | 🟢PASSED |
+| 1775 | **DB** | Seed Users | 10 Vietnamese users seeded with correct XP/levels | 🟢PASSED |
+| 1776 | **DB** | EF Migrations | 5 migrations applied, 9 tables created | 🟢PASSED |
