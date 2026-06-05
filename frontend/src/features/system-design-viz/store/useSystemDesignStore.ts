@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia';
-import { ref, computed, triggerRef } from 'vue';
+import { ref, computed } from 'vue';
 import { SystemDesignEngine } from '../engine/SystemDesignEngine';
 import { ReplicationLagScheduler } from '../engine/ReplicationLagScheduler';
 import type {
@@ -169,7 +169,7 @@ export const useSystemDesignStore = defineStore('systemDesign', () => {
   }
 
   function syncNodes(): void {
-    triggerRef(nodes);
+    nodes.value = engine.getNodes().map((n) => ({ ...n }));
   }
 
   function dispatchSmokeEvent(nodeId: string): void {
