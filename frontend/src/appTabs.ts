@@ -13,36 +13,36 @@ export interface TabGroup {
 
 export const APP_TABS: readonly (TabGroup | TabItem)[] = [
   {
-    groupName: 'Algorithms',
+    groupName: 'Giải thuật',
     items: [
-      { id: 'sorting',  path: '/sorting',  name: 'Sorting' },
-      { id: 'graph',    path: '/graph',    name: 'Graph' },
-      { id: 'code-ide', path: '/code-ide', name: 'Code Debugger' }
+      { id: 'sorting',  path: '/sorting',  name: 'Sắp xếp' },
+      { id: 'graph',    path: '/graph',    name: 'Đồ thị' },
+      { id: 'code-ide', path: '/code-ide', name: 'Gỡ lỗi Code' }
     ]
   },
   {
-    groupName: 'Concepts',
+    groupName: 'Khái niệm',
     items: [
-      { id: 'oop',      path: '/oop',      name: 'OOP Viz' },
-      { id: 'solid',    path: '/solid',    name: 'SOLID Viz' },
-      { id: 'patterns', path: '/patterns', name: 'Patterns' },
+      { id: 'oop',      path: '/oop',      name: 'OOP' },
+      { id: 'solid',    path: '/solid',    name: 'SOLID' },
+      { id: 'patterns', path: '/patterns', name: 'Design Patterns' },
       { id: 'di',       path: '/di',       name: 'DI/IoC' },
-      { id: 'system',   path: '/system',   name: 'System Design' }
+      { id: 'system',   path: '/system',   name: 'Thiết kế HT' }
     ]
   },
   {
-    groupName: 'Interactive',
+    groupName: 'Tương tác',
     items: [
-      { id: 'quiz',          path: '/quiz',          name: 'Quiz' },
-      { id: 'gamification',  path: '/gamification',  name: 'Leaderboard' },
+      { id: 'quiz',          path: '/quiz',          name: 'Trắc nghiệm' },
+      { id: 'gamification',  path: '/gamification',  name: 'Bảng xếp hạng' },
     ]
   },
   {
-    groupName: 'Account',
+    groupName: 'Tài khoản',
     items: [
-      { id: 'dashboard', path: '/dashboard', name: 'Dashboard', requiresAuth: true },
-      { id: 'checkout',  path: '/checkout',  name: 'Premium' },
-      { id: 'teacher',   path: '/teacher',   name: 'Teacher Panel', requiresAuth: true, requiresRole: 'Teacher' },
+      { id: 'dashboard', path: '/dashboard', name: 'Bảng điều khiển', requiresAuth: true },
+      { id: 'checkout',  path: '/checkout',  name: 'Nâng cấp Premium' },
+      { id: 'teacher',   path: '/teacher',   name: 'Quản lý Giảng viên', requiresAuth: true, requiresRole: 'Teacher' },
     ]
   },
 ] as const;

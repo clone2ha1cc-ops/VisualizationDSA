@@ -215,3 +215,51 @@ body {
   border-radius: var(--radius-full);
   box-shadow: 0 0 10px var(--color-accent-yellow, #d4a832);
 }
+
+/* =============================================================================
+ * RESPONSIVE MOBILE LAYOUT
+ * ============================================================================= */
+
+/* ── Tablet (≤ 768px) ─────────────────────────────────── */
+@media (max-width: 768px) {
+  html { font-size: 14px; }
+
+  /* Dashboard grid → single column */
+  .dash-grid { grid-template-columns: 1fr !important; }
+
+  /* Stats bar compact */
+  .stats-bar { gap: 1.5rem; padding: 1.5rem 1rem; }
+  .stat-item__value { font-size: 1.4rem; }
+
+  /* Teacher panel analytics → stack */
+  .analytics-grid { grid-template-columns: 1fr !important; }
+
+  /* Workspace panels → stack vertically */
+  .workspace-split,
+  .workspace-layout { flex-direction: column !important; }
+
+  /* Graph sidebar → collapsible */
+  .graph-sidebar { max-height: 40vh; overflow-y: auto; }
+}
+
+/* ── Phone (≤ 480px) ──────────────────────────────────── */
+@media (max-width: 480px) {
+  html { font-size: 13px; }
+
+  /* Hero section compact */
+  .hero { min-height: 50vh; padding: 2rem 1rem; }
+  .hero__title { font-size: 2rem; }
+  .hero__tagline { font-size: 1rem; }
+  .hero__actions { flex-direction: column; align-items: stretch; }
+  .hero__cta { text-align: center; }
+
+  /* Feature cards → 1 column */
+  .features { padding: 2rem 1rem; }
+  .features__grid { grid-template-columns: 1fr; }
+
+  /* Quick links compact */
+  .quicklinks { grid-template-columns: 1fr 1fr !important; }
+
+  /* Toast → full width */
+  .toast-container { left: 0.5rem; right: 0.5rem; width: auto; }
+}

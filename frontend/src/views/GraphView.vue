@@ -81,8 +81,8 @@ const activeTab = ref('graph');
 const isPanelCollapsed = ref(false);
 
 const tabs = [
-  { id: 'graph', name: 'Graph Sandbox', icon: 'graph' },
-  { id: 'dsa', name: 'Graph & Tree DSA', icon: 'dsa' }
+  { id: 'graph', name: 'Sân chơi Đồ thị', icon: 'graph' },
+  { id: 'dsa', name: 'Cấu trúc Đồ thị & Cây', icon: 'dsa' }
 ];
 
 const activeProps = computed(() => {

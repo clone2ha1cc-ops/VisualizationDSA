@@ -24,7 +24,7 @@
           <a href="https://github.com/maitieubao/VisualizationDSA"
              target="_blank" rel="noopener noreferrer"
              class="hero__cta hero__cta--ghost">
-            GitHub Repository
+            Mã nguồn GitHub
           </a>
         </div>
       </div>
@@ -69,20 +69,20 @@ function handleCta(): void {
 }
 
 const features = [
-  { icon: '📊', title: 'Sorting Algorithms', desc: '7 thuật toán sắp xếp với hoạt ảnh VCR từng bước' },
-  { icon: '🔗', title: 'Graph Sandbox', desc: 'BFS, DFS, Dijkstra — kéo thả đồ thị tương tác' },
-  { icon: '🧬', title: 'OOP Visualization', desc: 'Encapsulation, Inheritance, Polymorphism trực quan' },
-  { icon: '🏗️', title: 'SOLID Principles', desc: '5 nguyên tắc SOLID với ví dụ vi phạm & tuân thủ' },
-  { icon: '🎨', title: 'Design Patterns', desc: 'Observer, Strategy, Factory — UML + mã nguồn' },
+  { icon: '📊', title: 'Thuật toán Sắp xếp', desc: '7 thuật toán sắp xếp với hoạt ảnh VCR từng bước' },
+  { icon: '🔗', title: 'Sân chơi Đồ thị', desc: 'BFS, DFS, Dijkstra — kéo thả đồ thị tương tác' },
+  { icon: '🧬', title: 'Trực quan OOP', desc: 'Encapsulation, Inheritance, Polymorphism trực quan' },
+  { icon: '🏗️', title: 'Nguyên tắc SOLID', desc: '5 nguyên tắc SOLID với ví dụ vi phạm & tuân thủ' },
+  { icon: '🎨', title: 'Mẫu thiết kế', desc: 'Observer, Strategy, Factory — UML + mã nguồn' },
   { icon: '💉', title: 'DI/IoC Container', desc: 'Dependency Injection với Singleton, Transient, Scoped' },
-  { icon: '📝', title: 'Quiz System', desc: '27+ câu hỏi trắc nghiệm tiếng Việt kèm giải thích' },
-  { icon: '🏆', title: 'Gamification', desc: 'XP, Level, Badges, Leaderboard — học mà chơi' },
+  { icon: '📝', title: 'Hệ thống Trắc nghiệm', desc: '27+ câu hỏi trắc nghiệm tiếng Việt kèm giải thích' },
+  { icon: '🏆', title: 'Trò chơi hóa', desc: 'XP, Level, Huy hiệu, Bảng xếp hạng — học mà chơi' },
 ] as const;
 
 const stats = [
-  { value: '7+', label: 'Sorting Strategies' },
-  { value: '27+', label: 'Quiz Questions' },
-  { value: '8', label: 'Badge Levels' },
+  { value: '7+', label: 'Thuật toán Sắp xếp' },
+  { value: '27+', label: 'Câu hỏi Trắc nghiệm' },
+  { value: '8', label: 'Cấp độ Huy hiệu' },
   { value: '100%', label: 'Tiếng Việt' },
 ] as const;
 </script>
@@ -287,5 +287,25 @@ const stats = [
 .stat-item__label {
   font-size: 0.8rem;
   color: var(--text-tertiary, #64748b);
+}
+
+/* ── Responsive ─────────────────────────── */
+@media (max-width: 768px) {
+  .hero { min-height: 55vh; padding: 2rem 1.5rem; }
+  .hero__title { font-size: 2.5rem; }
+  .hero__tagline { font-size: 1.05rem; }
+  .features { padding: 2rem 1.5rem; }
+  .features__grid { grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 1rem; }
+  .stats-bar { gap: 2rem; }
+}
+
+@media (max-width: 480px) {
+  .hero__title { font-size: 1.8rem; }
+  .hero__tagline { font-size: 0.95rem; }
+  .hero__actions { flex-direction: column; align-items: stretch; }
+  .hero__cta { text-align: center; }
+  .features__grid { grid-template-columns: 1fr; }
+  .stats-bar { gap: 1.5rem; padding: 1.5rem 1rem; }
+  .stat-item__value { font-size: 1.4rem; }
 }
 </style>

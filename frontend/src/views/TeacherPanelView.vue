@@ -1,8 +1,8 @@
 <template>
   <div class="teacher-panel">
     <h1 class="panel-title">
-      🎓 Teacher Dashboard
-      <span class="panel-title__badge">Admin</span>
+      🎓 Bảng điều khiển Giảng viên
+      <span class="panel-title__badge">Quản trị</span>
     </h1>
 
     <!-- Analytics Grid -->
@@ -425,5 +425,19 @@ onMounted(() => {
 
 .submit-message--error {
   color: #f87171;
+}
+
+/* ── Responsive ─────────────────────── */
+@media (max-width: 768px) {
+  .teacher-panel { padding: 1rem; }
+  .panel-title { font-size: 1.2rem; }
+  .analytics-grid { grid-template-columns: 1fr 1fr; }
+  .form-row--inline { flex-direction: column; gap: 0.75rem; }
+  .options-grid { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 480px) {
+  .analytics-grid { grid-template-columns: 1fr; }
+  .metric-card__value { font-size: 1.4rem; }
 }
 </style>

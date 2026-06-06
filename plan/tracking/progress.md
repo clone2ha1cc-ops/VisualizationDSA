@@ -976,3 +976,23 @@ Tất cả các mục tiêu Sprint 5 đã đạt:
 | **WebTransportClient** | HTTP/3 QUIC stub with WebSocket fallback + local offline mode | ✅ CODE DONE | `services/WebTransportClient.ts` |
 | **Transport bridge** | createCollabTransport() factory wiring CRDT onLocalUpdate → broadcast | ✅ CODE DONE | `services/WebTransportClient.ts` |
 | **Compilation** | dotnet build 0 errors + vue-tsc 0 errors | ✅ CODE DONE | Backend Build succeeded, Frontend vue-tsc clean |
+
+---
+
+## 29. Vietnamese Localization & Responsive Mobile Layout
+
+| Tính năng | Chi tiết | Trạng thái | Files liên quan |
+| :--- | :--- | :--- | :--- |
+| **Sidebar tabs VN** | Giải thuật, Khái niệm, Tương tác, Tài khoản — 15 tabs translated | ✅ CODE DONE | `appTabs.ts` |
+| **Route titles VN** | 13 active route meta titles translated to Vietnamese | ✅ CODE DONE | `router/routes.ts` |
+| **Landing Page VN** | 8 feature card titles + 4 stats labels + CTA link translated | ✅ CODE DONE | `LandingView.vue` |
+| **Dashboard VN** | Quick links (Sắp xếp, Trắc nghiệm, Bảng xếp hạng, Quản lý GV) | ✅ CODE DONE | `DashboardView.vue` |
+| **Teacher Panel VN** | "Bảng điều khiển Giảng viên" + "Quản trị" badge | ✅ CODE DONE | `TeacherPanelView.vue` |
+| **Graph View VN** | Tab names: Sân chơi Đồ thị, Cấu trúc Đồ thị & Cây | ✅ CODE DONE | `GraphView.vue` |
+| **App.vue VN** | Premium tooltip → "Thành viên Premium", GitHub → "Mã nguồn GitHub" | ✅ CODE DONE | `App.vue` |
+| **Responsive: Global** | @media 768px + 480px breakpoints for dashboard grid, stats, workspaces | ✅ CODE DONE | `style.css` |
+| **Responsive: App shell** | Header compact, user badge info hidden, sidebar horizontal scroll | ✅ CODE DONE | `App.vue` |
+| **Responsive: Landing** | Hero text scaling, CTA stacking, feature grid 1-col on phone | ✅ CODE DONE | `LandingView.vue` |
+| **Responsive: Dashboard** | Grid 1-col, XP wheel scaled, quicklinks 2-col grid on phone | ✅ CODE DONE | `DashboardView.vue` |
+| **Responsive: Teacher** | Analytics 2→1 col, form inline→stack, options grid 1-col | ✅ CODE DONE | `TeacherPanelView.vue` |
+| **Compilation** | dotnet build 0 errors + vue-tsc 0 errors | ✅ CODE DONE | Backend Build succeeded, Frontend vue-tsc clean |

@@ -6,32 +6,32 @@ import type { RouteRecordRaw } from 'vue-router';
  */
 export const routes: RouteRecordRaw[] = [
   // ── Landing & Dashboard ──────────────────────────────────────────
-  { path: '/',              name: 'landing',       component: () => import('../views/LandingView.vue'),           meta: { title: 'Welcome',         public: true } },
-  { path: '/dashboard',     name: 'dashboard',     component: () => import('../views/DashboardView.vue'),         meta: { title: 'Dashboard',        requiresAuth: true } },
-  { path: '/teacher',       name: 'teacher',       component: () => import('../views/TeacherPanelView.vue'),      meta: { title: 'Teacher Panel',    requiresAuth: true, requiresRole: 'Teacher' } },
+  { path: '/',              name: 'landing',       component: () => import('../views/LandingView.vue'),           meta: { title: 'Chào mừng',        public: true } },
+  { path: '/dashboard',     name: 'dashboard',     component: () => import('../views/DashboardView.vue'),         meta: { title: 'Bảng điều khiển',   requiresAuth: true } },
+  { path: '/teacher',       name: 'teacher',       component: () => import('../views/TeacherPanelView.vue'),      meta: { title: 'Quản lý Giảng viên', requiresAuth: true, requiresRole: 'Teacher' } },
 
   // ── Core Algorithm Sandboxes ─────────────────────────────────────
-  { path: '/sorting',       name: 'sorting',       component: () => import('../views/SortingView.vue'),          meta: { title: 'Sorting',         icon: 'sorting' } },
+  { path: '/sorting',       name: 'sorting',       component: () => import('../views/SortingView.vue'),          meta: { title: 'Sắp xếp',         icon: 'sorting' } },
   // { path: '/animation',     name: 'animation',     component: () => import('../views/AnimationView.vue'),        meta: { title: 'Animation',       icon: 'animation' } },
   // { path: '/dsa',           name: 'dsa',           component: () => import('../views/DSAModulesView.vue'),       meta: { title: 'DSA Modules',     icon: 'dsa' } },
-  { path: '/code-ide',      name: 'code-ide',      component: () => import('../views/CodeIDEView.vue'),          meta: { title: 'Code Debugger',   icon: 'code-ide' } },
+  { path: '/code-ide',      name: 'code-ide',      component: () => import('../views/CodeIDEView.vue'),          meta: { title: 'Gỡ lỗi Code',     icon: 'code-ide' } },
   // { path: '/compare',       name: 'compare',       component: () => import('../views/CompareView.vue'),          meta: { title: 'So sánh',         icon: 'compare' } },
   // { path: '/concurrency',   name: 'concurrency',   component: () => import('../views/ConcurrencyView.vue'),      meta: { title: 'Đa luồng',        icon: 'concurrency' } },
   // { path: '/debug',         name: 'debug',         component: () => import('../views/DebugView.vue'),            meta: { title: 'Debug',           icon: 'debug' } },
-  { path: '/graph',         name: 'graph',         component: () => import('../views/GraphView.vue'),            meta: { title: 'Graph',           icon: 'graph' } },
+  { path: '/graph',         name: 'graph',         component: () => import('../views/GraphView.vue'),            meta: { title: 'Đồ thị',          icon: 'graph' } },
   // { path: '/playground',    name: 'playground',    component: () => import('../views/PlaygroundView.vue'),       meta: { title: 'Sandbox',         icon: 'playground' } },
   { path: '/di',            name: 'di',            component: () => import('../views/DIView.vue'),               meta: { title: 'DI/IoC',          icon: 'di' } },
-  { path: '/patterns',      name: 'patterns',      component: () => import('../views/PatternsView.vue'),         meta: { title: 'Patterns',        icon: 'patterns' } },
+  { path: '/patterns',      name: 'patterns',      component: () => import('../views/PatternsView.vue'),         meta: { title: 'Mẫu thiết kế',    icon: 'patterns' } },
   // { path: '/leaderboard',   name: 'leaderboard',   component: () => import('../views/LeaderboardView.vue'),      meta: { title: 'Leaderboard',     icon: 'leaderboard' } },
-  { path: '/checkout',      name: 'checkout',      component: () => import('../views/PremiumCheckoutView.vue'),  meta: { title: 'Premium Upgrade', icon: 'checkout' } },
+  { path: '/checkout',      name: 'checkout',      component: () => import('../views/PremiumCheckoutView.vue'),  meta: { title: 'Nâng cấp Premium', icon: 'checkout' } },
 
   // --- Phase 2 Upgraded Sandboxes ---
-  { path: '/oop',           name: 'oop',           component: () => import('../views/OOPVisualizationView.vue'), meta: { title: 'OOP Viz',         icon: 'oop' } },
-  { path: '/solid',         name: 'solid',         component: () => import('../views/SOLIDVisualizationView.vue'),meta: { title: 'SOLID Viz',       icon: 'solid' } },
+  { path: '/oop',           name: 'oop',           component: () => import('../views/OOPVisualizationView.vue'), meta: { title: 'Trực quan OOP',    icon: 'oop' } },
+  { path: '/solid',         name: 'solid',         component: () => import('../views/SOLIDVisualizationView.vue'),meta: { title: 'Trực quan SOLID',  icon: 'solid' } },
   // { path: '/state',         name: 'state',         component: () => import('../views/StateInspectorView.vue'),   meta: { title: 'State Inspector', icon: 'state' } },
-  { path: '/system',        name: 'system',        component: () => import('../views/SystemDesignVizView.vue'),  meta: { title: 'System Design',  icon: 'system' } },
-  { path: '/quiz',          name: 'quiz',          component: () => import('../views/BackendQuizView.vue'),      meta: { title: 'Quiz System',     icon: 'quiz' } },
-  { path: '/gamification',  name: 'gamification',  component: () => import('../views/GamificationEngineView.vue'),meta: { title: 'Gamification+',   icon: 'gamification' } },
+  { path: '/system',        name: 'system',        component: () => import('../views/SystemDesignVizView.vue'),  meta: { title: 'Thiết kế HT',     icon: 'system' } },
+  { path: '/quiz',          name: 'quiz',          component: () => import('../views/BackendQuizView.vue'),      meta: { title: 'Trắc nghiệm',     icon: 'quiz' } },
+  { path: '/gamification',  name: 'gamification',  component: () => import('../views/GamificationEngineView.vue'),meta: { title: 'Bảng xếp hạng',   icon: 'gamification' } },
 
   // --- Completely New Phase 2 Routes ---
   { path: '/embed',         name: 'embed',         component: () => import('../views/EmbedWidgetView.vue'),      meta: { title: 'Embed',           icon: 'embed' } },

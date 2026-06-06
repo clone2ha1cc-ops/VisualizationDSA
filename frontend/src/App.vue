@@ -38,7 +38,7 @@
           <!-- Authenticated user badge -->
           <template v-if="authStore.isAuthenticated">
             <!-- Premium Crown Badge -->
-            <span v-if="authStore.isPremium" class="premium-crown" title="Premium Member">👑</span>
+            <span v-if="authStore.isPremium" class="premium-crown" title="Thành viên Premium">👑</span>
             <div class="user-badge" :class="{ 'user-badge--premium': authStore.isPremium }">
               <div class="user-badge__avatar" :class="{ 'user-badge__avatar--premium': authStore.isPremium }">
                 {{ authStore.userName.charAt(0).toUpperCase() }}
@@ -649,5 +649,24 @@ onMounted(() => {
   margin-left: 4px;
   vertical-align: middle;
   letter-spacing: 0.5px;
+}
+
+/* ── RESPONSIVE MOBILE ───────────────────────────────────── */
+@media (max-width: 768px) {
+  .app-header {
+    padding: 0 var(--space-3);
+    gap: var(--space-2);
+  }
+  .logo-badge { font-size: var(--text-xs); padding: 3px 8px; }
+  .user-badge { padding: 3px var(--space-2); }
+  .user-badge__info { display: none; }
+  .btn-primary { padding: 4px var(--space-3); font-size: 11px; }
+  .app-main { padding: var(--space-2); gap: var(--space-2); }
+}
+
+@media (max-width: 480px) {
+  .header-controls { gap: 4px; }
+  .btn-icon { width: 26px; height: 26px; }
+  .premium-crown { font-size: 13px; }
 }
 </style>
