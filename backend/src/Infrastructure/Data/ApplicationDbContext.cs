@@ -17,6 +17,8 @@ namespace VisualizationDSA.Infrastructure.Data
         public DbSet<LearningProgress> LearningProgresses { get; set; }
         public DbSet<RefreshToken>   RefreshTokens   { get; set; }
         public DbSet<Order>          Orders          { get; set; }
+        public DbSet<SemanticConceptNode> SemanticConceptNodes { get; set; }
+        public DbSet<KnowledgeEdge>       KnowledgeEdges       { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -124,6 +126,42 @@ namespace VisualizationDSA.Infrastructure.Data
                       .WithMany()
                       .HasForeignKey(e => e.UserId)
                       .OnDelete(DeleteBehavior.Cascade);
+            });
+
+            // SemanticConceptNode configuration — đỉnh đồ thị tri thức (Graph RAG)
+            modelBuilder.Entity<SemanticConceptNode>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+                entity.HasIndex(e => e.ConceptKey).IsUnique();
+                entity.HasIndex(e => e.Category);
+                entity.Property(e => e.ConceptKey).IsRequired().HasMaxLength(150);
+                entity.Property(e => e.Title).IsRequired().HasMaxLength(200);
+                entity.Property(e => e.Category).IsRequired().HasMaxLength(60);
+                entity.Property(e => e.Description).HasMaxLength(2000);
+                // Vector embedding ngữ nghĩa — ánh xạ sang double precision[] của PostgreSQL.
+                entity.Property(e => e.Embedding).HasColumnType("double precision[]");
+                entity.Property(e => e.Importance).HasDefaultValue(0.0);
+            });
+
+            // KnowledgeEdge configuration — cạnh có hướng giữa hai concept node
+            modelBuilder.Entity<KnowledgeEdge>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+                entity.HasIndex(e => new { e.SourceNodeId, e.TargetNodeId, e.RelationType }).IsUnique();
+                entity.HasIndex(e => e.RelationType);
+                entity.Property(e => e.RelationType).IsRequired().HasMaxLength(60);
+                entity.Property(e => e.Weight).HasDefaultValue(1.0);
+
+                entity.HasOne(e => e.SourceNode)
+                      .WithMany(n => n.OutgoingEdges)
+                      .HasForeignKey(e => e.SourceNodeId)
+                      .OnDelete(DeleteBehavior.Cascade);
+
+                // Restrict ở chiều còn lại để tránh multiple cascade paths trên cùng một bảng.
+                entity.HasOne(e => e.TargetNode)
+                      .WithMany(n => n.IncomingEdges)
+                      .HasForeignKey(e => e.TargetNodeId)
+                      .OnDelete(DeleteBehavior.Restrict);
             });
         }
     }

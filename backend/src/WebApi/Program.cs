@@ -169,6 +169,7 @@ builder.Services.AddScoped<IGamificationService, GamificationService>();
 builder.Services.AddScoped<ILeaderboardService, LeaderboardService>();
 builder.Services.AddScoped<IAnalyticsService, AnalyticsService>();
 builder.Services.AddScoped<IPaymentService, PaymentService>();
+builder.Services.AddScoped<ISemanticGraphService, SemanticGraphService>();
 
 // Register Algorithm Strategies (Reflection-based auto-scan)
 builder.Services.AddAlgorithmStrategies();
