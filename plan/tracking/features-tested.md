@@ -2055,3 +2055,8 @@ Tài liệu này ghi nhận trạng thái kiểm thử đơn vị tự động (
 | 1790 | **Docker** | nginx.conf | SPA routing + gzip + static caching | 🟢PASSED |
 | 1791 | **Docker** | DB health check | pg_isready with service_healthy condition | 🟢PASSED |
 | 1792 | **Compilation** | dotnet build + vue-tsc | Backend 0 errors, Frontend 0 errors | 🟢PASSED |
+| 1793 | **WebGPU** | WebGpuPipeline.ts | probeWebGpu() + initCanvasContext() + createComputePipeline() | 🟢PASSED |
+| 1794 | **WebGPU** | WGSL Compute Shader | GRAPH_FORCE_COMPUTE_WGSL Coulomb repulsion kernel | 🟢PASSED |
+| 1795 | **WebGPU** | Dashboard Badge | Glowing "WebGPU Engine: READY" with gpuGlow animation | 🟢PASSED |
+| 1796 | **WebGPU** | @webgpu/types | TypeScript type definitions registered in tsconfig.app.json | 🟢PASSED |
+| 1797 | **Compilation** | dotnet build + vue-tsc | Backend 0 errors, Frontend 0 errors | 🟢PASSED |

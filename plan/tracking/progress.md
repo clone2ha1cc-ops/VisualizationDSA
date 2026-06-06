@@ -919,3 +919,16 @@ Tất cả các mục tiêu Sprint 5 đã đạt:
 | **DB health check** | pg_isready interval 5s, 10 retries, backend depends_on condition:service_healthy | ✅ CODE DONE | `docker-compose.yml` |
 | **Auto migrations** | Backend runs `context.Database.Migrate()` + `DbSeeder.SeedAsync()` at startup | ✅ CODE DONE | `Program.cs` (existing) |
 | **Compilation** | dotnet build 0 errors + vue-tsc 0 errors | ✅ CODE DONE | Backend Build succeeded, Frontend vue-tsc clean |
+
+---
+
+## 31. WebGPU Rendering Pipeline Foundation
+
+| Tính năng | Chi tiết | Trạng thái | Files liên quan |
+| :--- | :--- | :--- | :--- |
+| **WebGpuPipeline.ts** | Reusable pipeline: probeWebGpu(), initCanvasContext(), createComputePipeline() | ✅ CODE DONE | `frontend/src/core/WebGpuPipeline.ts` |
+| **WGSL Compute Shader** | GRAPH_FORCE_COMPUTE_WGSL — Coulomb repulsion kernel for graph node arrays | ✅ CODE DONE | `frontend/src/core/WebGpuPipeline.ts` |
+| **Adapter/Device Check** | probeWebGpu() checks navigator.gpu, adapter, device; returns capabilities | ✅ CODE DONE | `frontend/src/core/WebGpuPipeline.ts` |
+| **Dashboard Badge** | Glowing "WebGPU Engine: READY" badge with gpuGlow animation + adapter name | ✅ CODE DONE | `frontend/src/views/DashboardView.vue` |
+| **@webgpu/types** | TypeScript type definitions for WebGPU API added to tsconfig.app.json | ✅ CODE DONE | `tsconfig.app.json`, `package.json` |
+| **Compilation** | dotnet build 0 errors + vue-tsc 0 errors | ✅ CODE DONE | Backend Build succeeded, Frontend vue-tsc clean |

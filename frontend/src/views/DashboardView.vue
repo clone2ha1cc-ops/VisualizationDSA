@@ -80,13 +80,29 @@
           </router-link>
         </div>
       </div>
+      <!-- WebGPU Engine Status -->
+      <div class="dash-card webgpu-card">
+        <h3 class="dash-card__title">Công nghệ đồ họa</h3>
+        <div class="webgpu-status">
+          <span :class="['webgpu-badge', webGpuReady ? 'webgpu-badge--ready' : 'webgpu-badge--unavailable']">
+            {{ webGpuReady ? '⚡ WebGPU Engine: READY' : '⚠ WebGPU: Không khả dụng' }}
+          </span>
+          <p class="webgpu-adapter" v-if="webGpuAdapterName">
+            GPU: {{ webGpuAdapterName }}
+          </p>
+          <p class="webgpu-hint">
+            {{ webGpuReady ? 'Sẵn sàng tăng tốc GPU cho trực quan hóa đồ thị' : webGpuError }}
+          </p>
+        </div>
+      </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue';
+import { computed, ref, onMounted } from 'vue';
 import { useAuthStore } from '../features/auth/store/useAuthStore';
+import { probeWebGpu } from '../core/WebGpuPipeline';
 
 const authStore = useAuthStore();
 
@@ -126,6 +142,18 @@ const topBadges = computed<BadgeDisplay[]>(() => {
     name: String(b.name ?? ''),
     icon: String(b.icon ?? '🏅'),
   }));
+});
+
+// ── WebGPU probe ─────────────────────────
+const webGpuReady = ref(false);
+const webGpuAdapterName = ref('');
+const webGpuError = ref('');
+
+onMounted(async () => {
+  const result = await probeWebGpu();
+  webGpuReady.value = result.supported;
+  webGpuAdapterName.value = result.adapterName;
+  webGpuError.value = result.error ?? '';
 });
 </script>
 
@@ -319,5 +347,57 @@ const topBadges = computed<BadgeDisplay[]>(() => {
 
 .quicklink__icon {
   font-size: 1.1rem;
+}
+
+/* ── WebGPU Badge ──────────────────── */
+.webgpu-card {
+  text-align: center;
+}
+
+.webgpu-status {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.webgpu-badge {
+  display: inline-block;
+  padding: 0.5rem 1.25rem;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 700;
+  font-family: var(--font-mono, 'JetBrains Mono', monospace);
+  letter-spacing: 0.5px;
+}
+
+.webgpu-badge--ready {
+  background: rgba(52, 211, 153, 0.12);
+  color: #34d399;
+  border: 1px solid rgba(52, 211, 153, 0.3);
+  box-shadow: 0 0 12px rgba(52, 211, 153, 0.2), 0 0 24px rgba(52, 211, 153, 0.08);
+  animation: gpuGlow 2s ease-in-out infinite alternate;
+}
+
+.webgpu-badge--unavailable {
+  background: rgba(251, 191, 36, 0.1);
+  color: #fbbf24;
+  border: 1px solid rgba(251, 191, 36, 0.2);
+}
+
+@keyframes gpuGlow {
+  from { box-shadow: 0 0 8px rgba(52, 211, 153, 0.15), 0 0 16px rgba(52, 211, 153, 0.05); }
+  to   { box-shadow: 0 0 16px rgba(52, 211, 153, 0.3), 0 0 32px rgba(52, 211, 153, 0.12); }
+}
+
+.webgpu-adapter {
+  font-size: 0.8rem;
+  font-family: var(--font-mono, 'JetBrains Mono', monospace);
+  color: var(--text-secondary, #94a3b8);
+}
+
+.webgpu-hint {
+  font-size: 0.8rem;
+  color: var(--text-tertiary, #64748b);
 }
 </style>
