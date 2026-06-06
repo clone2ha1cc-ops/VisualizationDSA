@@ -19,6 +19,7 @@ using VisualizationDSA.Application.Services;
 using VisualizationDSA.Domain.Interfaces;
 using VisualizationDSA.Infrastructure.Data;
 using VisualizationDSA.Infrastructure.Extensions;
+using VisualizationDSA.Infrastructure.Interceptors;
 using VisualizationDSA.Infrastructure.Repositories;
 using VisualizationDSA.Infrastructure.Services;
 using VisualizationDSA.WebApi.Middlewares;
@@ -53,7 +54,11 @@ builder.Host.UseSerilog((context, services, configuration) =>
 });
 
 // Add services to the container
-builder.Services.AddControllers()
+builder.Services.AddControllers(options =>
+    {
+        // Ghi mọi tương tác API vào Event Sourcing Ledger (append-only) một cách reactively.
+        options.Filters.Add<VisualizationDSA.WebApi.Filters.AuditEventActionFilter>();
+    })
     .AddJsonOptions(options =>
     {
         options.JsonSerializerOptions.DefaultIgnoreCondition =
@@ -151,13 +156,16 @@ builder.Services.AddCors(options =>
 
 // Configure Database (PostgreSQL with Connection Resiliency Retry strategy)
 builder.Services.AddDbContextPool<ApplicationDbContext>(options =>
-    options.UseNpgsql(
-        builder.Configuration.GetConnectionString("DefaultConnection"),
-        npgsqlOptions => npgsqlOptions.EnableRetryOnFailure(
-            maxRetryCount: 5,
-            maxRetryDelay: TimeSpan.FromSeconds(30),
-            errorCodesToAdd: null)
-    ));
+    options
+        .UseNpgsql(
+            builder.Configuration.GetConnectionString("DefaultConnection"),
+            npgsqlOptions => npgsqlOptions.EnableRetryOnFailure(
+                maxRetryCount: 5,
+                maxRetryDelay: TimeSpan.FromSeconds(30),
+                errorCodesToAdd: null)
+        )
+        // Bảo vệ tính bất biến của Event Sourcing Ledger (chặn UPDATE/DELETE).
+        .AddInterceptors(new ImmutableAuditInterceptor()));
 
 // Register Repository & Unit of Work
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
@@ -170,6 +178,7 @@ builder.Services.AddScoped<ILeaderboardService, LeaderboardService>();
 builder.Services.AddScoped<IAnalyticsService, AnalyticsService>();
 builder.Services.AddScoped<IPaymentService, PaymentService>();
 builder.Services.AddScoped<ISemanticGraphService, SemanticGraphService>();
+builder.Services.AddScoped<IAuditEventService, AuditEventService>();
 
 // Register Algorithm Strategies (Reflection-based auto-scan)
 builder.Services.AddAlgorithmStrategies();

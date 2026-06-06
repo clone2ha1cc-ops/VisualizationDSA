@@ -19,6 +19,7 @@ namespace VisualizationDSA.Infrastructure.Data
         public DbSet<Order>          Orders          { get; set; }
         public DbSet<SemanticConceptNode> SemanticConceptNodes { get; set; }
         public DbSet<KnowledgeEdge>       KnowledgeEdges       { get; set; }
+        public DbSet<SystemAuditEventStream> SystemAuditEventStreams { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -162,6 +163,23 @@ namespace VisualizationDSA.Infrastructure.Data
                       .WithMany(n => n.IncomingEdges)
                       .HasForeignKey(e => e.TargetNodeId)
                       .OnDelete(DeleteBehavior.Restrict);
+            });
+
+            // SystemAuditEventStream configuration — Event Sourcing Ledger (append-only time-series)
+            modelBuilder.Entity<SystemAuditEventStream>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+                // Index thời gian + sequence để truy vấn time-series hiệu quả.
+                entity.HasIndex(e => e.OccurredAt);
+                entity.HasIndex(e => e.Sequence);
+                entity.HasIndex(e => new { e.UserId, e.OccurredAt });
+                entity.HasIndex(e => e.EventType);
+                entity.Property(e => e.EventType).IsRequired().HasMaxLength(120);
+                entity.Property(e => e.CorrelationId).HasMaxLength(100);
+                entity.Property(e => e.HttpMethod).HasMaxLength(10);
+                entity.Property(e => e.Path).HasMaxLength(500);
+                // Payload thô lưu dạng JSONB của PostgreSQL.
+                entity.Property(e => e.Payload).HasColumnType("jsonb");
             });
         }
     }

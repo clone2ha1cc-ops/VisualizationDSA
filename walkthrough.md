@@ -49,3 +49,58 @@ The Code Debugger module is now **100% resilient** to crashes from bad syntax an
 | Deep recursion | `__recursionDepth` AST injection | 500 levels | Error thrown + toast |
 
 **Compilation status:** `dotnet build` 0 errors, `vue-tsc --noEmit` 0 errors.
+
+---
+
+# 🏛️ Tech Stack Integration — 6 Technical Pillars Index
+
+This section formally indexes the six advanced technical pillars integrated into the
+VisualizationDSA platform. Pillars 1–4 cover the runtime/orchestration & client compute
+layers; pillars 5–6 establish the enterprise backend data foundations (Graph RAG +
+Event Sourcing).
+
+| # | Pillar | Layer | Key Artifacts |
+|---|---|---|---|
+| 1 | Production Docker Compose orchestration | Infra | `docker-compose.yml` (PostgreSQL + .NET backend + nginx frontend) |
+| 2 | WebGPU rendering pipeline | Frontend | WebGPU pipeline foundation + Dashboard status badge |
+| 3 | WASM compute engine | Frontend | Web Worker + transferable `ArrayBuffer` bridge |
+| 4 | CRDT collaborative graph store | Frontend | Yjs collaborative store + WebTransport client |
+| 5 | Graph RAG Backend Layer | Backend | `SemanticConceptNode`, `KnowledgeEdge`, `GET /api/v1/concepts/analytics/semantic-graph` |
+| 6 | Event Sourcing Ledger | Backend | `SystemAuditEventStream`, `ImmutableAuditInterceptor`, `AuditEventActionFilter` |
+
+## Pillar 5 — Semantic Matrix Engineering (Graph RAG Backend Layer)
+
+Grounds the backend with an enterprise-grade semantic vector graph for Graph RAG.
+
+- **Entities** (`Domain/Entities/`):
+  - `SemanticConceptNode` — graph vertex modelling a software-engineering concept, carrying
+    a semantic `double[] Embedding` vector (mapped to PostgreSQL `double precision[]`),
+    `Importance` weight, `ConceptKey` (unique), `Category`.
+  - `KnowledgeEdge` — directed edge modelling cross-cutting dependencies
+    (`RelationType`, `Weight`) between two concept nodes.
+- **Persistence** (`Infrastructure/Data/ApplicationDbContext.cs`): EF Core Fluent API mappings
+  (unique indexes, category index, FK with `Cascade` on source / `Restrict` on target to avoid
+  multiple-cascade-path errors) + migration `AddSemanticGraph`.
+- **API** (`WebApi/Controllers/ConceptsController.cs`):
+  `GET /api/v1/concepts/analytics/semantic-graph?category=` — backed by
+  `ISemanticGraphService` / `SemanticGraphService` using `AsNoTracking` projections,
+  returns nodes, induced-subgraph edges, and graph stats (node/edge count, density, degree).
+
+## Pillar 6 — Event Sourcing Ledger (Immutable Audit Stream)
+
+Captures raw user interactions (VCR timeline scrubbing, code syntax gaffes, quiz telemetry)
+as an append-only time-series ledger.
+
+- **Entity** (`Domain/Entities/SystemAuditEventStream.cs`): immutable time-series frame
+  (`EventType`, `UserId?`, `CorrelationId`, `HttpMethod`, `Path`, `StatusCode`,
+  `Payload` as JSONB, monotonically-increasing `Sequence`, `OccurredAt`).
+- **Append path** (`Infrastructure/Services/AuditEventService.cs` + `Application/Services/IAuditEventService.cs`):
+  append-only writer; persisted via EF Core + migration `AddSystemAuditEventStream`
+  (time/sequence/user indexes for time-series queries).
+- **Reactive capture** (`WebApi/Filters/AuditEventActionFilter.cs`): global `IAsyncActionFilter`
+  that appends an audit frame after every action executes (best-effort, never fails the request).
+- **Immutability guard** (`Infrastructure/Interceptors/ImmutableAuditInterceptor.cs`):
+  EF Core `SaveChanges` interceptor that blocks any `UPDATE`/`DELETE` on
+  `SystemAuditEventStream` — only `INSERT` (append) is permitted.
+
+**Workspace compilation status:** `dotnet build` 0 errors · `vue-tsc --noEmit` 0 errors.
