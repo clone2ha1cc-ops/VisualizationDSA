@@ -923,3 +923,17 @@ Tất cả các mục tiêu Sprint 5 đã đạt:
 | **Sidebar Role Filtering** | appTabs with requiresAuth/requiresRole, filtered in App.vue, Teacher Panel visible only for Teacher | ✅ CODE DONE | `appTabs.ts`, `App.vue` |
 | **Auth Store: role/isTeacher** | userRole + isTeacher computed, role mapped in _applyStatelessAuth | ✅ CODE DONE | `useAuthStore.ts`, `authApi.ts`, `statelessAuthApi.ts` |
 | **Compilation** | dotnet build 0 errors + vue-tsc 0 errors | ✅ CODE DONE | Backend Build succeeded, Frontend vue-tsc clean |
+
+---
+
+## 30. Production Multi-Container Dockerization
+
+| Tính năng | Chi tiết | Trạng thái | Files liên quan |
+| :--- | :--- | :--- | :--- |
+| **docker-compose.yml** | 3 services: database (postgres:15), backend (.NET 9), frontend (nginx:alpine) | ✅ CODE DONE | `docker-compose.yml` |
+| **Backend Dockerfile** | Multi-stage: sdk:9.0 build → aspnet:9.0 runtime, Release mode, port 5055 | ✅ CODE DONE | `backend/Dockerfile`, `backend/.dockerignore` |
+| **Frontend Dockerfile** | Multi-stage: node:20 build → nginx:alpine serve, VITE_API_BASE_URL injected | ✅ CODE DONE | `frontend/Dockerfile`, `frontend/.dockerignore` |
+| **Nginx SPA config** | try_files fallback, gzip, static asset caching, no-cache index.html | ✅ CODE DONE | `frontend/nginx.conf` |
+| **DB health check** | pg_isready interval 5s, 10 retries, backend depends_on condition:service_healthy | ✅ CODE DONE | `docker-compose.yml` |
+| **Auto migrations** | Backend runs `context.Database.Migrate()` + `DbSeeder.SeedAsync()` at startup | ✅ CODE DONE | `Program.cs` (existing) |
+| **Compilation** | dotnet build 0 errors + vue-tsc 0 errors | ✅ CODE DONE | Backend Build succeeded, Frontend vue-tsc clean |

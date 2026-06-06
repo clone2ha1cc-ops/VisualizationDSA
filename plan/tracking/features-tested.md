@@ -2055,3 +2055,9 @@ Tài liệu này ghi nhận trạng thái kiểm thử đơn vị tự động (
 | 1790 | **DB** | Payment webhook → DB | POST /simulate-webhook persists isPremium=true in Users table | 🟢PASSED |
 | 1791 | **Port** | SKILL.md port sweep | 18 references localhost:5050 → localhost:5055 | 🟢PASSED |
 | 1792 | **Compilation** | dotnet build + vue-tsc | Backend 0 errors, Frontend 0 errors | 🟢PASSED |
+| 1793 | **Docker** | docker-compose.yml | 3 services: postgres:15 + .NET 9 backend + nginx:alpine frontend | 🟢PASSED |
+| 1794 | **Docker** | Backend Dockerfile | Multi-stage sdk:9.0 → aspnet:9.0 Release build | 🟢PASSED |
+| 1795 | **Docker** | Frontend Dockerfile | Multi-stage node:20 → nginx:alpine with VITE_API_BASE_URL | 🟢PASSED |
+| 1796 | **Docker** | nginx.conf | SPA routing + gzip + static caching | 🟢PASSED |
+| 1797 | **Docker** | DB health check | pg_isready with service_healthy condition | 🟢PASSED |
+| 1798 | **Compilation** | dotnet build + vue-tsc | Backend 0 errors, Frontend 0 errors | 🟢PASSED |
