@@ -58,6 +58,8 @@ namespace VisualizationDSA.WebApi.Controllers
                     _dbContext.Users.Add(dbUser);
                     await _dbContext.SaveChangesAsync();
                 }
+                // Ensure response reflects DB role
+                response.User.Role = "Student";
 
                 return Ok(response);
             }
@@ -78,13 +80,18 @@ namespace VisualizationDSA.WebApi.Controllers
             {
                 var response = _authStrategy.Login(request);
 
-                // Update LastLoginAt in PostgreSQL
+                // Sync from PostgreSQL — update LastLoginAt + override role/premium from DB
                 var dbUser = await _dbContext.Users
                     .FirstOrDefaultAsync(u => u.Email == request.Email);
                 if (dbUser != null)
                 {
                     dbUser.RecordLogin();
                     await _dbContext.SaveChangesAsync();
+                    // Override in-memory fields with DB truth
+                    response.User.Role = dbUser.Role;
+                    response.User.IsPremium = dbUser.IsPremium;
+                    response.User.TotalXP = dbUser.TotalXP;
+                    response.User.CurrentLevel = dbUser.CurrentLevel;
                 }
 
                 return Ok(response);

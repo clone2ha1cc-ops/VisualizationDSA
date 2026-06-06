@@ -1,14 +1,16 @@
 using Asp.Versioning;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using VisualizationDSA.Domain.Engine;
 using VisualizationDSA.Domain.Strategies;
+using VisualizationDSA.Infrastructure.Data;
 
 namespace VisualizationDSA.WebApi.Controllers
 {
     /// <summary>
-    /// Stateless Payment Controller — thanh toán Premium mà KHÔNG cần PostgreSQL / SePay.
+    /// Payment Controller — thanh toán Premium với PostgreSQL persistence.
     /// Route: api/v{version:apiVersion}/concepts/payment
     /// </summary>
     [ApiVersion("1.0")]
@@ -17,10 +19,12 @@ namespace VisualizationDSA.WebApi.Controllers
     public class StatelessPaymentController : ControllerBase
     {
         private readonly StatelessPaymentStrategy _paymentStrategy;
+        private readonly ApplicationDbContext _dbContext;
 
-        public StatelessPaymentController(StatelessPaymentStrategy paymentStrategy)
+        public StatelessPaymentController(StatelessPaymentStrategy paymentStrategy, ApplicationDbContext dbContext)
         {
             _paymentStrategy = paymentStrategy;
+            _dbContext = dbContext;
         }
 
         /// <summary>
@@ -61,11 +65,15 @@ namespace VisualizationDSA.WebApi.Controllers
         /// POST /api/v1/concepts/payment/verify
         /// </summary>
         [HttpPost("verify")]
-        public ActionResult<StatelessOrderDto> Verify([FromBody] StatelessVerifyRequest request)
+        public async Task<ActionResult<StatelessOrderDto>> Verify([FromBody] StatelessVerifyRequest request)
         {
             try
             {
                 var order = _paymentStrategy.VerifyPayment(request.OrderId, request.UserId);
+
+                // Persist isPremium to PostgreSQL
+                await PersistPremiumStatus(request.UserId);
+
                 return Ok(order);
             }
             catch (KeyNotFoundException ex)
@@ -105,11 +113,15 @@ namespace VisualizationDSA.WebApi.Controllers
         /// POST /api/v1/concepts/payment/simulate-webhook
         /// </summary>
         [HttpPost("simulate-webhook")]
-        public ActionResult<StatelessOrderDto> SimulateWebhook([FromBody] StatelessVerifyRequest request)
+        public async Task<ActionResult<StatelessOrderDto>> SimulateWebhook([FromBody] StatelessVerifyRequest request)
         {
             try
             {
                 var order = _paymentStrategy.SimulateWebhook(request.OrderId);
+
+                // Persist isPremium to PostgreSQL
+                await PersistPremiumStatus(request.UserId);
+
                 return Ok(order);
             }
             catch (KeyNotFoundException ex)
@@ -150,6 +162,23 @@ namespace VisualizationDSA.WebApi.Controllers
         {
             var log = _paymentStrategy.GetTransactionLog(userId);
             return Ok(log);
+        }
+
+        /// <summary>
+        /// Persist Premium status to PostgreSQL — finds user by in-memory userId mapping.
+        /// </summary>
+        private async Task PersistPremiumStatus(string? userId)
+        {
+            if (string.IsNullOrWhiteSpace(userId)) return;
+            // In-memory userId might be "demo-user-001" or similar; try to find by email
+            var email = userId == "demo-user-001" ? "demo@algolens.dev" : userId;
+            var dbUser = await _dbContext.Users
+                .FirstOrDefaultAsync(u => u.Email == email || u.Id.ToString() == userId);
+            if (dbUser != null)
+            {
+                dbUser.SetPremiumStatus(true);
+                await _dbContext.SaveChangesAsync();
+            }
         }
     }
 }

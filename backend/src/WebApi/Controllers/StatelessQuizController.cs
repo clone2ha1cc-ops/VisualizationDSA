@@ -1,12 +1,15 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Asp.Versioning;
 using VisualizationDSA.Domain.Engine;
+using VisualizationDSA.Domain.Entities;
 using VisualizationDSA.Domain.Strategies;
+using VisualizationDSA.Infrastructure.Data;
 
 namespace VisualizationDSA.WebApi.Controllers
 {
     /// <summary>
-    /// Stateless Quiz API — serves pre-built quiz bank without database.
+    /// Quiz API — serves quiz bank from in-memory + PostgreSQL persistence.
     /// Route: /api/v1/concepts/quiz
     /// </summary>
     [ApiVersion("1.0")]
@@ -15,11 +18,13 @@ namespace VisualizationDSA.WebApi.Controllers
     public class StatelessQuizController : ControllerBase
     {
         private readonly QuizBankStrategy _quizBank;
+        private readonly ApplicationDbContext _dbContext;
         private static readonly List<StatelessQuizAttemptResult> _attemptLog = new();
 
-        public StatelessQuizController(QuizBankStrategy quizBank)
+        public StatelessQuizController(QuizBankStrategy quizBank, ApplicationDbContext dbContext)
         {
             _quizBank = quizBank;
+            _dbContext = dbContext;
         }
 
         /// <summary>
@@ -99,12 +104,27 @@ namespace VisualizationDSA.WebApi.Controllers
         /// POST /api/v1/concepts/quiz/manage
         /// </summary>
         [HttpPost("manage")]
-        public IActionResult ManageQuiz([FromBody] StatelessQuizDto quiz)
+        public async Task<IActionResult> ManageQuiz([FromBody] StatelessQuizDto quiz)
         {
             if (string.IsNullOrWhiteSpace(quiz.Title) || quiz.Questions.Count == 0)
                 return BadRequest(new { error = "INVALID_QUIZ", message = "Quiz phải có tiêu đề và ít nhất 1 câu hỏi." });
 
+            // Add to in-memory bank for immediate availability
             var created = _quizBank.AddQuiz(quiz);
+
+            // Persist to PostgreSQL
+            var difficultyInt = quiz.Difficulty switch
+            {
+                "easy" => 1, "medium" => 3, "hard" => 5, _ => 3
+            };
+            var dbQuiz = new Quiz(quiz.Title, quiz.Topic, quiz.Topic, difficultyInt, quiz.XpReward);
+            foreach (var q in quiz.Questions)
+            {
+                dbQuiz.AddQuestion(q.Text, q.Options.ToArray(), q.CorrectIndex, q.Explanation ?? "");
+            }
+            _dbContext.Quizzes.Add(dbQuiz);
+            await _dbContext.SaveChangesAsync();
+
             return Ok(new { message = "Quiz đã được thêm thành công.", quiz = created });
         }
 

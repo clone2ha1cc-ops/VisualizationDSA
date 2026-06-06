@@ -2049,26 +2049,32 @@ Tài liệu này ghi nhận trạng thái kiểm thử đơn vị tự động (
 | 1784 | **API** | GET quiz/analytics | Quiz stats: total, attempts, pass rate | 🟢PASSED |
 | 1785 | **DB** | AddUserRole Migration | Role column (varchar 20, default Student) added to Users table | 🟢PASSED |
 | 1786 | **Compilation** | dotnet build + vue-tsc | Backend 0 errors, Frontend 0 errors | 🟢PASSED |
-| 1787 | **Docker** | docker-compose.yml | 3 services: postgres:15 + .NET 9 backend + nginx:alpine frontend | 🟢PASSED |
-| 1788 | **Docker** | Backend Dockerfile | Multi-stage sdk:9.0 → aspnet:9.0 Release build | 🟢PASSED |
-| 1789 | **Docker** | Frontend Dockerfile | Multi-stage node:20 → nginx:alpine with VITE_API_BASE_URL | 🟢PASSED |
-| 1790 | **Docker** | nginx.conf | SPA routing + gzip + static caching | 🟢PASSED |
-| 1791 | **Docker** | DB health check | pg_isready with service_healthy condition | 🟢PASSED |
+| 1787 | **DB** | Auth Login → DB sync | Login response overrides Role/IsPremium/TotalXP from PostgreSQL | 🟢PASSED |
+| 1788 | **DB** | Quiz manage → DB | POST /quiz/manage persists Quiz + QuizQuestions to PostgreSQL | 🟢PASSED |
+| 1789 | **DB** | Payment verify → DB | POST /payment/verify persists isPremium=true in Users table | 🟢PASSED |
+| 1790 | **DB** | Payment webhook → DB | POST /simulate-webhook persists isPremium=true in Users table | 🟢PASSED |
+| 1791 | **Port** | SKILL.md port sweep | 18 references localhost:5050 → localhost:5055 | 🟢PASSED |
 | 1792 | **Compilation** | dotnet build + vue-tsc | Backend 0 errors, Frontend 0 errors | 🟢PASSED |
-| 1793 | **WebGPU** | WebGpuPipeline.ts | probeWebGpu() + initCanvasContext() + createComputePipeline() | 🟢PASSED |
-| 1794 | **WebGPU** | WGSL Compute Shader | GRAPH_FORCE_COMPUTE_WGSL Coulomb repulsion kernel | 🟢PASSED |
-| 1795 | **WebGPU** | Dashboard Badge | Glowing "WebGPU Engine: READY" with gpuGlow animation | 🟢PASSED |
-| 1796 | **WebGPU** | @webgpu/types | TypeScript type definitions registered in tsconfig.app.json | 🟢PASSED |
-| 1797 | **Compilation** | dotnet build + vue-tsc | Backend 0 errors, Frontend 0 errors | 🟢PASSED |
-| 1798 | **WASM** | Vite WASM config | worker format 'es', assetsInclude '*.wasm', optimizeDeps exclude | 🟢PASSED |
-| 1799 | **WASM** | WasmComputeWorker | Web Worker init/compute/abort protocol + WASM instantiation | 🟢PASSED |
-| 1800 | **WASM** | Transferable bridge | createWasmBridge() zero-copy ArrayBuffer transfer API | 🟢PASSED |
-| 1801 | **WASM** | JS fallback compute | sort + graph-force algorithms with iteration guard | 🟢PASSED |
-| 1802 | **Compilation** | dotnet build + vue-tsc | Backend 0 errors, Frontend 0 errors | 🟢PASSED |
-| 1803 | **CRDT** | yjs dependency | CRDT library installed for decentralized state sync | 🟢PASSED |
-| 1804 | **CRDT** | CollaborativeGraphStore | Y.Doc binding with conflict-free graph operations | 🟢PASSED |
-| 1805 | **CRDT** | Node locking | moveNode acquires lock, releaseNodeLock clears it | 🟢PASSED |
-| 1806 | **CRDT** | Awareness layer | Peer cursors + presence tracking | 🟢PASSED |
-| 1807 | **Network** | WebTransportClient | HTTP/3 stub + WebSocket fallback + local mode | 🟢PASSED |
-| 1808 | **Network** | createCollabTransport | Factory wiring CRDT ↔ transport bridge | 🟢PASSED |
-| 1809 | **Compilation** | dotnet build + vue-tsc | Backend 0 errors, Frontend 0 errors | 🟢PASSED |
+| 1793 | **Docker** | docker-compose.yml | 3 services: postgres:15 + .NET 9 backend + nginx:alpine frontend | 🟢PASSED |
+| 1794 | **Docker** | Backend Dockerfile | Multi-stage sdk:9.0 → aspnet:9.0 Release build | 🟢PASSED |
+| 1795 | **Docker** | Frontend Dockerfile | Multi-stage node:20 → nginx:alpine with VITE_API_BASE_URL | 🟢PASSED |
+| 1796 | **Docker** | nginx.conf | SPA routing + gzip + static caching | 🟢PASSED |
+| 1797 | **Docker** | DB health check | pg_isready with service_healthy condition | 🟢PASSED |
+| 1798 | **Compilation** | dotnet build + vue-tsc | Backend 0 errors, Frontend 0 errors | 🟢PASSED |
+| 1799 | **WebGPU** | WebGpuPipeline.ts | probeWebGpu() + initCanvasContext() + createComputePipeline() | 🟢PASSED |
+| 1800 | **WebGPU** | WGSL Compute Shader | GRAPH_FORCE_COMPUTE_WGSL Coulomb repulsion kernel | 🟢PASSED |
+| 1801 | **WebGPU** | Dashboard Badge | Glowing "WebGPU Engine: READY" with gpuGlow animation | 🟢PASSED |
+| 1802 | **WebGPU** | @webgpu/types | TypeScript type definitions registered in tsconfig.app.json | 🟢PASSED |
+| 1803 | **Compilation** | dotnet build + vue-tsc | Backend 0 errors, Frontend 0 errors | 🟢PASSED |
+| 1804 | **WASM** | Vite WASM config | worker format 'es', assetsInclude '*.wasm', optimizeDeps exclude | 🟢PASSED |
+| 1805 | **WASM** | WasmComputeWorker | Web Worker init/compute/abort protocol + WASM instantiation | 🟢PASSED |
+| 1806 | **WASM** | Transferable bridge | createWasmBridge() zero-copy ArrayBuffer transfer API | 🟢PASSED |
+| 1807 | **WASM** | JS fallback compute | sort + graph-force algorithms with iteration guard | 🟢PASSED |
+| 1808 | **Compilation** | dotnet build + vue-tsc | Backend 0 errors, Frontend 0 errors | 🟢PASSED |
+| 1809 | **CRDT** | yjs dependency | CRDT library installed for decentralized state sync | 🟢PASSED |
+| 1810 | **CRDT** | CollaborativeGraphStore | Y.Doc binding with conflict-free graph operations | 🟢PASSED |
+| 1811 | **CRDT** | Node locking | moveNode acquires lock, releaseNodeLock clears it | 🟢PASSED |
+| 1812 | **CRDT** | Awareness layer | Peer cursors + presence tracking | 🟢PASSED |
+| 1813 | **Network** | WebTransportClient | HTTP/3 stub + WebSocket fallback + local mode | 🟢PASSED |
+| 1814 | **Network** | createCollabTransport | Factory wiring CRDT ↔ transport bridge | 🟢PASSED |
+| 1815 | **Compilation** | dotnet build + vue-tsc | Backend 0 errors, Frontend 0 errors | 🟢PASSED |

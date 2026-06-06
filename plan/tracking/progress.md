@@ -889,6 +889,24 @@ Tất cả các mục tiêu Sprint 5 đã đạt:
 
 ---
 
+## 27. Platform Overhaul (continued in section 28)
+
+---
+
+## 28. System-Wide Hardening — DB Integration for Auth/Quiz/Payment + Port Sweep
+
+| Tính năng | Chi tiết | Trạng thái | Files liên quan |
+| :--- | :--- | :--- | :--- |
+| **Auth Login → DB sync** | Login response overrides Role/IsPremium/TotalXP/CurrentLevel from PostgreSQL | ✅ CODE DONE | `StatelessAuthController.Login()` |
+| **Auth Register → role sync** | Register response explicitly sets Role = "Student" | ✅ CODE DONE | `StatelessAuthController.Register()` |
+| **Quiz manage → DB** | POST /quiz/manage persists Quiz + QuizQuestions to PostgreSQL via EF Core | ✅ CODE DONE | `StatelessQuizController.ManageQuiz()` |
+| **Payment verify → DB** | POST /payment/verify persists isPremium=true to Users table | ✅ CODE DONE | `StatelessPaymentController.Verify()` + `PersistPremiumStatus()` |
+| **Payment webhook → DB** | POST /payment/simulate-webhook persists isPremium=true to Users table | ✅ CODE DONE | `StatelessPaymentController.SimulateWebhook()` + `PersistPremiumStatus()` |
+| **Port sweep SKILL.md** | 18 references localhost:5050 → localhost:5055 in testing skill | ✅ CODE DONE | `.agents/skills/testing-custom-input/SKILL.md` |
+| **Compilation** | dotnet build 0 errors + vue-tsc 0 errors | ✅ CODE DONE | Backend Build succeeded, Frontend vue-tsc clean |
+
+---
+
 ## 27. Platform Overhaul — Landing Page, Dashboard Hub, Multi-Role (Student/Teacher), Teacher Panel
 
 | Tính năng | Chi tiết | Trạng thái | Files liên quan |

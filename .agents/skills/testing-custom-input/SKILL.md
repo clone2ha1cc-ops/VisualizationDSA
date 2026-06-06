@@ -19,7 +19,7 @@ None — no authentication required for any module.
 
 ### Frontend
 ```bash
-cd frontend && VITE_API_BASE_URL=http://localhost:5050 npx vite --host 0.0.0.0 --port 5173
+cd frontend && VITE_API_BASE_URL=http://localhost:5055 npx vite --host 0.0.0.0 --port 5173
 ```
 Note: If port 5173 is in use, Vite will auto-increment. Check terminal output.
 CRITICAL: `VITE_API_BASE_URL` must be set BEFORE starting vite (it's baked at build time). If frontend is already running without the env var, kill it and restart.
@@ -88,12 +88,12 @@ Expected: 17 total algorithms (7 sorting + 3 searching + 3 stack-queue + 4 graph
 
 ### List All Algorithms
 ```bash
-curl -s http://localhost:5050/api/v1/algorithms | python3 -c "import sys,json; d=json.load(sys.stdin); print(len(d),'algorithms'); [print(f'  {a[\"id\"]}') for a in d]"
+curl -s http://localhost:5055/api/v1/algorithms | python3 -c "import sys,json; d=json.load(sys.stdin); print(len(d),'algorithms'); [print(f'  {a[\"id\"]}') for a in d]"
 ```
 
 ### Execute a Sorting Strategy
 ```bash
-curl -s -X POST http://localhost:5050/api/v1/algorithms/execute \
+curl -s -X POST http://localhost:5055/api/v1/algorithms/execute \
   -H "Content-Type: application/json" \
   -d '{"algorithmId":"bubble-sort","inputData":[45,12,85,32,9]}' | \
   python3 -c "import sys,json; d=json.load(sys.stdin); frames=d.get('frames',[]); print(f'Frames: {len(frames)}'); print(f'Last: {frames[-1][\"dataState\"]}')"
@@ -105,50 +105,50 @@ Expected last frame: `[9, 12, 32, 45, 85]`
 
 ### OOP Concepts API
 ```bash
-curl -s http://localhost:5050/api/v1/concepts/oop/scenarios
-curl -s -X POST http://localhost:5050/api/v1/concepts/oop/execute -H "Content-Type: application/json" -d '{"scenarioId":"encapsulation"}'
+curl -s http://localhost:5055/api/v1/concepts/oop/scenarios
+curl -s -X POST http://localhost:5055/api/v1/concepts/oop/execute -H "Content-Type: application/json" -d '{"scenarioId":"encapsulation"}'
 ```
 
 ### System Design API
 ```bash
-curl -s http://localhost:5050/api/v1/concepts/system-design/topology
-curl -s -X POST http://localhost:5050/api/v1/concepts/system-design/execute -H "Content-Type: application/json" -d '{"scenarioId":"server-failover"}'
+curl -s http://localhost:5055/api/v1/concepts/system-design/topology
+curl -s -X POST http://localhost:5055/api/v1/concepts/system-design/execute -H "Content-Type: application/json" -d '{"scenarioId":"server-failover"}'
 ```
 
 ### SOLID Principles API
 ```bash
 # List scenarios
-curl -s http://localhost:5050/api/v1/concepts/solid/scenarios
+curl -s http://localhost:5055/api/v1/concepts/solid/scenarios
 # Execute SRP scenario (4 frames)
-curl -s -X POST http://localhost:5050/api/v1/concepts/solid/execute -H "Content-Type: application/json" -d '{"scenarioId":"srp"}'
+curl -s -X POST http://localhost:5055/api/v1/concepts/solid/execute -H "Content-Type: application/json" -d '{"scenarioId":"srp"}'
 # Execute OCP scenario (4 frames)
-curl -s -X POST http://localhost:5050/api/v1/concepts/solid/execute -H "Content-Type: application/json" -d '{"scenarioId":"ocp"}'
+curl -s -X POST http://localhost:5055/api/v1/concepts/solid/execute -H "Content-Type: application/json" -d '{"scenarioId":"ocp"}'
 # Execute LSP scenario (4 frames)
-curl -s -X POST http://localhost:5050/api/v1/concepts/solid/execute -H "Content-Type: application/json" -d '{"scenarioId":"lsp"}'
+curl -s -X POST http://localhost:5055/api/v1/concepts/solid/execute -H "Content-Type: application/json" -d '{"scenarioId":"lsp"}'
 ```
 Supported scenario IDs: `srp`, `ocp`, `lsp`
 
 ### Design Patterns API
 ```bash
 # List scenarios
-curl -s http://localhost:5050/api/v1/concepts/design-patterns/scenarios
+curl -s http://localhost:5055/api/v1/concepts/design-patterns/scenarios
 # Execute Strategy Pattern (4 frames)
-curl -s -X POST http://localhost:5050/api/v1/concepts/design-patterns/execute -H "Content-Type: application/json" -d '{"scenarioId":"strategy-pattern"}'
+curl -s -X POST http://localhost:5055/api/v1/concepts/design-patterns/execute -H "Content-Type: application/json" -d '{"scenarioId":"strategy-pattern"}'
 # Execute Observer Pattern (4 frames)
-curl -s -X POST http://localhost:5050/api/v1/concepts/design-patterns/execute -H "Content-Type: application/json" -d '{"scenarioId":"observer-pattern"}'
+curl -s -X POST http://localhost:5055/api/v1/concepts/design-patterns/execute -H "Content-Type: application/json" -d '{"scenarioId":"observer-pattern"}'
 # Execute Singleton Pattern (4 frames)
-curl -s -X POST http://localhost:5050/api/v1/concepts/design-patterns/execute -H "Content-Type: application/json" -d '{"scenarioId":"singleton-pattern"}'
+curl -s -X POST http://localhost:5055/api/v1/concepts/design-patterns/execute -H "Content-Type: application/json" -d '{"scenarioId":"singleton-pattern"}'
 ```
 Supported scenario IDs: `strategy-pattern`, `observer-pattern`, `singleton-pattern`
 
 ### DI Container API
 ```bash
 # List scenarios
-curl -s http://localhost:5050/api/v1/concepts/di-container/scenarios
+curl -s http://localhost:5055/api/v1/concepts/di-container/scenarios
 # Execute Lifetime Demo (5 frames)
-curl -s -X POST http://localhost:5050/api/v1/concepts/di-container/execute -H "Content-Type: application/json" -d '{"scenarioId":"lifetime-demo"}'
+curl -s -X POST http://localhost:5055/api/v1/concepts/di-container/execute -H "Content-Type: application/json" -d '{"scenarioId":"lifetime-demo"}'
 # Execute Cycle Detection (4 frames)
-curl -s -X POST http://localhost:5050/api/v1/concepts/di-container/execute -H "Content-Type: application/json" -d '{"scenarioId":"cycle-detection"}'
+curl -s -X POST http://localhost:5055/api/v1/concepts/di-container/execute -H "Content-Type: application/json" -d '{"scenarioId":"cycle-detection"}'
 ```
 Supported scenario IDs: `lifetime-demo`, `cycle-detection`
 
