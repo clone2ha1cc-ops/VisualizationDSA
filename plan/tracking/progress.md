@@ -932,3 +932,15 @@ Tất cả các mục tiêu Sprint 5 đã đạt:
 | **Dashboard Badge** | Glowing "WebGPU Engine: READY" badge with gpuGlow animation + adapter name | ✅ CODE DONE | `frontend/src/views/DashboardView.vue` |
 | **@webgpu/types** | TypeScript type definitions for WebGPU API added to tsconfig.app.json | ✅ CODE DONE | `tsconfig.app.json`, `package.json` |
 | **Compilation** | dotnet build 0 errors + vue-tsc 0 errors | ✅ CODE DONE | Backend Build succeeded, Frontend vue-tsc clean |
+
+---
+
+## 32. WASM Compute Engine & Web Worker Bridge
+
+| Tính năng | Chi tiết | Trạng thái | Files liên quan |
+| :--- | :--- | :--- | :--- |
+| **Vite WASM config** | worker format 'es', assetsInclude '*.wasm', optimizeDeps exclude | ✅ CODE DONE | `vite.config.ts` |
+| **WasmComputeWorker** | Web Worker: init/compute/abort protocol, WASM instantiation, JS fallback | ✅ CODE DONE | `features/code-to-visualization/engine/WasmComputeWorker.ts` |
+| **Transferable bridge** | createWasmBridge() — zero-copy ArrayBuffer transfer, Promise-based API | ✅ CODE DONE | `features/code-to-visualization/engine/WasmComputeWorker.ts` |
+| **JS fallback compute** | sort (insertion), graph-force (Coulomb repulsion), iteration guard | ✅ CODE DONE | `features/code-to-visualization/engine/WasmComputeWorker.ts` |
+| **Compilation** | dotnet build 0 errors + vue-tsc 0 errors | ✅ CODE DONE | Backend Build succeeded, Frontend vue-tsc clean |
