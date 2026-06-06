@@ -944,3 +944,17 @@ Tất cả các mục tiêu Sprint 5 đã đạt:
 | **Transferable bridge** | createWasmBridge() — zero-copy ArrayBuffer transfer, Promise-based API | ✅ CODE DONE | `features/code-to-visualization/engine/WasmComputeWorker.ts` |
 | **JS fallback compute** | sort (insertion), graph-force (Coulomb repulsion), iteration guard | ✅ CODE DONE | `features/code-to-visualization/engine/WasmComputeWorker.ts` |
 | **Compilation** | dotnet build 0 errors + vue-tsc 0 errors | ✅ CODE DONE | Backend Build succeeded, Frontend vue-tsc clean |
+
+---
+
+## 33. CRDT Collaborative Graph & WebTransport
+
+| Tính năng | Chi tiết | Trạng thái | Files liên quan |
+| :--- | :--- | :--- | :--- |
+| **yjs dependency** | CRDT library for decentralized state synchronization | ✅ CODE DONE | `package.json` |
+| **CollaborativeGraphStore** | Pinia store binding Y.Doc arrays to graph nodes/edges with conflict-free ops | ✅ CODE DONE | `features/graph/store/useCollaborativeGraphStore.ts` |
+| **CRDT operations** | addNode, addEdge, removeNode, moveNode (with lock), updateEdgeWeight — all transactional | ✅ CODE DONE | `features/graph/store/useCollaborativeGraphStore.ts` |
+| **Awareness layer** | Peer cursors, colors, presence tracking for multi-user editing | ✅ CODE DONE | `features/graph/store/useCollaborativeGraphStore.ts` |
+| **WebTransportClient** | HTTP/3 QUIC stub with WebSocket fallback + local offline mode | ✅ CODE DONE | `services/WebTransportClient.ts` |
+| **Transport bridge** | createCollabTransport() factory wiring CRDT onLocalUpdate → broadcast | ✅ CODE DONE | `services/WebTransportClient.ts` |
+| **Compilation** | dotnet build 0 errors + vue-tsc 0 errors | ✅ CODE DONE | Backend Build succeeded, Frontend vue-tsc clean |

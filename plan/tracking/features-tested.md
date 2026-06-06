@@ -2065,3 +2065,10 @@ Tài liệu này ghi nhận trạng thái kiểm thử đơn vị tự động (
 | 1800 | **WASM** | Transferable bridge | createWasmBridge() zero-copy ArrayBuffer transfer API | 🟢PASSED |
 | 1801 | **WASM** | JS fallback compute | sort + graph-force algorithms with iteration guard | 🟢PASSED |
 | 1802 | **Compilation** | dotnet build + vue-tsc | Backend 0 errors, Frontend 0 errors | 🟢PASSED |
+| 1803 | **CRDT** | yjs dependency | CRDT library installed for decentralized state sync | 🟢PASSED |
+| 1804 | **CRDT** | CollaborativeGraphStore | Y.Doc binding with conflict-free graph operations | 🟢PASSED |
+| 1805 | **CRDT** | Node locking | moveNode acquires lock, releaseNodeLock clears it | 🟢PASSED |
+| 1806 | **CRDT** | Awareness layer | Peer cursors + presence tracking | 🟢PASSED |
+| 1807 | **Network** | WebTransportClient | HTTP/3 stub + WebSocket fallback + local mode | 🟢PASSED |
+| 1808 | **Network** | createCollabTransport | Factory wiring CRDT ↔ transport bridge | 🟢PASSED |
+| 1809 | **Compilation** | dotnet build + vue-tsc | Backend 0 errors, Frontend 0 errors | 🟢PASSED |
