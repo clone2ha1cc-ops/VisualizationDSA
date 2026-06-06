@@ -17,6 +17,7 @@ export interface StatelessUserDto {
   createdAt:    string;
   badges:       StatelessBadgeInfo[];
   isPremium:    boolean;
+  role:         'Student' | 'Teacher';
 }
 
 export interface StatelessBadgeInfo {

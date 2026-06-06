@@ -17,6 +17,7 @@ export interface AuthUserDto {
   createdAt:    string;
   badges:       unknown[];
   isPremium:    boolean;
+  role?:        'Student' | 'Teacher';
 }
 
 export interface AuthResponse {

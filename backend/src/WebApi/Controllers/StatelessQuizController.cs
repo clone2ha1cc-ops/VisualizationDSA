@@ -15,6 +15,7 @@ namespace VisualizationDSA.WebApi.Controllers
     public class StatelessQuizController : ControllerBase
     {
         private readonly QuizBankStrategy _quizBank;
+        private static readonly List<StatelessQuizAttemptResult> _attemptLog = new();
 
         public StatelessQuizController(QuizBankStrategy quizBank)
         {
@@ -80,6 +81,7 @@ namespace VisualizationDSA.WebApi.Controllers
             try
             {
                 var result = _quizBank.EvaluateAttempt(request);
+                _attemptLog.Add(result);
                 return Ok(result);
             }
             catch (KeyNotFoundException ex)
@@ -90,6 +92,51 @@ namespace VisualizationDSA.WebApi.Controllers
             {
                 return BadRequest(new { error = "INVALID_ANSWERS", message = ex.Message });
             }
+        }
+
+        /// <summary>
+        /// Teacher: thêm quiz mới vào ngân hàng câu hỏi.
+        /// POST /api/v1/concepts/quiz/manage
+        /// </summary>
+        [HttpPost("manage")]
+        public IActionResult ManageQuiz([FromBody] StatelessQuizDto quiz)
+        {
+            if (string.IsNullOrWhiteSpace(quiz.Title) || quiz.Questions.Count == 0)
+                return BadRequest(new { error = "INVALID_QUIZ", message = "Quiz phải có tiêu đề và ít nhất 1 câu hỏi." });
+
+            var created = _quizBank.AddQuiz(quiz);
+            return Ok(new { message = "Quiz đã được thêm thành công.", quiz = created });
+        }
+
+        /// <summary>
+        /// Teacher analytics: thống kê tổng quan hoạt động quiz.
+        /// GET /api/v1/concepts/quiz/analytics
+        /// </summary>
+        [HttpGet("analytics")]
+        public IActionResult GetAnalytics()
+        {
+            var totalQuizzes = _quizBank.GetAllQuizzes().Count;
+            var totalAttempts = _attemptLog.Count;
+            var passedAttempts = _attemptLog.Count(a => a.Passed);
+            var avgPassRate = totalAttempts > 0
+                ? Math.Round(passedAttempts * 100.0 / totalAttempts, 1)
+                : 0;
+            var totalQuestionsAnswered = _attemptLog.Sum(a => a.MaxScore);
+
+            return Ok(new
+            {
+                totalQuizzes,
+                totalAttempts,
+                passedAttempts,
+                failedAttempts = totalAttempts - passedAttempts,
+                averagePassRate = avgPassRate,
+                totalQuestionsAnswered,
+                topicBreakdown = _quizBank.GetTopics().Select(t => new
+                {
+                    topic = t,
+                    quizCount = _quizBank.GetQuizzesByTopic(t).Count
+                })
+            });
         }
     }
 }

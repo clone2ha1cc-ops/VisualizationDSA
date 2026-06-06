@@ -886,3 +886,22 @@ Tất cả các mục tiêu Sprint 5 đã đạt:
 | **Seed 10 Vietnamese Users** | DbSeeder.SeedLeaderboardUsersAsync() | ✅ CODE DONE | 10 users with varying XP/levels: NguyenVanA (2850), TranThiB (2200), ..., AlgoLens Student (150) |
 | **EF Migrations Applied** | 5 existing migrations applied to fresh PostgreSQL | ✅ CODE DONE | Users, Badges, UserBadges, RefreshTokens, Orders, Quizzes, QuizQuestions, QuizAttempts, LearningProgresses |
 | **Compilation** | dotnet build 0 errors + vue-tsc 0 errors | ✅ CODE DONE | Backend Build succeeded, Frontend vue-tsc clean |
+
+---
+
+## 27. Platform Overhaul — Landing Page, Dashboard Hub, Multi-Role (Student/Teacher), Teacher Panel
+
+| Tính năng | Chi tiết | Trạng thái | Files liên quan |
+| :--- | :--- | :--- | :--- |
+| **Landing Page** | `/#/` for unauthenticated users, neon gradients, glassmorphic feature grid, stats bar | ✅ CODE DONE | `frontend/src/views/LandingView.vue` |
+| **Dashboard Hub** | `/#/dashboard` for authenticated users, greeting banner, XP progress wheel, top 3 badges, quick links | ✅ CODE DONE | `frontend/src/views/DashboardView.vue` |
+| **User.Role (Backend)** | Student/Teacher role on User entity, StatelessAuthStrategy, StatelessUserDto, DbContext config | ✅ CODE DONE | `User.cs`, `StatelessAuthStrategy.cs`, `StatelessAuthDto.cs`, `ApplicationDbContext.cs` |
+| **EF Migration: AddUserRole** | Adds Role column (varchar 20, default 'Student') to Users table | ✅ CODE DONE | `Infrastructure/Migrations/AddUserRole` |
+| **Demo user = Teacher** | demo@algolens.dev seeded as Teacher role in both in-memory and DbSeeder | ✅ CODE DONE | `StatelessAuthStrategy.cs`, `DbSeeder.cs` |
+| **Router Guards** | beforeEach: Landing→Dashboard redirect, requiresAuth, requiresRole checks | ✅ CODE DONE | `frontend/src/router/index.ts`, `routes.ts`, `routeMeta.d.ts` |
+| **Teacher Panel** | `/#/teacher` — analytics grid (quiz stats), quiz management form (POST /quiz/manage) | ✅ CODE DONE | `frontend/src/views/TeacherPanelView.vue` |
+| **Quiz Manage Endpoint** | POST /api/v1/concepts/quiz/manage — add new quiz to in-memory bank | ✅ CODE DONE | `StatelessQuizController.cs`, `QuizBankStrategy.cs` |
+| **Quiz Analytics Endpoint** | GET /api/v1/concepts/quiz/analytics — total quizzes, attempts, pass rate | ✅ CODE DONE | `StatelessQuizController.cs` |
+| **Sidebar Role Filtering** | appTabs with requiresAuth/requiresRole, filtered in App.vue, Teacher Panel visible only for Teacher | ✅ CODE DONE | `appTabs.ts`, `App.vue` |
+| **Auth Store: role/isTeacher** | userRole + isTeacher computed, role mapped in _applyStatelessAuth | ✅ CODE DONE | `useAuthStore.ts`, `authApi.ts`, `statelessAuthApi.ts` |
+| **Compilation** | dotnet build 0 errors + vue-tsc 0 errors | ✅ CODE DONE | Backend Build succeeded, Frontend vue-tsc clean |

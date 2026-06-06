@@ -5,8 +5,12 @@ import type { RouteRecordRaw } from 'vue-router';
  * Mỗi tab là một route riêng → code-splitting tự động qua Vite.
  */
 export const routes: RouteRecordRaw[] = [
-  { path: '/', redirect: '/sorting' },
+  // ── Landing & Dashboard ──────────────────────────────────────────
+  { path: '/',              name: 'landing',       component: () => import('../views/LandingView.vue'),           meta: { title: 'Welcome',         public: true } },
+  { path: '/dashboard',     name: 'dashboard',     component: () => import('../views/DashboardView.vue'),         meta: { title: 'Dashboard',        requiresAuth: true } },
+  { path: '/teacher',       name: 'teacher',       component: () => import('../views/TeacherPanelView.vue'),      meta: { title: 'Teacher Panel',    requiresAuth: true, requiresRole: 'Teacher' } },
 
+  // ── Core Algorithm Sandboxes ─────────────────────────────────────
   { path: '/sorting',       name: 'sorting',       component: () => import('../views/SortingView.vue'),          meta: { title: 'Sorting',         icon: 'sorting' } },
   // { path: '/animation',     name: 'animation',     component: () => import('../views/AnimationView.vue'),        meta: { title: 'Animation',       icon: 'animation' } },
   // { path: '/dsa',           name: 'dsa',           component: () => import('../views/DSAModulesView.vue'),       meta: { title: 'DSA Modules',     icon: 'dsa' } },
@@ -36,5 +40,5 @@ export const routes: RouteRecordRaw[] = [
   // { path: '/multi-view',    name: 'multi-view',    component: () => import('../views/MultiViewView.vue'),        meta: { title: 'Multi-View',      icon: 'multi-view' } },
   // { path: '/timeline',      name: 'timeline',      component: () => import('../views/TimelinePlaybackView.vue'), meta: { title: 'Timeline',        icon: 'timeline' } },
 
-  { path: '/:pathMatch(.*)*', redirect: '/sorting' },
+  { path: '/:pathMatch(.*)*', redirect: '/' },
 ];

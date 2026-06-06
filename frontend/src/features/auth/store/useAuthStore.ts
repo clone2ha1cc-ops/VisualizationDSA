@@ -30,6 +30,8 @@ export const useAuthStore = defineStore('auth', () => {
   const userLevel       = computed(() => currentUser.value?.currentLevel ?? 1);
   const userXP          = computed(() => currentUser.value?.totalXP ?? 0);
   const isPremium       = computed(() => currentUser.value?.isPremium ?? false);
+  const userRole        = computed(() => currentUser.value?.role ?? 'Student');
+  const isTeacher       = computed(() => userRole.value === 'Teacher');
 
   // ── Private helpers ────────────────────────────────────────────────────────
   function _scheduleRefresh(expiresInSeconds: number): void {
@@ -94,6 +96,7 @@ export const useAuthStore = defineStore('auth', () => {
       createdAt: response.user.createdAt,
       badges: response.user.badges,
       isPremium: response.user.isPremium,
+      role: response.user.role,
     };
     localStorage.setItem('vdsa_refresh_token', response.refreshToken);
     localStorage.setItem('vdsa_access_expires', String(Date.now() + response.expiresIn * 1000));
@@ -165,7 +168,7 @@ export const useAuthStore = defineStore('auth', () => {
 
   return {
     currentUser, isLoading, authError,
-    isAuthenticated, userName, userLevel, userXP, isPremium,
+    isAuthenticated, userName, userLevel, userXP, isPremium, userRole, isTeacher,
     init, register, logIn, logOut, getAccessToken,
     // Stateless backend
     statelessUser, isStatelessMode,

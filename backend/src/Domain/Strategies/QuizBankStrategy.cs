@@ -26,6 +26,14 @@ namespace VisualizationDSA.Domain.Strategies
         public List<string> GetTopics() =>
             _quizzes.Select(q => q.Topic).Distinct().ToList();
 
+        public StatelessQuizDto AddQuiz(StatelessQuizDto quiz)
+        {
+            if (string.IsNullOrWhiteSpace(quiz.Id))
+                quiz.Id = $"custom-{Guid.NewGuid():N}"[..20];
+            _quizzes.Add(quiz);
+            return quiz;
+        }
+
         public StatelessQuizAttemptResult EvaluateAttempt(StatelessQuizAttemptRequest request)
         {
             var quiz = GetQuizById(request.QuizId);

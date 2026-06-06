@@ -17,6 +17,7 @@ namespace VisualizationDSA.Domain.Entities
         public int       CurrentLevel   { get; private set; }
         public int       StreakDays     { get; private set; }
         public bool      IsPremium      { get; private set; }
+        public string    Role           { get; private set; } = "Student";
 
         /// <summary>
         /// Ngày cuối cùng user có hoạt động học tập (xem lecture, làm quiz, v.v.)
@@ -43,6 +44,7 @@ namespace VisualizationDSA.Domain.Entities
             CurrentLevel = 1;
             StreakDays   = 0;
             IsPremium    = false;
+            Role         = "Student";
 
             UserBadges         = new List<UserBadge>();
             QuizAttempts       = new List<QuizAttempt>();
@@ -80,6 +82,12 @@ namespace VisualizationDSA.Domain.Entities
         public void SetPremiumStatus(bool isPremium)
         {
             IsPremium = isPremium;
+        }
+
+        public void SetRole(string role)
+        {
+            if (role == "Student" || role == "Teacher")
+                Role = role;
         }
 
         // ── Private ───────────────────────────────────────────────────────────

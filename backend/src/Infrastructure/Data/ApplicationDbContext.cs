@@ -37,6 +37,7 @@ namespace VisualizationDSA.Infrastructure.Data
                 entity.Property(e => e.StreakDays).HasDefaultValue(0);
                 // ✅ FIX 3.4: LastActivityDate — nullable, dùng để tính streak chính xác
                 entity.Property(e => e.LastActivityDate).IsRequired(false);
+                entity.Property(e => e.Role).IsRequired().HasMaxLength(20).HasDefaultValue("Student");
                 entity.Property<uint>("xmin")
                     .HasColumnType("xid")
                     .ValueGeneratedOnAddOrUpdate()

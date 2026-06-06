@@ -2039,3 +2039,13 @@ Tài liệu này ghi nhận trạng thái kiểm thử đơn vị tự động (
 | 1774 | **DB** | Leaderboard → PostgreSQL | GET /leaderboard reads live from Users table | 🟢PASSED |
 | 1775 | **DB** | Seed Users | 10 Vietnamese users seeded with correct XP/levels | 🟢PASSED |
 | 1776 | **DB** | EF Migrations | 5 migrations applied, 9 tables created | 🟢PASSED |
+| 1777 | **UI** | Landing Page | `/#/` neon gradient hero, 8-card feature grid, stats bar | 🟢PASSED |
+| 1778 | **UI** | Dashboard Hub | `/#/dashboard` greeting, XP progress wheel, top 3 badges | 🟢PASSED |
+| 1779 | **Auth** | User.Role Backend | Student/Teacher role in User entity + StatelessAuthStrategy | 🟢PASSED |
+| 1780 | **Auth** | Role Router Guards | beforeEach: requiresAuth, requiresRole navigation guards | 🟢PASSED |
+| 1781 | **Auth** | Sidebar Role Filter | Teacher Panel tab hidden for Student users | 🟢PASSED |
+| 1782 | **Admin** | Teacher Panel | `/#/teacher` analytics grid + quiz management form | 🟢PASSED |
+| 1783 | **API** | POST quiz/manage | Adds new quiz to in-memory bank via Teacher Panel | 🟢PASSED |
+| 1784 | **API** | GET quiz/analytics | Quiz stats: total, attempts, pass rate | 🟢PASSED |
+| 1785 | **DB** | AddUserRole Migration | Role column (varchar 20, default Student) added to Users table | 🟢PASSED |
+| 1786 | **Compilation** | dotnet build + vue-tsc | Backend 0 errors, Frontend 0 errors | 🟢PASSED |

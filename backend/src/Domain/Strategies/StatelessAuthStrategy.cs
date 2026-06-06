@@ -32,6 +32,7 @@ namespace VisualizationDSA.Domain.Strategies
                 CurrentLevel = 2,
                 StreakDays = 3,
                 IsPremium = false,
+                Role = "Teacher",
                 CreatedAt = DateTime.UtcNow.AddDays(-30),
                 LastLoginAt = DateTime.UtcNow.AddHours(-2),
                 Badges = new List<InMemoryBadge>
@@ -67,6 +68,7 @@ namespace VisualizationDSA.Domain.Strategies
                 CurrentLevel = 1,
                 StreakDays = 0,
                 IsPremium = false,
+                Role = "Student",
                 CreatedAt = DateTime.UtcNow,
                 LastLoginAt = DateTime.UtcNow,
                 Badges = new List<InMemoryBadge>()
@@ -236,7 +238,8 @@ namespace VisualizationDSA.Domain.Strategies
             StreakDays = user.StreakDays,
             CreatedAt = user.CreatedAt,
             Badges = user.Badges.Select(MapToBadgeDto).ToList(),
-            IsPremium = user.IsPremium
+            IsPremium = user.IsPremium,
+            Role = user.Role
         };
 
         private static StatelessBadgeInfoDto MapToBadgeDto(InMemoryBadge b) => new()
@@ -257,6 +260,7 @@ namespace VisualizationDSA.Domain.Strategies
             public int CurrentLevel { get; set; }
             public int StreakDays { get; set; }
             public bool IsPremium { get; set; }
+            public string Role { get; set; } = "Student";
             public DateTime CreatedAt { get; set; }
             public DateTime? LastLoginAt { get; set; }
             public List<InMemoryBadge> Badges { get; set; } = new();

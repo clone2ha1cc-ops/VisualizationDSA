@@ -97,10 +97,10 @@
          BODY — Sidebar + Main Content Layout
     ══════════════════════════════════════════════════════════ -->
     <div class="app-body">
-      <!-- ── LEFT SIDEBAR — Vertical Tab Navigation ── -->
-      <aside class="app-sidebar" aria-label="Sidebar navigation">
+      <!-- ── LEFT SIDEBAR — Vertical Tab Navigation (hidden on landing) ── -->
+      <aside v-if="!isLandingPage" class="app-sidebar" aria-label="Sidebar navigation">
         <nav class="sidebar-nav">
-          <template v-for="tabOrGroup in APP_TABS" :key="'groupName' in tabOrGroup ? tabOrGroup.groupName : tabOrGroup.id">
+          <template v-for="tabOrGroup in filteredTabs" :key="'groupName' in tabOrGroup ? tabOrGroup.groupName : tabOrGroup.id">
             <!-- If it is a group -->
             <div v-if="'groupName' in tabOrGroup" class="sidebar-group">
               <div class="sidebar-group__title">{{ tabOrGroup.groupName }}</div>
@@ -132,10 +132,10 @@
       </aside>
 
       <!-- ── MAIN CONTENT AREA ── -->
-      <main class="app-main">
+      <main class="app-main" :class="{ 'app-main--full': isLandingPage }">
         <RouterView v-slot="{ Component }">
           <Transition name="page-fade" mode="out-in">
-            <component :is="Component" class="app-view" />
+            <component :is="Component" class="app-view" @openLogin="handleOpenLogin" />
           </Transition>
         </RouterView>
       </main>
@@ -151,16 +151,47 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
-import { RouterView, RouterLink } from 'vue-router';
+import { ref, computed, onMounted } from 'vue';
+import { RouterView, RouterLink, useRoute, useRouter } from 'vue-router';
 import { useAuthStore } from './features/auth/store/useAuthStore';
 import { APP_TABS } from './appTabs';
+import type { TabGroup, TabItem } from './appTabs';
 import BaseIcon from './shared/components/BaseIcon.vue';
 import LoginModal from './features/auth/components/LoginModal.vue';
 import ToastContainer from './components/ToastContainer.vue';
 
 const authStore      = useAuthStore();
+const route          = useRoute();
+const router         = useRouter();
 const showLoginModal = ref(false);
+
+const isLandingPage = computed(() => route.name === 'landing');
+
+const filteredTabs = computed(() => {
+  return APP_TABS.filter((tabOrGroup) => {
+    if ('groupName' in tabOrGroup) {
+      const group = tabOrGroup as TabGroup;
+      const visibleItems = group.items.filter((item: TabItem) => isTabVisible(item));
+      return visibleItems.length > 0;
+    }
+    return isTabVisible(tabOrGroup as TabItem);
+  }).map((tabOrGroup) => {
+    if ('groupName' in tabOrGroup) {
+      const group = tabOrGroup as TabGroup;
+      return {
+        ...group,
+        items: group.items.filter((item: TabItem) => isTabVisible(item)),
+      };
+    }
+    return tabOrGroup;
+  });
+});
+
+function isTabVisible(tab: TabItem): boolean {
+  if (tab.requiresAuth && !authStore.isAuthenticated) return false;
+  if (tab.requiresRole && authStore.userRole !== tab.requiresRole) return false;
+  return true;
+}
 
 async function handleLogout(): Promise<void> {
   if (authStore.isStatelessMode) {
@@ -168,6 +199,11 @@ async function handleLogout(): Promise<void> {
   } else {
     await authStore.logOut();
   }
+  router.push('/');
+}
+
+function handleOpenLogin(): void {
+  showLoginModal.value = true;
 }
 
 onMounted(() => {
@@ -550,6 +586,10 @@ onMounted(() => {
   overflow: hidden;
   padding: var(--space-4);
   gap: var(--space-4);
+}
+
+.app-main--full {
+  padding: 0;
 }
 
 .app-view {

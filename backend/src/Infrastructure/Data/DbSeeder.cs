@@ -197,6 +197,7 @@ namespace VisualizationDSA.Infrastructure.Data
                 var user = new User(email, username, passwordHash);
                 // Award XP to set level correctly via the entity's business logic
                 if (xp > 0) user.AwardXP(xp);
+                if (email == "demo@algolens.dev") user.SetRole("Teacher");
                 await _context.Users.AddAsync(user);
             }
 

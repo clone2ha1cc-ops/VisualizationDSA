@@ -2,6 +2,8 @@ export interface TabItem {
   readonly id: string;
   readonly path: string;
   readonly name: string;
+  readonly requiresAuth?: boolean;
+  readonly requiresRole?: string;
 }
 
 export interface TabGroup {
@@ -29,9 +31,18 @@ export const APP_TABS: readonly (TabGroup | TabItem)[] = [
     ]
   },
   {
+    groupName: 'Interactive',
+    items: [
+      { id: 'quiz',          path: '/quiz',          name: 'Quiz' },
+      { id: 'gamification',  path: '/gamification',  name: 'Leaderboard' },
+    ]
+  },
+  {
     groupName: 'Account',
     items: [
-      { id: 'checkout', path: '/checkout', name: 'Premium' },
+      { id: 'dashboard', path: '/dashboard', name: 'Dashboard', requiresAuth: true },
+      { id: 'checkout',  path: '/checkout',  name: 'Premium' },
+      { id: 'teacher',   path: '/teacher',   name: 'Teacher Panel', requiresAuth: true, requiresRole: 'Teacher' },
     ]
   },
 ] as const;

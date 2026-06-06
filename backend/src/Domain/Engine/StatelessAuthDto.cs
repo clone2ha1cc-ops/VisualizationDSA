@@ -27,6 +27,7 @@ namespace VisualizationDSA.Domain.Engine
         public DateTime CreatedAt { get; set; }
         public List<StatelessBadgeInfoDto> Badges { get; set; } = new();
         public bool IsPremium { get; set; }
+        public string Role { get; set; } = "Student";
     }
 
     public class StatelessBadgeInfoDto
