@@ -2066,3 +2066,8 @@ Tài liệu này ghi nhận trạng thái kiểm thử đơn vị tự động (
 | 1801 | **WebGPU** | Dashboard Badge | Glowing "WebGPU Engine: READY" with gpuGlow animation | 🟢PASSED |
 | 1802 | **WebGPU** | @webgpu/types | TypeScript type definitions registered in tsconfig.app.json | 🟢PASSED |
 | 1803 | **Compilation** | dotnet build + vue-tsc | Backend 0 errors, Frontend 0 errors | 🟢PASSED |
+| 1804 | **WASM** | Vite WASM config | worker format 'es', assetsInclude '*.wasm', optimizeDeps exclude | 🟢PASSED |
+| 1805 | **WASM** | WasmComputeWorker | Web Worker init/compute/abort protocol + WASM instantiation | 🟢PASSED |
+| 1806 | **WASM** | Transferable bridge | createWasmBridge() zero-copy ArrayBuffer transfer API | 🟢PASSED |
+| 1807 | **WASM** | JS fallback compute | sort + graph-force algorithms with iteration guard | 🟢PASSED |
+| 1808 | **Compilation** | dotnet build + vue-tsc | Backend 0 errors, Frontend 0 errors | 🟢PASSED |

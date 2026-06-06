@@ -8,6 +8,13 @@ export default defineConfig({
     port: 5173,
     strictPort: true,
   },
+  worker: {
+    format: 'es',
+  },
+  optimizeDeps: {
+    exclude: ['*.wasm'],
+  },
+  assetsInclude: ['**/*.wasm'],
   build: {
     rollupOptions: {
       output: {
