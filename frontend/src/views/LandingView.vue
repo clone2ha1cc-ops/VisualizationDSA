@@ -18,8 +18,8 @@
           tất cả trong một giao diện tương tác cinematic.
         </p>
         <div class="hero__actions">
-          <button class="hero__cta hero__cta--primary" @click="$emit('openLogin')">
-            Bắt đầu ngay
+          <button class="hero__cta hero__cta--primary" @click="handleCta">
+            {{ authStore.isAuthenticated ? 'Vào bảng điều khiển ➔' : 'Bắt đầu ngay' }}
           </button>
           <a href="https://github.com/maitieubao/VisualizationDSA"
              target="_blank" rel="noopener noreferrer"
@@ -53,7 +53,20 @@
 </template>
 
 <script setup lang="ts">
-defineEmits<{ openLogin: [] }>();
+import { useRouter } from 'vue-router';
+import { useAuthStore } from '../features/auth/store/useAuthStore';
+
+const emit = defineEmits<{ openLogin: [] }>();
+const authStore = useAuthStore();
+const router = useRouter();
+
+function handleCta(): void {
+  if (authStore.isAuthenticated) {
+    router.push('/dashboard');
+  } else {
+    emit('openLogin');
+  }
+}
 
 const features = [
   { icon: '📊', title: 'Sorting Algorithms', desc: '7 thuật toán sắp xếp với hoạt ảnh VCR từng bước' },
@@ -76,10 +89,10 @@ const stats = [
 
 <style scoped>
 .landing {
-  min-height: 100vh;
+  min-height: 100%;
+  padding-bottom: 3rem;
   background: var(--bg-primary, #0a0a0f);
   color: var(--text-primary, #e2e8f0);
-  overflow-y: auto;
 }
 
 /* ── Hero ───────────────────────────────────────────── */

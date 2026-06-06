@@ -590,6 +590,7 @@ onMounted(() => {
 
 .app-main--full {
   padding: 0;
+  overflow-y: auto;
 }
 
 .app-view {

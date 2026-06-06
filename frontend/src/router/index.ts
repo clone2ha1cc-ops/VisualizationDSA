@@ -25,7 +25,7 @@ router.beforeEach((to, _from, next) => {
   const authStore = useAuthStore();
 
   // Authenticated users visiting landing → redirect to dashboard
-  if (to.name === 'landing' && authStore.isAuthenticated) {
+  if ((to.name === 'landing' || to.path === '/') && authStore.isAuthenticated) {
     return next({ name: 'dashboard' });
   }
 
